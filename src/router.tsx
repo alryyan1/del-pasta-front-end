@@ -3,29 +3,33 @@ import Error from "./Error";
 import App from "./App";
 import DefaultLayout from "./components/DefaultLayout";
 import GuestLayout from "./components/GuestLayout";
-import { log } from "console";
+import About from "./pages/About";
+import Signup from "./pages/Signup";
+import Config from "./pages/Config";
+import Orders from "./pages/Orders";
+import Login from "./pages/Login";
 
 const about: RouteObject = {
     path: "about",
-    element: <h1>About</h1>,
+    element: <About/>,
   };
   
   const login: RouteObject = {
     path: "login",
-    element: <h1>login</h1>,
+    element: <Login/>,
   };
   const signup: RouteObject = {
     path: "signup",
-    element: <h1>signup</h1>,
+    element: <Signup/>,
   };
   const config: RouteObject = {
     path: "config",
-    element: <h1>صفحه الاعدادات</h1>,
+    element: <Config/>,
   };
   
   const orders: RouteObject = {
     path: "orders",
-    element: <h1>صفحه الطلبات</h1>,
+    element: <Orders/>,
   };
   const home: RouteObject = {
     path: "/",

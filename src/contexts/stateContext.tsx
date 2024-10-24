@@ -16,10 +16,11 @@ const AuthContext = createContext({
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({});
-  const [token, setToken] = useState(5165);
+  const [token, setToken] = useState(localStorage.getItem('ACCESS_TOKEN'));
   const authenticate = (token) => {
     if (token) {
-      setToken(token);
+      // alert('dd')
+      setToken(()=>token);
       localStorage.setItem("ACCESS_TOKEN", token);
     }else{
         localStorage.removeItem("ACCESS_TOKEN");

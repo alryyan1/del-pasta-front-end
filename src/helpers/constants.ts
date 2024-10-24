@@ -1,8 +1,5 @@
 import { Paper, createTheme, styled } from "@mui/material";
 import createCache from "@emotion/cache";
-import { prefixer } from "stylis";
-import stylisRTLPlugin from "stylis-plugin-rtl";
-import axiosClient from "../../axios-client";
 
 // export const host = 'sahara-pharma.com'
 export const schema = "http";
@@ -56,23 +53,7 @@ export const notifyMe = (title, data, address, action) => {
 };
 
 
-export const cacheRtl = createCache({
-  key: "muirtl",
-  stylisPlugins: [prefixer, stylisRTLPlugin],
-});
-export const ltrCache = createCache({
-  key: "mui",
-});
-export const theme = createTheme({
-  palette: {
-    mode: "dark",
-  },
 
-  direction: "rtl",
-  typography: {
-    fontFamily: [].join(","),
-  },
-});
 
 export const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

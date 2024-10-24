@@ -8,6 +8,9 @@ import Signup from "./pages/Signup";
 import Config from "./pages/Config";
 import Orders from "./pages/Orders";
 import Login from "./pages/Login";
+import LandingPage from "./pages/LandingPage";
+import MakeOrder from "./pages/MakeOrder";
+import Meals from "./pages/Meals";
 
 const about: RouteObject = {
     path: "about",
@@ -31,11 +34,23 @@ const about: RouteObject = {
     path: "orders",
     element: <Orders/>,
   };
-  const home: RouteObject = {
+  const makeOrder: RouteObject = {
+    path: "makeOrder",
+    element: <MakeOrder/>,
+  };
+  const landingPage: RouteObject = {
+    path: "/home",
+    element: <LandingPage/>,
+  };
+  const meals: RouteObject = {
+    path: "/meals",
+    element: <Meals/>,
+  };
+  const authoroized: RouteObject = {
     path: "/",
     errorElement: <Error />,
     element: <DefaultLayout />,
-    children: [about, config, orders],
+    children: [about, config, orders,landingPage,makeOrder,meals],
   };
 
   const guest: RouteObject = {
@@ -45,4 +60,4 @@ const about: RouteObject = {
     children: [login,signup],
   };
   
-  export const router =  createBrowserRouter([home,guest]);
+  export const router =  createBrowserRouter([authoroized,guest]);

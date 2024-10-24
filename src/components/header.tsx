@@ -1,8 +1,13 @@
 import React from 'react'
+import ButtonAppBar from './MyNav'
 
 function Header() {
   return (
-    <div>header</div>
+    <>
+    
+    <ButtonAppBar/>
+
+    </>
   )
 }
 

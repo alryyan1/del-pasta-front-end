@@ -11,6 +11,9 @@ import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 import MakeOrder from "./pages/MakeOrder";
 import Meals from "./pages/Meals";
+import Dashboard from "./pages/Dashboard";
+import Customers from "./pages/Customers";
+import Expenses from "./pages/Expenses";
 
 const about: RouteObject = {
     path: "about",
@@ -46,11 +49,23 @@ const about: RouteObject = {
     path: "/meals",
     element: <Meals/>,
   };
+  const dashboard: RouteObject = {
+    path: "/dashboard",
+    element: <Dashboard/>,
+  };
+  const customers: RouteObject = {
+    path: "/customers",
+    element: <Customers/>,
+  };
+  const expenses: RouteObject = {
+    path: "/expenses",
+    element: <Expenses/>,
+  };
   const authoroized: RouteObject = {
     path: "/",
     errorElement: <Error />,
     element: <DefaultLayout />,
-    children: [about, config, orders,landingPage,makeOrder,meals],
+    children: [about, config, orders,landingPage,makeOrder,meals,dashboard,customers,expenses],
   };
 
   const guest: RouteObject = {

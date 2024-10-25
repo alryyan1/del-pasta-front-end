@@ -6,11 +6,7 @@ import Header from "./header";
 function DefaultLayout() {
   const {user,token} =  useAuthContext();
   // debugger;
-  useEffect(()=>{
-    axiosClient.get('categories').then(({data})=>{
-      console.log(data,'data')
-    })
-  })
+
   console.log(token,'token')
   if (!token) {
     return <Navigate to={'/login'}/>

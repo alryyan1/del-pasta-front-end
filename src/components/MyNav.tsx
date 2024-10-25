@@ -74,6 +74,27 @@ export default function ButtonAppBar() {
           >
              الوجبات
           </Link>
+          <Link
+            to={'/dashboard'}
+            color="inherit"
+            className='bg-blue-500 text-white text-lg px-4 py-2 rounded hover:bg-blue-700'
+          >
+             الرئيسيه
+          </Link>
+          <Link
+            to={'/customers'}
+            color="inherit"
+            className='bg-blue-500 text-white text-lg px-4 py-2 rounded hover:bg-blue-700'
+          >
+             الزبائن
+          </Link>
+          <Link
+            to={'/expenses'}
+            color="inherit"
+            className='bg-blue-500 text-white text-lg px-4 py-2 rounded hover:bg-blue-700'
+          >
+             المصروفات
+          </Link>
         </Toolbar>
       </AppBar>
     </Box>

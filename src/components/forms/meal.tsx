@@ -9,6 +9,7 @@ import {
   Button,
   InputLabel,
   FormControl,
+  Typography
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
 
@@ -20,7 +21,7 @@ interface ICategory {
 interface IFormInput {
   name: string;
   price: number;
-  category: number;
+  category_id: number;
   description: string;
   image: string;
   available: boolean;
@@ -31,130 +32,147 @@ interface IFormInput {
   is_gluten_free: boolean;
 }
 
-const ProductForm = ( ) => {
+const ProductForm = () => {
 
-    const [categories, setCategories] = React.useState<ICategory[]>([]);
+  const [categories, setCategories] = React.useState<ICategory[]>([]);
   const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
 
   const submitForm: SubmitHandler<IFormInput> = (data) => {
     console.log(data)
-    axiosClient.post('meal',data).then(({data})=>{
-        console.log(data,'data')
+    axiosClient.post('meals', data).then(({ data }) => {
+      console.log(data, 'data')
     })
   };
 
   return (
-    <form onSubmit={handleSubmit(submitForm)}>
-      {/* Name */}
-      <TextField
-        label="Name"
-        fullWidth
-        margin="normal"
-        {...register('name', { required: 'Name is required' })}
-        error={!!errors.name}
-        helperText={errors.name?.message}
-      />
+    <>
+      <Typography variant="h4" align="center" gutterBottom>
+         اضافه وجبه
+      </Typography>
+      <form  style={{direction:'rtl'}}  onSubmit={handleSubmit(submitForm)}>
+        {/* Name */}
+        <TextField
+         size='small'
+          label="الاسم"
+          fullWidth
+          
+          variant="standard"
+          {...register('name', { required: 'Name is required' })}
+          error={!!errors.name}
+          helperText={errors.name?.message}
+        />
 
-      {/* Price */}
-      <TextField
-        label="Price"
-        type="number"
-        fullWidth
-        margin="normal"
-        {...register('price', { required: 'Price is required', min: 0 })}
-        error={!!errors.price}
-        helperText={errors.price?.message}
-      />
+        {/* Price */}
+        <TextField
+         size='small'
+          label="السعر"
+          type="number"
+          fullWidth
+          
+          variant="standard"
+          {...register('price', { required: 'Price is required', min: 0 })}
+          error={!!errors.price}
+          helperText={errors.price?.message}
+        />
 
-      {/* Category */}
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Category</InputLabel>
-        <Select
-          label="Category"
-          defaultValue=""
-          {...register('category')}
-          error={!!errors.category}
-        >
-          {categories.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
-              {category.name}
-            </MenuItem>
-          ))}
-        </Select>
-        {errors.category && <p>{errors.category.message}</p>}
-      </FormControl>
+        {/* Category */}
+        <FormControl fullWidth >
+          <InputLabel>الفئة</InputLabel>
+          <Select
+            label="الفئة"
+            defaultValue=""
+            {...register('category_id')}
+          >
+            {categories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      {/* Description */}
-      <TextField
-        label="Description"
-        fullWidth
-        margin="normal"
-        {...register('description', { required: 'Description is required' })}
-        error={!!errors.description}
-        helperText={errors.description?.message}
-      />
+        {/* Description */}
+        <TextField
+         size='small'
+          label="الوصف"
+          fullWidth
+          
+          variant="standard"
+          {...register('description', { required: 'Description is required' })}
+          error={!!errors.description}
+          helperText={errors.description?.message}
+        />
 
-      {/* Image */}
-      <TextField
-        label="Image URL"
-        fullWidth
-        margin="normal"
-        {...register('image', { required: 'Image URL is required' })}
-        error={!!errors.image}
-        helperText={errors.image?.message}
-      />
+        {/* Image */}
+        <TextField
+         size='small'
+          label="رابط الصورة"
+          fullWidth
+          
+          variant="standard"
+          {...register('image', { required: 'Image URL is required' })}
+          error={!!errors.image}
+          helperText={errors.image?.message}
+        />
 
-      {/* Available */}
-      <FormControlLabel
-        control={<Checkbox defaultChecked {...register('available')} />}
-        label="Available"
-      />
+        {/* Available */}
+        <FormControlLabel
+          control={<Checkbox defaultChecked {...register('available')} />}
+          label="متاح"
+        />
 
-      {/* Calories */}
-      <TextField
-        label="Calories"
-        type="number"
-        fullWidth
-        margin="normal"
-        {...register('calories')}
-      />
+        {/* Calories */}
+        <TextField
+         size='small'
+          label="السعرات الحرارية"
+          type="number"
+          fullWidth
+          
+          variant="standard"
+          {...register('calories')}
+        />
 
-      {/* Prep Time */}
-      <TextField
-        label="Prep Time (minutes)"
-        type="number"
-        fullWidth
-        margin="normal"
-        {...register('prep_time')}
-      />
+        {/* Prep Time */}
+        <TextField
+         size='small'
+          label="وقت التحضير (بالدقائق)"
+          type="number"
+          fullWidth
+          
+          variant="standard"
+          {...register('prep_time')}
+        />
 
-      {/* Spice Level */}
-      <TextField
-        label="Spice Level (1-5)"
-        type="number"
-        fullWidth
-        margin="normal"
-        inputProps={{ min: 1, max: 5 }}
-        {...register('spice_level')}
-      />
+        {/* Spice Level */}
+        <TextField
+         size='small'
+          label="درجة الحارة (1-5)"
+          type="number"
+          fullWidth
+          
+          variant="standard"
+          inputProps={{ min: 1, max: 5 }}
+          {...register('spice_level')}
+        />
 
-      {/* Is Vegan */}
-      <FormControlLabel
-        control={<Checkbox {...register('is_vegan')} />}
-        label="Is Vegan"
-      />
+        {/* Is Vegan */}
+        <FormControlLabel
+          control={<Checkbox {...register('is_vegan')} />}
+          label="نباتي"
+        />
 
-      {/* Is Gluten Free */}
-      <FormControlLabel
-        control={<Checkbox {...register('is_gluten_free')} />}
-        label="Is Gluten Free"
-      />
+        {/* Is Gluten Free */}
+        <FormControlLabel
+          control={<Checkbox {...register('is_gluten_free')} />}
+          label="خالٍ من الغلوتين"
+        />
 
-      {/* Submit Button */}
-      <Button type="submit" variant="contained" color="primary" fullWidth>
-        Submit
-      </Button>
-    </form>
+        {/* Submit Button */}
+        <Button type="submit" variant="contained" color="primary" fullWidth>
+          إرسال
+        </Button>
+      </form>
+    </>
   );
 };
 

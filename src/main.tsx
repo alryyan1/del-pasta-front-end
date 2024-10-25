@@ -6,9 +6,9 @@ import { router } from "./router.tsx";
 import { AuthProvider } from "./contexts/stateContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  // <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-  </StrictMode>
+  // </StrictMode>
 );

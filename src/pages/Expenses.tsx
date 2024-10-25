@@ -26,7 +26,7 @@ function CashDenos() {
     document.title = "الفئات -";
   }, []);
 
-  const {data,setData} = useAuthContext()
+  const {data,setData,deleteItem} = useAuthContext()
   useEffect(()=>{
     axiosClient.get<Cost[]>(`costs`).then(({data})=>{
       setData(data);
@@ -75,9 +75,10 @@ function CashDenos() {
                         <LoadingButton
                           onClick={() => {
                             axiosClient
-                              .delete(`cost/${cost.id}`)
+                              .delete(`costs/${cost.id}`)
                               .then(({ data }) => {
-                                console.log(data);
+                              
+                                deleteItem(data.data)
                               });
                           }}
                         >

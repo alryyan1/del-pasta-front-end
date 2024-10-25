@@ -11,7 +11,9 @@ import { Cost } from '@/Types/types';
 function AddCostForm() {
     const [loading , setLoading] = useState(false)
     const [costCategories,setCostCategories] = useState([])
-    const {data,setData} = useAuthContext()
+    const {data,setData,add,deleteItem} = useAuthContext()
+    console.log(data,'data rendered')
+
     useEffect(()=>{
         axiosClient.get(`CostCategories`).then(({data})=>{
           setCostCategories(data);
@@ -31,11 +33,11 @@ function AddCostForm() {
       const submitHandler = (data) => {
         console.log(data)
         setLoading(true);
-        axiosClient.post("costs", {...data,cost_category_id:data.costCategory.id}).then(({ data }) => {
-          console.log(data);
+        axiosClient.post<Cost>("costs", {...data,cost_category_id:data.costCategory.id}).then(({ data }) => {
+          console.log(data,'item add');
           if (data.status) {
             reset()
-            
+            add(data.data)
           }
         }).catch((error)=>{
             console.error(error);

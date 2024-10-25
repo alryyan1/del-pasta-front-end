@@ -26,7 +26,7 @@ export default function MyCustomControlledAutocomplete({
 }) {
   const [open, toggleOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-console.log(errors,'in autocomplete')
+// console.log(errors,'in autocomplete')
   const handleClose = () => {
     setDialogValue("");
     toggleOpen(false);
@@ -40,7 +40,7 @@ console.log(errors,'in autocomplete')
     axiosClient
       .post(submitPath, { name: dialogValue })
       .then(({ data }) => {
-        console.log(data);
+        // console.log(data);
         setRows((prev) => {
           return [...prev, data.status];
         });
@@ -97,7 +97,7 @@ console.log(errors,'in autocomplete')
               }}
               options={rows}
               getOptionLabel={(option) => {
-                console.log("option", option);
+                // console.log("option", option);
                 // for example value selected with enter, right from the input
                 if (typeof option === "string") {
                   return option;

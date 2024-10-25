@@ -1,9 +1,13 @@
 import React from 'react'
+import { Outlet } from 'react-router-dom'
 
 function GuestLayout() {
     
   return (
-    <div>GuestLayout</div>
+    <div>
+        Guest Layout
+        {<Outlet />}
+    </div>
   )
 }
 

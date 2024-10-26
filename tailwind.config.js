@@ -21,7 +21,7 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "#e74c3c", // Set the default primary color (example: orange)
+          DEFAULT: "#d35400", // Set the default primary color (example: orange)
           light: "#e74c3c", // Optional: lighter shade for hover states
           dark: "#E64A19", // Optional: darker shade for buttons or text
         },

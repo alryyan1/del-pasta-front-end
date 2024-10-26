@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/stateContext.tsx";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl, theme } from "./helpers/constants.ts";
 import { ThemeProvider } from "@mui/material";
+import { Toaster } from "./components/ui/toaster.tsx";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>

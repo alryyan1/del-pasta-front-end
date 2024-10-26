@@ -29,7 +29,11 @@ const CreateNewOrder = () => {
   const categories = ["مقبلات", "الطبق الرئيسي", "الحلويات", "المشروبات"];
   const meals = {
     مقبلات: [
-      { name: "سلطة خضراء", price: 5, image: "/images/Egyptian-food-4.jpg" },
+      {
+        name: "سلطة خضراء",
+        price: 5,
+        image: "/imaggit es/Egyptian-food-4.jpg",
+      },
       { name: "شوربة", price: 8, image: "/images/sop.jpg" },
     ],
     "الطبق الرئيسي": [
@@ -91,7 +95,7 @@ const CreateNewOrder = () => {
           {/* Meals Display */}
           <div className="w-full sm:w-2/3 md:w-3/4 p-6 overflow-y-auto mt-24 md:mt-0">
             <h2 className="text-2xl font-bold mb-6 text-gray-800">الوجبات</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-6">
               {selectedCategory ? (
                 meals[selectedCategory].map((meal, index) => (
                   <Card
@@ -110,7 +114,8 @@ const CreateNewOrder = () => {
                       <p className="text-gray-600 mb-4">{meal.price}$</p>
                       <Button
                         onClick={() => addMealToOrder(meal)}
-                        className="flex items-center justify-center w-full bg-green-500 text-white hover:bg-green-600 transition duration-300"
+                        style={{ borderRadius: "10px" }}
+                        className="flex items-center justify-center w-full bg-primary text-white hover:bg-primary transition duration-300"
                       >
                         <FiPlusCircle className="mr-2" /> أضف إلى الطلب
                       </Button>

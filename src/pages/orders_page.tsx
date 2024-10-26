@@ -8,6 +8,7 @@ import {
   TableRow,
   TableCell,
 } from "@/components/ui/table"; // Assuming the table structure
+import Header from "@/components/header";
 
 const OrdersPage = () => {
   // Example orders data
@@ -55,68 +56,71 @@ const OrdersPage = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8" dir="rtl">
-      {/* Cards for actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <CardLink
-          title="إضافة طلب جديد"
-          description="قم بإضافة طلب جديد إلى النظام"
-          href="/orders/new"
-        />
-        <CardLink
-          title="إضافة تصنيف جديد"
-          description="قم بإضافة تصنيف جديد"
-          href="/categories/new"
-        />
-        <CardLink
-          title="إضافة صنف جديد"
-          description="قم بإضافة وجبة جديدة إلى القائمة"
-          href="/meals/new"
-        />
-      </div>
+    <>
+      <Header />
+      <div className="container mx-auto px-4 py-8" dir="rtl">
+        {/* Cards for actions */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <CardLink
+            title="إضافة طلب جديد"
+            description="قم بإضافة طلب جديد إلى النظام"
+            href="/create-new-order"
+          />
+          <CardLink
+            title="إضافة قسم جديد"
+            description="قم بإضافة تصنيف جديد"
+            href="/create-category"
+          />
+          <CardLink
+            title="إضافة صنف جديد"
+            description="قم بإضافة وجبة جديدة إلى القائمة"
+            href="/create-meal"
+          />
+        </div>
 
-      {/* Orders Table */}
-      <div className="bg-white shadow-md rounded-lg p-4">
-        <h2 className="text-2xl font-bold mb-4">الطلبات</h2>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableCell>رقم الطلب</TableCell>
-              <TableCell>اسم العميل</TableCell>
-              <TableCell>محتويات الطلب</TableCell>
-              <TableCell>السعر</TableCell>
-              <TableCell>طريقة الدفع</TableCell>
-              <TableCell>تاريخ التسليم</TableCell>
-              <TableCell>تاريخ اكمال الطلب</TableCell>
-              <TableCell>عنوان التسليم</TableCell>
-              <TableCell>الحالة</TableCell>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.order_number}>
-                <TableCell>{order.order_number}</TableCell>
-                <TableCell>{order.customer_id}</TableCell>
-                <TableCell>
-                  {order.meals.map((meal, index) => (
-                    <span key={index}>
-                      {meal}
-                      {index < order.meals.length - 1 && ", "}
-                    </span>
-                  ))}
-                </TableCell>
-                <TableCell>{order.amount_paid}</TableCell>
-                <TableCell>{order.payment_type}</TableCell>
-                <TableCell>{order.delivery_date}</TableCell>
-                <TableCell>{order.compileted_at}</TableCell>
-                <TableCell>{order.delivery_address}</TableCell>
-                <TableCell>{order.status}</TableCell>
+        {/* Orders Table */}
+        <div className="bg-white shadow-md rounded-lg p-4">
+          <h2 className="text-2xl font-bold mb-4">الطلبات</h2>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableCell>رقم الطلب</TableCell>
+                <TableCell>اسم العميل</TableCell>
+                <TableCell>محتويات الطلب</TableCell>
+                <TableCell>السعر</TableCell>
+                <TableCell>طريقة الدفع</TableCell>
+                <TableCell>تاريخ التسليم</TableCell>
+                <TableCell>تاريخ اكمال الطلب</TableCell>
+                <TableCell>عنوان التسليم</TableCell>
+                <TableCell>الحالة</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {orders.map((order) => (
+                <TableRow key={order.order_number}>
+                  <TableCell>{order.order_number}</TableCell>
+                  <TableCell>{order.customer_id}</TableCell>
+                  <TableCell>
+                    {order.meals.map((meal, index) => (
+                      <span key={index}>
+                        {meal}
+                        {index < order.meals.length - 1 && ", "}
+                      </span>
+                    ))}
+                  </TableCell>
+                  <TableCell>{order.amount_paid}</TableCell>
+                  <TableCell>{order.payment_type}</TableCell>
+                  <TableCell>{order.delivery_date}</TableCell>
+                  <TableCell>{order.compileted_at}</TableCell>
+                  <TableCell>{order.delivery_address}</TableCell>
+                  <TableCell>{order.status}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

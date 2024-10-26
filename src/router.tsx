@@ -3,14 +3,15 @@ import Error from "./Error";
 import App from "./App";
 import DefaultLayout from "./components/DefaultLayout";
 import GuestLayout from "./components/GuestLayout";
-import { log } from "console";
-import CreateNewOrder from "./pages/create_new_order";
-
 import About from "./pages/About";
 import Signup from "./pages/Signup";
 import Config from "./pages/Config";
 import Login from "./pages/Login";
+
+import CreateNewOrder from "./pages/create_new_order";
 import OrdersPage from "./pages/orders_page";
+import CreateCategory from "./pages/categories/create_category";
+import CreateMeal from "./pages/meals/CreateMeal";
 
 const about: RouteObject = {
   path: "about",
@@ -29,19 +30,29 @@ const config: RouteObject = {
   path: "config",
   element: <Config />,
 };
-const orders: RouteObject = {
-  path: "orders",
+const Orders: RouteObject = {
+  path: "/orders",
   element: <OrdersPage />,
 };
-const create_new_order: RouteObject = {
-  path: "create-new-order",
+const makeOrder: RouteObject = {
+  path: "/create-new-order",
   element: <CreateNewOrder />,
 };
-const home: RouteObject = {
+
+const createCategory: RouteObject = {
+  path: "/create-category",
+  element: <CreateCategory />,
+};
+
+const createMeal: RouteObject = {
+  path: "/create-meal",
+  element: <CreateMeal />,
+};
+const authoroized: RouteObject = {
   path: "/",
   errorElement: <Error />,
   element: <DefaultLayout />,
-  children: [about, config, orders, create_new_order],
+  children: [about, config, makeOrder, Orders, createCategory, createMeal],
 };
 
 const guest: RouteObject = {
@@ -51,4 +62,4 @@ const guest: RouteObject = {
   children: [login, signup],
 };
 
-export const router = createBrowserRouter([home, guest]);
+export const router = createBrowserRouter([authoroized, guest]);

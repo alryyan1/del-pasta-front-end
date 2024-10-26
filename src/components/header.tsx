@@ -18,13 +18,13 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex space-x-6 space-x-reverse">
           <a href="/home" className="hover:underline">
-            الرئيسية
+            لوحة التحكم
+          </a>
+          <a href="/orders" className="hover:underline">
+            الطلبات
           </a>
           <a href="/about" className="hover:underline">
             حول
-          </a>
-          <a href="/contact" className="hover:underline">
-            اتصل بنا
           </a>
         </nav>
 

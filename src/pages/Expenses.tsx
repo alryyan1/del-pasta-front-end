@@ -19,6 +19,8 @@ import { LoadingButton } from "@mui/lab";
 import AddCostForm from "@/components/forms/cost";
 import axiosClient from "@/helpers/axios-client";
 import { useAuthContext } from "@/contexts/stateContext";
+import OrderCard from "@/components/Card";
+import { Cost } from "@/Types/types";
 
 
 function CashDenos() {
@@ -65,7 +67,7 @@ function CashDenos() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.map((cost) => {
+                {data.map((cost:Cost) => {
                   return (
                     <TableRow key={cost.id}>
                       <TableCell>{cost.description}</TableCell>
@@ -91,6 +93,9 @@ function CashDenos() {
               </TableBody>
             </Table>
           </Box>
+        </Grid>
+        <Grid item lg={6} xs={12}>
+          <OrderCard/>
         </Grid>
       
       </Grid>

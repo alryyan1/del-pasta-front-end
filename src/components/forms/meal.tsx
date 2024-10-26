@@ -12,6 +12,7 @@ import {
   Typography
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
+import { useAuthContext } from '@/contexts/stateContext';
 
 interface ICategory {
   id: number;
@@ -36,13 +37,17 @@ const ProductForm = () => {
 
   const [categories, setCategories] = React.useState<ICategory[]>([]);
   const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
+  const  {setData,data,add,deleteItem,setAction} =   useAuthContext()
 
   const submitForm: SubmitHandler<IFormInput> = (data) => {
     console.log(data)
     axiosClient.post('meals', data).then(({ data }) => {
-      console.log(data, 'data')
+      console.log(data,'data')
+      add(data)
     })
   };
+
+
 
   return (
     <>

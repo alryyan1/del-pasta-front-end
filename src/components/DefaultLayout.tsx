@@ -15,7 +15,7 @@ function DefaultLayout() {
     <div>
            <Header/>
 
-      DefaultLayout
+      
       {<Outlet />}
     </div>
   );

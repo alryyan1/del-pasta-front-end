@@ -19,7 +19,7 @@ export interface AuthPros {
   action: string;
   setData: (data: string) => void;
   setActionItem: (data) => void;
-  add: () => void;
+  add: (data) => void;
   deleteItem: (item: any) => void;
 }
 const AuthContext = createContext({
@@ -32,22 +32,23 @@ const AuthContext = createContext({
   setData: (data) => {},
   action: "",
   setAction: (data) => {},
-  add : ()=>{},
-  deleteItem:()=>{}
+  add : (data)=>{},
+  deleteItem:(data)=>{}
 });
 
 type Action = "add" | "delete" | "";
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [data, setData] = useState([]);
-  const [action, setAction] = useState<Action>("");
   const [token, setToken] = useState(localStorage.getItem("ACCESS_TOKEN"));
+  
   const add = (actionItem)=>{
        setData((data)=>{
         return  [...data, actionItem]
         });
         // toast.success("Item added successfully!");
   }
+
   const deleteItem = (dl) => {
     setData(data.filter((item, index) => item.id != dl.id));
     // toast.success("Item deleted successfully!");
@@ -62,6 +63,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("ACCESS_TOKEN");
     }
   };
+
   return (
     <AuthContext.Provider
       value={{
@@ -72,9 +74,6 @@ export const AuthProvider = ({ children }) => {
         authenticate,
         data,
         setData,
-        action,
-        setAction,
-        
         add,
         deleteItem
       }}

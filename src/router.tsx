@@ -3,10 +3,11 @@ import Error from "./Error";
 import App from "./App";
 import DefaultLayout from "./components/DefaultLayout";
 import GuestLayout from "./components/GuestLayout";
+import CreateNewOrder from "./pages/create_new_order";
+
 import About from "./pages/About";
 import Signup from "./pages/Signup";
 import Config from "./pages/Config";
-import Orders from "./pages/Orders";
 import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 import MakeOrder from "./pages/MakeOrder";
@@ -14,6 +15,7 @@ import Meals from "./pages/Meals";
 import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
 import Expenses from "./pages/Expenses";
+import MealCategoryForm from "./components/meal_category_form";
 
 const about: RouteObject = {
     path: "about",
@@ -33,13 +35,13 @@ const about: RouteObject = {
     element: <Config/>,
   };
   
-  const orders: RouteObject = {
-    path: "orders",
-    element: <Orders/>,
+  const MealCategories: RouteObject = {
+    path: "MealCategories",
+    element: <MealCategoryForm/>,
   };
   const makeOrder: RouteObject = {
     path: "makeOrder",
-    element: <MakeOrder/>,
+    element: <CreateNewOrder/>,
   };
   const landingPage: RouteObject = {
     path: "/home",
@@ -65,7 +67,7 @@ const about: RouteObject = {
     path: "/",
     errorElement: <Error />,
     element: <DefaultLayout />,
-    children: [about, config, orders,landingPage,makeOrder,meals,dashboard,customers,expenses],
+    children: [about, config, MealCategories,landingPage,makeOrder,meals,dashboard,customers,expenses],
   };
 
   const guest: RouteObject = {

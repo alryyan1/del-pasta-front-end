@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restaurant Checkout</title>
+<style>
+    * {
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f0f0;
+        margin: 0;
+    }
+
+    .container {
+        width: 300px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .header img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .header div {
+        font-weight: bold;
+    }
+
+    .header p {
+        margin: 0;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .item-name {
+        font-size: 14px;
+    }
+
+    .item-price {
+        font-weight: bold;
+        color: #666;
+    }
+
+    .quantity-control {
+        display: flex;
+        align-items: center;
+    }
+
+    .quantity-control button {
+        background-color: #f0f0f0;
+        border: none;
+        padding: 5px;
+        cursor: pointer;
+    }
+
+    .quantity {
+        margin: 0 10px;
+    }
+
+    .promo-code {
+        display: flex;
+        margin: 15px 0;
+    }
+
+    .promo-code input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .promo-code button {
+        background-color: #ff4d6d;
+        color: #fff;
+        border: none;
+        padding: 8px 10px;
+        margin-left: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .suggestions {
+        margin-top: 10px;
+        font-size: 12px;
+        color: #666;
+    }
+
+    .total {
+        margin-top: 15px;
+    }
+
+    .total div {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+
+    .pay-btn {
+        background-color: #00c853;
+        color: #fff;
+        border: none;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="restaurant-logo.png" alt="Restaurant Logo">
+        <div>
+            <div>Spice Hut Indian Restaurant</div>
+            <p>2036 2nd Ave, New York, NY 10029</p>
+        </div>
+    </div>
+
+    <div class="item">
+        <span class="item-name">Chicken Tikka Sub</span>
+        <div class="quantity-control">
+            <button>-</button>
+            <span class="quantity">2</span>
+            <button>+</button>
+        </div>
+        <span class="item-price">$628</span>
+    </div>
+    
+    <!-- Add more items similarly -->
+    
+    <div class="promo-code">
+        <input type="text" placeholder="Enter promo code">
+        <button>APPLY</button>
+    </div>
+
+    <div class="suggestions">
+        Any suggestions? We will pass it on...
+    </div>
+
+    <div class="total">
+        <div>
+            <span>Item Total</span>
+            <span>$3140</span>
+        </div>
+        <div>
+            <span>Restaurant Charges</span>
+            <span>$62.8</span>
+        </div>
+        <div>
+            <span>Delivery Fee</span>
+            <span>$10</span>
+        </div>
+        <div style="color: green;">
+            <span>Total Discount</span>
+            <span>-$1884</span>
+        </div>
+        <div style="font-weight: bold; font-size: 16px;">
+            <span>TO PAY</span>
+            <span>$1329</span>
+        </div>
+    </div>
+
+    <button class="pay-btn">PAY $1329</button>
+</div>
+
+</body>
+</html>

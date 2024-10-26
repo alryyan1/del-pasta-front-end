@@ -11,75 +11,69 @@ import {
   Typography,
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
+import { useAuthContext } from '@/contexts/stateContext';
+import { Meal } from '@/Types/types';
 
 // Define the Meal interface
-interface Meal {
-  name: string;
-  price: number;
-  category_id: number;
-  description: string;
-  image: string;
-  available: boolean;
-  calories?: number;
-  prep_time?: number;
-  spice_level?: number;
-  is_vegan: boolean;
-  is_gluten_free: boolean;
-}
 
 // Sample data for meals
 
-
 const MealTable: React.FC = () => {
 
-  const [meals,setMeals]=useState([])
-
+  const {data,setData,deleteItem} = useAuthContext()     
   useEffect(()=>{
     axiosClient.get<Meal[]>('meals').then(({data})=>{
-      setMeals(data)
-      console.log(data,'meals')
+      setData(data)
     })
   },[])
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} dir="rtl">
       <Typography variant='h5' textAlign={'center'}>كل الوجبات</Typography>
-      <Table size='small'>
-        <TableHead>
+      <Table size='small' className="text-sm border border-gray-300">
+        <TableHead className="bg-gray-100">
           <TableRow>
-            <TableCell>اسم</TableCell>
-            <TableCell>السعر (ريال)</TableCell>
-            <TableCell>معرف الفئة</TableCell>
-            <TableCell>الوصف</TableCell>
-            <TableCell>صورة</TableCell>
-            <TableCell>متاح</TableCell>
-            <TableCell>السعرات الحرارية</TableCell>
-            <TableCell>وقت التحضير (دقائق)</TableCell>
-            <TableCell>مستوى التوابل (1-5)</TableCell>
-            <TableCell>نباتي</TableCell>
-            <TableCell>خالٍ من الغلوتين</TableCell>
+            <TableCell className="p-2">اسم</TableCell>
+            <TableCell className="p-2">السعر (ريال)</TableCell>
+            <TableCell className="p-2">معرف الفئة</TableCell>
+            <TableCell className="p-2">الوصف</TableCell>
+            <TableCell className="p-2">صورة</TableCell>
+            <TableCell className="p-2">متاح</TableCell>
+            <TableCell className="p-2">السعرات الحرارية</TableCell>
+            <TableCell className="p-2">وقت التحضير (دقائق)</TableCell>
+            <TableCell className="p-2">مستوى التوابل (1-5)</TableCell>
+            <TableCell className="p-2">نباتي</TableCell>
+            <TableCell className="p-2">خالٍ من الغلوتين</TableCell>
+            <TableCell className="p-2">حذف</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {meals.map((meal, index) => (
-            <TableRow key={index}>
-              <TableCell>{meal.name}</TableCell>
-              <TableCell>{meal.price}</TableCell>
-              <TableCell>{meal.category_id}</TableCell>
-              <TableCell>{meal.description}</TableCell>
-              <TableCell>
+          {data.map((meal:Meal, index) => (
+            <TableRow key={index} className="hover:bg-gray-50">
+              <TableCell className="p-2">{meal.name}</TableCell>
+              <TableCell className="p-2">{meal.price}</TableCell>
+              <TableCell className="p-2">{meal.category_id}</TableCell>
+              <TableCell className="p-2">{meal.description}</TableCell>
+              <TableCell className="p-2">
                 <img src={meal.image} alt={meal.name} style={{ width: '100px' }} />
               </TableCell>
-              <TableCell>
+              <TableCell className="p-2">
                 <Checkbox checked={meal.available} disabled />
               </TableCell>
-              <TableCell>{meal.calories ?? 'N/A'}</TableCell>
-              <TableCell>{meal.prep_time ?? 'N/A'}</TableCell>
-              <TableCell>{meal.spice_level ?? 'N/A'}</TableCell>
-              <TableCell>
+              <TableCell className="p-2">{meal.calories ?? 'N/A'}</TableCell>
+              <TableCell className="p-2">{meal.prep_time ?? 'N/A'}</TableCell>
+              <TableCell className="p-2">{meal.spice_level ?? 'N/A'}</TableCell>
+              <TableCell className="p-2">
                 <Checkbox checked={meal.is_vegan} disabled />
               </TableCell>
-              <TableCell>
+              <TableCell className="p-2">
                 <Checkbox checked={meal.is_gluten_free} disabled />
+              </TableCell>
+              <TableCell className="p-2">
+                <button onClick={() => {
+                  axiosClient.delete(`meals/${meal.id}`).then(()=>{
+                    deleteItem(meal)
+                  })
+                }}>حذف</button>
               </TableCell>
             </TableRow>
           ))}

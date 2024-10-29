@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import {
   TextField,
@@ -9,7 +9,8 @@ import {
   Button,
   InputLabel,
   FormControl,
-  Typography
+  Typography,
+  Card
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
@@ -36,6 +37,12 @@ interface IFormInput {
 const ProductForm = () => {
 
   const [categories, setCategories] = React.useState<ICategory[]>([]);
+  useEffect(()=>{
+    axiosClient.get<Category>(`categories`).then(({data})=>{
+      setCategories(data)
+    })
+  },[])
+  
   const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
   const  {setData,data,add,deleteItem,setAction} =   useAuthContext()
 
@@ -50,7 +57,7 @@ const ProductForm = () => {
 
 
   return (
-    <>
+    <Card sx={{p:1}}>
       <Typography variant="h4" align="center" gutterBottom>
          اضافه وجبه
       </Typography>
@@ -84,6 +91,7 @@ const ProductForm = () => {
         <FormControl fullWidth >
           <InputLabel>الفئة</InputLabel>
           <Select
+          variant='standard'
             label="الفئة"
             defaultValue=""
             {...register('category_id')}
@@ -95,48 +103,6 @@ const ProductForm = () => {
             ))}
           </Select>
         </FormControl>
-
-        {/* Description */}
-        <TextField
-         size='small'
-          label="الوصف"
-          fullWidth
-          
-          variant="standard"
-          {...register('description', { required: 'Description is required' })}
-          error={!!errors.description}
-          helperText={errors.description?.message}
-        />
-
-        {/* Image */}
-        <TextField
-         size='small'
-          label="رابط الصورة"
-          fullWidth
-          
-          variant="standard"
-          {...register('image', { required: 'Image URL is required' })}
-          error={!!errors.image}
-          helperText={errors.image?.message}
-        />
-
-        {/* Available */}
-        <FormControlLabel
-          control={<Checkbox defaultChecked {...register('available')} />}
-          label="متاح"
-        />
-
-        {/* Calories */}
-        <TextField
-         size='small'
-          label="السعرات الحرارية"
-          type="number"
-          fullWidth
-          
-          variant="standard"
-          {...register('calories')}
-        />
-
         {/* Prep Time */}
         <TextField
          size='small'
@@ -160,24 +126,14 @@ const ProductForm = () => {
           {...register('spice_level')}
         />
 
-        {/* Is Vegan */}
-        <FormControlLabel
-          control={<Checkbox {...register('is_vegan')} />}
-          label="نباتي"
-        />
-
-        {/* Is Gluten Free */}
-        <FormControlLabel
-          control={<Checkbox {...register('is_gluten_free')} />}
-          label="خالٍ من الغلوتين"
-        />
+   
 
         {/* Submit Button */}
         <Button type="submit" variant="contained" color="primary" fullWidth>
-          إرسال
+          حفظ
         </Button>
       </form>
-    </>
+    </Card>
   );
 };
 

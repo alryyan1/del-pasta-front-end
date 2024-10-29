@@ -1,14 +1,16 @@
-import { useState } from "react";
-import "./App.css";
+import * as React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "./components/header";
-import Footer from "./components/footer";
+import { DashboardLayout } from "@toolpad/core/DashboardLayout";
+import { PageContainer } from "@toolpad/core/PageContainer";
+
 function App() {
   return (
     <>
-      <Header />
-      <Outlet />
-      <Footer />
+      <DashboardLayout>
+        <PageContainer>
+          <Outlet />
+        </PageContainer>
+      </DashboardLayout>
     </>
   );
 }

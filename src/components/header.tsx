@@ -32,7 +32,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-primary text-white shadow-md" dir="rtl">
+    <header style={{marginBottom:'5px'}} className="bg-primary text-white shadow-md" dir="rtl">
       <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
         {/* Brand */}
         <h1 className="text-2xl font-bold">تطبيق المطبخ</h1>

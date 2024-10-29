@@ -10,7 +10,7 @@ function GuestLayout() {
     }
   return (
     <div>
-      <Header />
+      {/* <Header /> */}
       Guest Layout
         {<Outlet />}
     </div>

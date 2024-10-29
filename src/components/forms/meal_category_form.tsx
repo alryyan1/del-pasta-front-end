@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import Header from "./header";
-import Card from "./Card";
+import Header from "../header";
+import Card from "../Card";
 import axiosClient from "@/helpers/axios-client";
 
 const MealCategoryForm = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryImage, setCategoryImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  console.log(previewImage,'prevew img')
+  console.log(previewImage,'prevew img','name ',categoryName)
 
   // Handle form submission
   const handleSubmit = (e) => {

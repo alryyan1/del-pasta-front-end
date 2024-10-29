@@ -1,3 +1,4 @@
+import axiosClient from "@/helpers/axios-client";
 import {
   createContext,
   ContextType,
@@ -5,6 +6,7 @@ import {
   useContext,
   useEffect,
 } from "react";
+import { useNavigate, Navigate } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -19,7 +21,7 @@ export interface AuthPros {
   action: string;
   setData: (data: string) => void;
   setActionItem: (data) => void;
-  add: (data) => void;
+  add: (data,setSate) => void;
   deleteItem: (item: any) => void;
 }
 const AuthContext = createContext({
@@ -32,7 +34,7 @@ const AuthContext = createContext({
   setData: (data) => {},
   action: "",
   setAction: (data) => {},
-  add : (data)=>{},
+  add : (data,setSatate)=>{},
   deleteItem:(data)=>{}
 });
 
@@ -41,11 +43,54 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [data, setData] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("ACCESS_TOKEN"));
-  
-  const add = (actionItem)=>{
-       setData((data)=>{
-        return  [...data, actionItem]
-        });
+  const navigate =  useNavigate()
+  useEffect(() => {
+    axiosClient.get("/user").then(({ data }) => {
+      setUser(data);
+    }).catch((err)=>{
+    console.log('error')
+    setUser(null);
+    setToken(null)
+    navigate('/login');
+
+  });
+  }, [])
+  const add = (actionItem,setState)=>{
+
+       if (setState) {
+        setState((data)=>{
+          if (data.map((item)=>item.id).find((id)=>id==actionItem.id)) {
+           //update by replace old item with new item [data]
+           return  data.map((item)=>{
+               if(item.id===actionItem.id){
+                 return actionItem
+               }
+               return item;
+             })
+ 
+          }else{
+ 
+            return  [actionItem,...data ]
+          }
+         });
+       }else{
+        setData((data)=>{
+          if (data.map((item)=>item.id).find((id)=>id==actionItem.id)) {
+           //update by replace old item with new item [data]
+           return  data.map((item)=>{
+               if(item.id===actionItem.id){
+                 return actionItem
+               }
+               return item;
+             })
+ 
+          }else{
+ 
+            return  [actionItem,...data ]
+          }
+         });
+       }
+     
         // toast.success("Item added successfully!");
   }
 

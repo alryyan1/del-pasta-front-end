@@ -19,8 +19,36 @@ import { Meal } from '@/Types/types';
 // Sample data for meals
 
 const MealTable: React.FC = () => {
+  const [file, setFile] = useState(null);
+  const [src, setSrc] = useState(null);
+  const {data,setData,deleteItem,add} = useAuthContext()     
 
-  const {data,setData,deleteItem} = useAuthContext()     
+  const handleFileChange = (e,meal) => {
+    //convert image to base64 and save it to db
+    encodeImageFileAsURL(e.target.files[0],meal);
+
+    const url = URL.createObjectURL(e.target.files[0]);
+    console.log(url, "path");
+    setSrc(url);
+    console.log("upload", e.target.files[0]);
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
+  function encodeImageFileAsURL(file:File,meal:Meal) {
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      console.log("RESULT", reader.result);
+      saveToDb( reader.result,meal);
+    };
+    reader.readAsDataURL(file);
+  }
+  
+  const saveToDb = (data,meal) => {
+    axiosClient.patch(`meals/${meal.id}`, { image:data }).then(({ data }) => {
+      add(data)
+    });
+  };
   useEffect(()=>{
     axiosClient.get<Meal[]>('meals').then(({data})=>{
       setData(data)
@@ -33,16 +61,12 @@ const MealTable: React.FC = () => {
         <TableHead className="bg-gray-100">
           <TableRow>
             <TableCell className="p-2">اسم</TableCell>
-            <TableCell className="p-2">السعر (ريال)</TableCell>
-            <TableCell className="p-2">معرف الفئة</TableCell>
-            <TableCell className="p-2">الوصف</TableCell>
+            <TableCell className="p-2">السعر </TableCell>
+            <TableCell className="p-2"> الفئة</TableCell>
             <TableCell className="p-2">صورة</TableCell>
-            <TableCell className="p-2">متاح</TableCell>
-            <TableCell className="p-2">السعرات الحرارية</TableCell>
             <TableCell className="p-2">وقت التحضير (دقائق)</TableCell>
             <TableCell className="p-2">مستوى التوابل (1-5)</TableCell>
-            <TableCell className="p-2">نباتي</TableCell>
-            <TableCell className="p-2">خالٍ من الغلوتين</TableCell>
+            <TableCell className="p-2"> الصوره</TableCell>
             <TableCell className="p-2">حذف</TableCell>
           </TableRow>
         </TableHead>
@@ -51,23 +75,20 @@ const MealTable: React.FC = () => {
             <TableRow key={index} className="hover:bg-gray-50">
               <TableCell className="p-2">{meal.name}</TableCell>
               <TableCell className="p-2">{meal.price}</TableCell>
-              <TableCell className="p-2">{meal.category_id}</TableCell>
-              <TableCell className="p-2">{meal.description}</TableCell>
+              <TableCell className="p-2">{meal?.category?.name}</TableCell>
               <TableCell className="p-2">
                 <img src={meal.image} alt={meal.name} style={{ width: '100px' }} />
               </TableCell>
-              <TableCell className="p-2">
-                <Checkbox checked={meal.available} disabled />
-              </TableCell>
-              <TableCell className="p-2">{meal.calories ?? 'N/A'}</TableCell>
+           
               <TableCell className="p-2">{meal.prep_time ?? 'N/A'}</TableCell>
               <TableCell className="p-2">{meal.spice_level ?? 'N/A'}</TableCell>
-              <TableCell className="p-2">
-                <Checkbox checked={meal.is_vegan} disabled />
-              </TableCell>
-              <TableCell className="p-2">
-                <Checkbox checked={meal.is_gluten_free} disabled />
-              </TableCell>
+              <input onChange={(e)=>{
+          handleFileChange(e,meal)
+        }} type="file"></input>
+          
+           {/* <TableCell> */}
+           {/* <img width={100} src={URL.createObjectURL(meal.image)} alt="" /> */}
+           {/* </TableCell> */}
               <TableCell className="p-2">
                 <button onClick={() => {
                   axiosClient.delete(`meals/${meal.id}`).then(()=>{

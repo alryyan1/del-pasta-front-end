@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
+import './../App.css'
 import {useAuthContext} from '../contexts/stateContext'
 import { useEffect } from "react";
 import axiosClient from "@/helpers/axios-client";
@@ -12,7 +13,7 @@ function DefaultLayout() {
     return <Navigate to={'/login'}/>
   }
   return (
-    <div>
+    <div className="app-container">
            <Header/>
 
       

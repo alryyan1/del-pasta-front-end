@@ -17,10 +17,25 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
 import { Button } from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
-
-
-
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 const demoTheme = createTheme({
+  typography: {
+    fontFamily: [
+      'Cairo',  // Add your default font here
+      'Arial',
+      'sans-serif',
+    ].join(','),
+    // You can customize other typography settings here
+    h1: {
+      fontFamily: 'Cairo', // Custom font for h1
+    },
+    h2: {
+      fontFamily: 'Cairo', // Custom font for h2
+    },
+    // Add other styles as needed
+  },
   components :{
     MuiBreadcrumbs:{
       styleOverrides:{
@@ -92,14 +107,25 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       icon: <ShoppingCartIcon />,
     },
     {
+
       segment: "makeOrder",
       title: "طلب جديد",
-      icon: <ShoppingCartIcon />,
+      icon: <AddShoppingCartIcon />,
     },
     {
-      segment: "reservations",
-      title: "حجز جديد",
-      icon: <ShoppingCartIcon />,
+      segment: "reservations2",
+      title: "الحجوزات",
+      icon: <AddShoppingCartIcon />,
+    },
+    {
+      segment: "expenses",
+      title: "المصروفات",
+      icon: <AttachMoneyIcon />,
+    },
+    {
+      segment: "menu",
+      title: "قائمه الطعام",
+      icon: <RestaurantMenuIcon />,
     },
     {
       kind: "divider",

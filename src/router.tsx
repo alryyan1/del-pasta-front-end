@@ -11,9 +11,11 @@ import Orders from "./pages/Orders";
 import DashboardLayoutBasic from "./Layout/Layout";
 import { AuthProvider } from "./contexts/stateContext";
 import { CustomerList } from "./pages/Customer/CustomerList";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard";
 import Customers from "./pages/Customer/Customers";
-import Reservations from "./pages/Reservation/App";
+import Reservations from "./pages/Reservation/FoodMenu";
+import FoodMenu from "./pages/Reservation/FoodMenu";
+import ReservationCalendar from "./chatgpt/Calender";
 
 const login: RouteObject = {
   path: "login",
@@ -59,8 +61,17 @@ const expenses: RouteObject = {
   element: <Expenses />,
 };
 const reservation: RouteObject = {
-  path: "/reservation",
-  element: <Reservations />,
+  path: "/reservations2",
+  element: <ReservationCalendar />,
+};
+const reservation2: RouteObject = {
+  path: "/reservation2",
+  element: <ReservationCalendar />,
+};
+
+const menu: RouteObject = {
+  path: "/menu",
+  element: <FoodMenu />,
 };
 const authoroized: RouteObject = {
   path: "/",
@@ -73,7 +84,9 @@ const authoroized: RouteObject = {
     orders,
     customers,
     expenses,
-    reservation
+    reservation,
+    menu,
+    reservation2
   ],
 };
 

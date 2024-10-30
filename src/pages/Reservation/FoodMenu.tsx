@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Utensils, Calendar as CalendarIcon } from 'lucide-react';
 import { MenuItem as MenuItemType, CartItem, Reservation } from './types';
 import MenuItem from './MenuItem';
 import Cart from './Cart';
 import Calendar from './Calendar';
 import ReservationForm from './ReservationForm';
-import { menuItems } from './MenuItems';
+import { Meal } from '@/Types/types';
+import axiosClient from '@/helpers/axios-client';
 
-function Reservations() {
+function FoodMenu() {
   const [activeTab, setActiveTab] = useState<'order' | 'reserve'>('order');
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showReservationForm, setShowReservationForm] = useState(false);
+  const [menuItems ,setMenuItems] = useState<Meal[]>([])
+
+  useEffect(()=>{
+    axiosClient.get<Meal>('meals').then(({data})=>{
+      setMenuItems(data)
+    })
+  },[])
 
   const handleAddToCart = (item: MenuItemType) => {
     setCartItems((prev) => {
@@ -74,7 +82,7 @@ function Reservations() {
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center gap-2">
               <Utensils className="h-8 w-8 text-indigo-600" />
-              <h1 className="text-2xl font-bold text-gray-900">Fine Dining</h1>
+              <h1 className="text-2xl font-bold text-gray-900">قائمه الطعام </h1>
             </div>
             <nav className="flex space-x-4">
               <button
@@ -85,7 +93,7 @@ function Reservations() {
                     : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
-                Order Food
+                الاطعمه 
               </button>
               <button
                 onClick={() => setActiveTab('reserve')}
@@ -95,7 +103,7 @@ function Reservations() {
                     : 'text-gray-600 hover:bg-gray-100'
                 }`}
               >
-                Make Reservation
+                حجز طلب 
               </button>
             </nav>
           </div>
@@ -105,9 +113,7 @@ function Reservations() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'order' ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
               <h2 className="text-2xl font-semibold mb-6">Menu</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {menuItems.map((item) => (
                   <MenuItem
                     key={item.id}
@@ -115,16 +121,7 @@ function Reservations() {
                     onAddToCart={handleAddToCart}
                   />
                 ))}
-              </div>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold mb-6">Your Cart</h2>
-              <Cart
-                items={cartItems}
-                onUpdateQuantity={handleUpdateQuantity}
-                onRemoveItem={handleRemoveItem}
-              />
-            </div>
+          
           </div>
         ) : (
           <div>
@@ -154,4 +151,4 @@ function Reservations() {
   );
 }
 
-export default Reservations;
+export default FoodMenu;

@@ -5,6 +5,7 @@ import { LoadingButton } from "@mui/lab";
 import "./../magicCard.css";
 import { Stack } from "@mui/system";
 import CartItem from "./CartItem";
+import { ShoppingCart } from "lucide-react";
 interface CartProps {
   selectedOrder: Order;
   setSelectedOrder: (order) => void;
@@ -64,9 +65,16 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
           >
             <div className="space-y-4 mb-6">
               {selectedOrder.meal_orders.map((item) => {
-                const isMultible = item.quantity > 1 ?  'animate__animated animate__rubberBand' : ''
+                const isMultible =
+                  item.quantity > 1
+                    ? "animate__animated animate__rubberBand"
+                    : "";
                 return (
-                   <CartItem updateQuantity={updateQuantity} isMultible={isMultible}  item={item}/>
+                  <CartItem
+                    updateQuantity={updateQuantity}
+                    isMultible={isMultible}
+                    item={item}
+                  />
                 );
               })}
             </div>
@@ -76,6 +84,8 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
                 <span className="text-gray-600">إجمالي العناصر</span>
                 <span className="text-gray-900">{itemTotal.toFixed(2)}</span>
               </div>
+           
+            
 
               {/* <div className="flex justify-between">
                 <span className="text-gray-600">رسوم التوصيل</span>

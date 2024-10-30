@@ -26,6 +26,7 @@ export interface Customer {
 export interface Order {
   id: number;
   customer_id: null;
+  customer:Customer;
   order_number: string;
   payment_type: string;
   order_confirmed:boolean;

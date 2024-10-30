@@ -29,7 +29,7 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem }: CartProp
           <div key={item.id} className="flex items-center justify-between">
             <div className="flex-1">
               <h3 className="font-medium">{item.name}</h3>
-              <p className="text-sm text-gray-600">${item.price}</p>
+              <p className="text-sm text-gray-600">{item.price}</p>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -58,7 +58,7 @@ export default function Cart({ items, onUpdateQuantity, onRemoveItem }: CartProp
       <div className="mt-6 pt-4 border-t">
         <div className="flex justify-between items-center mb-4">
           <span className="font-semibold">Total:</span>
-          <span className="font-semibold">${total.toFixed(2)}</span>
+          <span className="font-semibold">{total.toFixed(2)}</span>
         </div>
         <button className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors">
           Proceed to Checkout

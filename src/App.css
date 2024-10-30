@@ -2,8 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+ button,h1,h2,h3,table,td,th {
+  font-family: 'cairo'!important;
+ }
 
+.css-hikx3c-MuiDrawer-docked{
+  background-color: lightblue; /* example style */
+  width: 240px!important;
+}
+.MuiDrawer-paper{
+  width: 240px!important;
 
+}
+.css-lhpdre-MuiStack-root ,.css-lhpdre-MuiStack-root>:not(style)~:not(style){
+  margin: 0!important;
+}
 
 /* From Uiverse.io by absoluteSTrange */ 
 .card {

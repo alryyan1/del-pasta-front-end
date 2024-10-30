@@ -52,7 +52,7 @@ function CashDenos() {
           <AddCostForm/>
         </Grid>
      
-        <Grid item lg={3} xs={12}>
+        <Grid item lg={8} xs={12}>
           <Box sx={{ p: 1 }}>
             <Typography variant="h6" textAlign={"center"}>
               المصروفات 
@@ -94,9 +94,7 @@ function CashDenos() {
             </Table>
           </Box>
         </Grid>
-        <Grid item lg={6} xs={12}>
-          <OrderCard/>
-        </Grid>
+    
       
       </Grid>
     </>

@@ -20,15 +20,9 @@ export default function MenuItem({ item, onAddToCart }: MenuItemProps) {
             <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
             <p className="text-sm text-gray-600 mt-1">{item.description}</p>
           </div>
-          <span className="text-lg font-semibold text-gray-900">${item.price}</span>
+          <span className="text-lg font-semibold text-gray-900">{item.price}</span>
         </div>
-        <button
-          onClick={() => onAddToCart(item)}
-          className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded-md flex items-center justify-center gap-2 hover:bg-indigo-700 transition-colors"
-        >
-          <Plus size={18} />
-          Add to Cart
-        </button>
+        
       </div>
     </div>
   );

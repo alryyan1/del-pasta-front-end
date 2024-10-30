@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import { Order } from '@/Types/types';
+import { Customer, Order } from '@/Types/types';
 import { OrderTable } from './orders/OrderTable';
+import axiosClient from '@/helpers/axios-client';
 
 // Sample data
 const initialOrders: Order[] = [
@@ -38,7 +39,12 @@ const theme = createTheme({
 
 function Orders() {
   const [orders, setOrders] = useState<Order[]>(initialOrders);
-
+  useEffect(()=>{
+    //fetch orders 
+    axiosClient.get<Order[]>('orders').then(({data})=>{
+      setOrders(data);
+    })
+  },[])
   const handleDelete = (id: number) => {
     setOrders(orders.filter(order => order.id !== id));
   };

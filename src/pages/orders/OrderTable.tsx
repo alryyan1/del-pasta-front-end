@@ -57,6 +57,7 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
             <TableHead>
               <TableRow>
                 <TableCell>رقم الطلب</TableCell>
+                <TableCell> الزبون</TableCell>
                 <TableCell>الحالة</TableCell>
                 <TableCell>حالة الدفع</TableCell>
                 <TableCell>المبلغ المدفوع</TableCell>
@@ -71,15 +72,18 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                   <TableRow key={order.id} hover>
                     <TableCell>
                       <Typography variant="body2" fontWeight="medium">
-                        {order.order_number}
+                        {order.id}
                       </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {order?.customer?.name}
                     </TableCell>
                     <TableCell>
                       <StatusChip status={order.status} />
                     </TableCell>
-                    <TableCell>{order.payment_status}</TableCell>
+                    <TableCell>{order.payment_type}</TableCell>
                     <TableCell>
-                      ${order.amount_paid.toFixed(2)}
+                      {order.amount_paid}
                     </TableCell>
                     <TableCell>
                       {format(new Date(order.created_at), 'MMM dd, yyyy HH:mm')}

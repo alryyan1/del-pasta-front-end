@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DollarSign, ShoppingBag, Users, TrendingUp } from 'lucide-react';
+import axiosClient from '@/helpers/axios-client';
+import { Customer } from '@/Types/types';
+import InfoItem from '@/components/InfoItem';
+import { Order } from '../Types/types';
 
 const data = [
   { name: 'Mon', sales: 4000 },
@@ -12,34 +16,38 @@ const data = [
   { name: 'Sun', sales: 7490 },
 ];
 
+interface Info {
+  totalRevenue: number;
+  totalOrders: number;
+  activeCustomers: number;
+  conversionRate: number;
+}
 const stats = [
-  { name: 'Total Revenue', value: '$45,231', icon: DollarSign, change: '+12.5%' },
-  { name: 'Total Orders', value: '1,345', icon: ShoppingBag, change: '+8.2%' },
-  { name: 'Active Customers', value: '892', icon: Users, change: '+5.4%' },
-  { name: 'Conversion Rate', value: '3.2%', icon: TrendingUp, change: '+2.1%' },
+  { name: 'Total Revenue', value: '$45,231', icon: DollarSign },
+  { name: 'Total Orders', value: '1,345', icon: ShoppingBag, },
+  { name: 'Active Customers', value: '892', icon: Users,  },
+  { name: 'Conversion Rate', value: '3.2%', icon: TrendingUp },
 ];
 
 export default function Dashboard() {
+  const [info, setInfo] = React.useState<Info>({
+    totalRevenue: 0,
+    totalOrders: 0,
+    activeCustomers: 0,
+    conversionRate: 0,
+  });
+  useEffect(()=>{
+    axiosClient.get<Info>('info').then(({data})=>{
+      setInfo(data)
+    })
+  },[])
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <div key={stat.name} className="bg-white p-6 rounded-lg shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">{stat.name}</p>
-                <p className="mt-1 text-2xl font-semibold text-gray-900">{stat.value}</p>
-              </div>
-              <div className="bg-indigo-50 p-3 rounded-full">
-                <stat.icon className="h-6 w-6 text-indigo-600" />
-              </div>
-            </div>
-            <div className="mt-4">
-              <span className="text-sm font-medium text-green-600">{stat.change}</span>
-              <span className="text-sm text-gray-500"> from last month</span>
-            </div>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+         <InfoItem  InfoIcon={DollarSign} name='Total Revenue' value={info.totalRevenue}/>
+         <InfoItem  InfoIcon={ShoppingBag} name='totalOrders' value={info.totalOrders}/>
+         <InfoItem  InfoIcon={Users} name='activeCustomers' value={info.activeCustomers}/>
+      
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-sm">

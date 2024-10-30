@@ -17,7 +17,7 @@ function OrderList({orders,selectedOrder,setSelectedOrder}:OrderListProps) {
             console.log(order);
             return (
               <Badge color='secondary'  variant="standard" badgeContent={order?.meal_orders.length}>
-                    <LoadingButton style={order.order_confirmed ? {backgroundColor:'green'}:null} sx={{backgroundColor:(theme)=>{
+                    <LoadingButton style={order.order_confirmed && selectedOrder?.id != order.id ? {backgroundColor:'green'}:null} sx={{backgroundColor:(theme)=>{
                 return selectedOrder?.id == order.id ? theme.palette.warning.light :''
               }}} onClick={()=>{
                 setSelectedOrder(order)

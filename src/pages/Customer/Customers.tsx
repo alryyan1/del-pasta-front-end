@@ -42,9 +42,9 @@ function Customers() {
 
   const filteredCustomers = customers.filter(
     (customer) =>
-      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.address.toLowerCase().includes(searchQuery.toLowerCase()) 
+      customer?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer?.phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer?.address?.toLowerCase().includes(searchQuery.toLowerCase()) 
   );
   useEffect(()=>{
     fetchData()

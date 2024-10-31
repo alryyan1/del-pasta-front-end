@@ -17,35 +17,41 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
 import { Button } from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
-import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import { CacheProvider } from "@emotion/react";
+import { cacheRtl } from "@/helpers/constants";
+import { Beef, LayoutPanelTop, PersonStanding, Users } from "lucide-react";
+import logo from './../assets/logo.png'
+import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 const demoTheme = createTheme({
+  // direction: "rtl",
   typography: {
     fontFamily: [
-      'Cairo',  // Add your default font here
-      'Arial',
-      'sans-serif',
-    ].join(','),
+      "Cairo", // Add your default font here
+      "Arial",
+      "sans-serif",
+    ].join(","),
     // You can customize other typography settings here
     h1: {
-      fontFamily: 'Cairo', // Custom font for h1
+      fontFamily: "Cairo", // Custom font for h1
     },
     h2: {
-      fontFamily: 'Cairo', // Custom font for h2
+      fontFamily: "Cairo", // Custom font for h2
     },
     // Add other styles as needed
   },
-  components :{
-    MuiBreadcrumbs:{
-      styleOverrides:{
-        root:{
-          display:'none'
-        }
-      }
-    }
+  components: {
+    MuiBreadcrumbs: {
+      styleOverrides: {
+        root: {
+          display: "none",
+        },
+      },
+    },
   },
-  
+
   cssVariables: {
     colorSchemeSelector: "data-toolpad-color-scheme",
   },
@@ -61,7 +67,6 @@ const demoTheme = createTheme({
   },
 });
 
-
 interface DemoProps {
   /**
    * Injected by the documentation to work in an iframe.
@@ -73,21 +78,19 @@ interface DemoProps {
 export default function DashboardLayoutBasic(props: DemoProps) {
   const { window } = props;
 
-  const [loading,setLoading] = React.useState(false)
-  const  { authenticate,setUser,} = useAuthContext()
+  const [loading, setLoading] = React.useState(false);
+  const { authenticate, setUser } = useAuthContext();
   const navigate = useNavigate();
   const logoutHandler = () => {
-
     setLoading(true);
-    console.log('navigate to to login');
+    console.log("navigate to to login");
     axiosClient
       .post("logout")
       .then(() => {
         authenticate(null);
         setUser(null);
-        localStorage.clear()
-        navigate('/dashboard')
-    
+        localStorage.clear();
+        navigate("/dashboard");
       })
       .finally(() => setLoading(false));
   };
@@ -107,7 +110,6 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       icon: <ShoppingCartIcon />,
     },
     {
-
       segment: "makeOrder",
       title: "طلب جديد",
       icon: <AddShoppingCartIcon />,
@@ -115,7 +117,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     {
       segment: "reservations2",
       title: "الحجوزات",
-      icon: <AddShoppingCartIcon />,
+      icon: <BookmarkAddedIcon />,
     },
     {
       segment: "expenses",
@@ -141,18 +143,18 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       children: [
         {
           segment: "meals",
-          title: "الوجبات",
-          icon: <DescriptionIcon />,
+          title: "باقات الوجبات",
+          icon: <Beef />,
         },
         {
           segment: "MealCategories",
           title: "الاقسام",
-          icon: <DescriptionIcon />,
+          icon: <LayoutPanelTop />,
         },
         {
           segment: "customers",
           title: "الزبائن",
-          icon: <DescriptionIcon />,
+          icon: <Users />,
         },
       ],
     },
@@ -160,7 +162,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       segment: "login",
       title: "تسجيل خروج",
       icon: <LayersIcon />,
-      action : <Button onClick={logoutHandler}>logout</Button>
+      action: <Button onClick={logoutHandler}>logout</Button>,
     },
   ];
   // Remove this const when copying and pasting into your project.
@@ -168,24 +170,26 @@ export default function DashboardLayoutBasic(props: DemoProps) {
 
   return (
     // preview-start
-    <AppProvider
-
+    <AppProvider 
       navigation={NAVIGATION}
       router={router}
       theme={demoTheme}
       branding={{
         title: "Kitchen App",
+        logo :<img src={logo}/>
       }}
       window={demoWindow}
     >
-      <AuthProvider>
-      {/* sx={{height:'90vh'}}  */}
-        <DashboardLayout  >
-          <PageContainer sx={{margin:0}} >
-            <Outlet />
-          </PageContainer>{" "}
-        </DashboardLayout>
-      </AuthProvider>
+      <CacheProvider value={cacheRtl}>
+        <AuthProvider>
+          {/* sx={{height:'90vh'}}  */}
+          <DashboardLayout >
+            <PageContainer sx={{ margin: 0,p:0 }}>
+              <Outlet />
+            </PageContainer>{" "}
+          </DashboardLayout>
+        </AuthProvider>
+      </CacheProvider>
     </AppProvider>
     // preview-end
   );

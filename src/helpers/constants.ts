@@ -10,7 +10,7 @@ import createCache from '@emotion/cache';
 // const theme = createTheme({ direction: 'rtl' })
 export const theme = () =>
   createTheme({
-    direction: 'rtl',
+    // direction: 'rtl',
    
   });
 

@@ -6,18 +6,24 @@
   font-family: 'cairo'!important;
  }
 
+
 .css-hikx3c-MuiDrawer-docked{
   background-color: lightblue; /* example style */
-  width: 240px!important;
+  /* width: 240px!important; */
+}
+body {
+  overflow: hidden;
 }
 .MuiDrawer-paper{
-  width: 240px!important;
+  /* width: 240px!important; */
 
 }
-.css-lhpdre-MuiStack-root ,.css-lhpdre-MuiStack-root>:not(style)~:not(style){
+.css-lhpdre-MuiStack-root ,.css-lhpdre-MuiStack-root>:not(style)~:not(style),.muirtl-lhpdre-MuiStack-root{
   margin: 0!important;
 }
-
+*{
+  /* outline: 1px solid lightblue; */
+}
 /* From Uiverse.io by absoluteSTrange */ 
 .card {
  

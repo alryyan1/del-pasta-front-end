@@ -59,7 +59,7 @@ const ProductForm = () => {
   return (
     <Card sx={{p:1}}>
       <Typography variant="h4" align="center" gutterBottom>
-         اضافه وجبه
+         اضافه بوفيه
       </Typography>
       <form  style={{direction:'rtl'}}  onSubmit={handleSubmit(submitForm)}>
         {/* Name */}

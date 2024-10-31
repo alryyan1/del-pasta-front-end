@@ -16,6 +16,7 @@ import { format } from 'date-fns';
 import { Order } from '@/Types/types';
 import { StatusChip } from './StatusShip';
 import { UpdateOrderDialog } from './UpdateOrderDialog';
+import dayjs from 'dayjs';
 
 interface OrderTableProps {
   orders: Order[];
@@ -86,7 +87,7 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                       {order.amount_paid}
                     </TableCell>
                     <TableCell>
-                      {format(new Date(order.created_at), 'MMM dd, yyyy HH:mm')}
+                      {dayjs(new Date(order.created_at)).format('YYYY-MM-DD H:m A')}
                     </TableCell>
                     <TableCell align="right">
                       <IconButton

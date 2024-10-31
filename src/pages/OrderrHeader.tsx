@@ -47,11 +47,11 @@ function OrderHeader({selectedOrder,setSelectedOrder,customers,newOrderHandler}:
       }}
     ></Autocomplete>
     <MyDateField2
-      label="تاريخ الاستلام"
+      label="تاريخ التسليم"
       path="orders"
       colName="delivery_date"
       disabled={false}
-      val={selectedOrder?.delivery_date}
+      val={selectedOrder?.delivery_date ?? new Date()}
       item={selectedOrder}
 
     />

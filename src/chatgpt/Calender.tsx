@@ -37,8 +37,9 @@ const ReservationCalendar = () => {
   useEffect(() => {
     axiosClient
       .get("reservations")
-      .then((response) =>{
-        const formattedEvents = response.data.map(event => ({
+      .then(({data:{orderReservations,reservations}}) =>{
+        const foodReservationsAndDateReservations = [...orderReservations,...reservations]
+        const formattedEvents = foodReservationsAndDateReservations.map(event => ({
             ...event,
             start: new Date(event.start), // Ensure start is a Date object
             end: new Date(event.end),     // Ensure end is a Date object
@@ -106,7 +107,7 @@ const ReservationCalendar = () => {
   };
 
   return (
-    <div>
+    <div style={{direction:'ltr'}}>
       <Calendar
         localizer={localizer}
         events={events}
@@ -126,6 +127,7 @@ const ReservationCalendar = () => {
           <TextField
            multiline
             rows={8}
+            sx={{width:'500px'}}
             autoFocus
             margin="dense"
             label="Title"

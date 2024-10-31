@@ -1,7 +1,7 @@
 import axios from "axios";
 import { host, schema } from "./constants";
 import { toast } from "react-toastify";
-
+import { AxiosResponse } from "axios";
 const axiosClient = axios.create({
   // baseURL : `https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api`
   baseURL: `${schema}://${host}/kitchen-laravel/public/api`,
@@ -15,8 +15,10 @@ axiosClient.interceptors.request.use((config) => {
   return config;
 });
 
+
 axiosClient.interceptors.response.use(
-  (res) => {
+  (res:AxiosResponse) => {
+    
     console.log(res.data.status, "res");
     if (res.data.status) {
       toast.success("تم العمليه بنجاح");

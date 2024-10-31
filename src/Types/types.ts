@@ -16,6 +16,12 @@ export interface Category {
   image:string;
   meals:Meal[];
 }
+export type AxiosResponseProps<T>  ={
+  data : T;
+  status:boolean
+}
+
+
 
 export interface Customer {
   id: string;
@@ -25,8 +31,8 @@ export interface Customer {
 }
 export interface Order {
   id: number;
-  customer_id: null;
-  customer:Customer;
+  customer_id?: null;
+  customer?:Customer;
   order_number: string;
   payment_type: string;
   order_confirmed:boolean;
@@ -77,8 +83,16 @@ export interface Meal {
   spice_level?: number;
   is_vegan?: boolean;
   is_gluten_free?: boolean;
-  category?:Category
+  category?:Category;
+  child_meals:ChildMeal[]
   
+}
+
+export interface ChildMeal {
+  id: number;
+  name: string;
+  meal:Meal;
+  quantity:number
 }
 export interface CostCategory {
   id: number;

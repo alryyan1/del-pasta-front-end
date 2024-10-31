@@ -1,35 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
-import { Customer, Order } from '@/Types/types';
+import { ThemeProvider, createTheme, CssBaseline, TextField } from '@mui/material';
+import { AxiosDataShape, Customer, Order } from '@/Types/types';
 import { OrderTable } from './orders/OrderTable';
 import axiosClient from '@/helpers/axios-client';
+import { Stack } from '@mui/system';
+import { Search } from 'lucide-react';
 
-// Sample data
-const initialOrders: Order[] = [
-  {
-    id: 1,
-    customer_id: null,
-    order_number: "ORD-001",
-    payment_type: "credit_card",
-    discount: 0,
-    amount_paid: 49.99,
-    user_id: 1,
-    notes: "No spicy food",
-    delivery_date: null,
-    completed_at: null,
-    delivery_address: "123 Main St",
-    special_instructions: "Ring doorbell twice",
-    status: "pending",
-    payment_status: "paid",
-    is_delivery: 1,
-    delivery_fee: 5,
-    address_id: null,
-    created_at: "2024-02-20T10:00:00Z",
-    updated_at: "2024-02-20T10:00:00Z",
-    meal_orders: []
-  },
-  // Add more sample orders as needed
-];
 
 const theme = createTheme({
   palette: {
@@ -38,15 +14,22 @@ const theme = createTheme({
 });
 
 function Orders() {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   useEffect(()=>{
     //fetch orders 
     axiosClient.get<Order[]>('orders').then(({data})=>{
       setOrders(data);
     })
   },[])
+
   const handleDelete = (id: number) => {
-    setOrders(orders.filter(order => order.id !== id));
+     axiosClient.delete<AxiosDataShape<Order>>(`orders/${id}`).then(({data})=>{
+      if (data.status) {
+         
+        setOrders(orders.filter(order => order.id !== id));
+      }
+     })
   };
 
   const handleUpdate = (id: number, data: Partial<Order>) => {
@@ -60,7 +43,21 @@ function Orders() {
       <CssBaseline />
       <div className="min-h-screen bg-gray-50 p-8">
         <div className="max-w-7xl mx-auto" dir="rtl">
+          <Stack direction={'column'}>
+
           <h1 className="text-3xl font-bold mb-8">اداره الطلبات </h1>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Search orders..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: <Search  size={20} className="mr-2 text-gray-500" />,
+            }}
+          />
+          </Stack>
+         
           <OrderTable
             orders={orders}
             onDelete={handleDelete}

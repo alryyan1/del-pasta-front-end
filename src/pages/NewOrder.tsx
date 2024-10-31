@@ -13,6 +13,7 @@ import MealCategoryPanel from "@/components/MealCategoryPanel";
 import OrderList from "@/components/OrderList";
 import OrderHeader from "./OrderrHeader";
 import { ShoppingCart } from "lucide-react";
+import HoverPopover from "@/components/Mypopover";
 
 const NewOrder = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -66,6 +67,7 @@ const NewOrder = () => {
         }}
         dir="rtl"
       >
+
         <MealCategoryPanel
           selectedOrder={selectedOrder}
           setOrders={setOrders}
@@ -88,6 +90,7 @@ const NewOrder = () => {
               </div>
               </>}
         </div>
+
         <OrderList
           orders={orders}
           selectedOrder={selectedOrder}

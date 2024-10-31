@@ -3,10 +3,9 @@ import { Plus } from 'lucide-react';
 
 interface MenuItemProps {
   item: MenuItemType;
-  onAddToCart: (item: MenuItemType) => void;
 }
 
-export default function MenuItem({ item, onAddToCart }: MenuItemProps) {
+export default function MenuItem({ item }: MenuItemProps) {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]">
       <img

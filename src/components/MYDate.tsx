@@ -43,7 +43,6 @@ function MyDateField2({ val, item ,disabled, label='تاريخ الانتهاء'
             })
             
         }}
-        sx={{ mb: 1 }}
       />
     </LocalizationProvider>
   );

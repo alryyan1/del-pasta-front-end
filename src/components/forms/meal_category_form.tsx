@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../header";
 import Card from "../Card";
 import axiosClient from "@/helpers/axios-client";
+import { useCategoryStore } from "@/stores/CategoryStore";
+import MenuItem from "@/pages/Reservation/MenuItem";
 
 const MealCategoryForm = () => {
   const [categoryName, setCategoryName] = useState("");
   const [categoryImage, setCategoryImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  console.log(previewImage,'prevew img','name ',categoryName)
+  const { fetchCategories, categories,add } = useCategoryStore((state) => state);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+  console.log(previewImage, "prevew img", "name ", categoryName);
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -24,22 +30,15 @@ const MealCategoryForm = () => {
     formData.append("categoryName", categoryName);
     formData.append("categoryImage", categoryImage);
 
-
     console.log("اسم التصنيف:", categoryName);
     console.log("تم رفع الصورة:", categoryImage);
 
-    axiosClient.post('categories',{
-      name:categoryName,
-      image:previewImage
-    }).then(({data})=>{
-      console.log(data,'data')
-    })
+      add(categoryName,previewImage)
 
     // Clear form after submission
     setCategoryName("");
     setCategoryImage(null);
     setPreviewImage(null);
-
   };
 
   // Handle file input change and preview
@@ -57,11 +56,15 @@ const MealCategoryForm = () => {
     }
   };
 
-  
   return (
-    <>
-      <div dir="rtl" className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-lg">
-        <h2 style={{ textAlign: "right" }} className="text-2xl font-bold mb-4">إضافة صنف وجبة</h2>
+    <div className="grid grid-cols-2 ]">
+      <div
+        dir="rtl"
+        className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-lg"
+      >
+        <h2 style={{ textAlign: "right" }} className="text-2xl font-bold mb-4">
+          إضافة صنف وجبة
+        </h2>
         <form onSubmit={handleSubmit}>
           {/* Category Name Input */}
           <div className="mb-4">
@@ -105,7 +108,12 @@ const MealCategoryForm = () => {
           {/* Image Preview */}
           {previewImage && (
             <div className="mb-4">
-              <p style={{ textAlign: "right" }} className="text-sm text-gray-700">معاينة الصورة:</p>
+              <p
+                style={{ textAlign: "right" }}
+                className="text-sm text-gray-700"
+              >
+                معاينة الصورة:
+              </p>
               <img
                 src={previewImage}
                 alt="معاينة الصورة"
@@ -123,7 +131,37 @@ const MealCategoryForm = () => {
           </button>
         </form>
       </div>
-    </>
+      <div>
+        {/* 3 columns grid */}
+        <div className="grid grid-cols-3 gap-1">
+          {categories.map((cat) => {
+            return (
+              <div>
+                <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-48 object-cover"
+                  />
+                  <div className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-lg flex items-center justify-center font-semibold text-gray-900">
+                          {cat.name}
+                        </h3>
+                      
+                      </div>
+                      <span className="text-lg font-semibold text-gray-900">
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
   );
 };
 

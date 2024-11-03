@@ -44,8 +44,8 @@ function TdCell({
       // console.log("diffent value");
       axiosClient
         .patch(`${table}/${item.id}`, {
-          colName: colName,
-          val,
+           [colName]:
+       val,
         })
         .then((data) => {
    

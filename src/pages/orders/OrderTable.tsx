@@ -17,6 +17,8 @@ import { Order } from '@/Types/types';
 import { StatusChip } from './StatusShip';
 import { UpdateOrderDialog } from './UpdateOrderDialog';
 import dayjs from 'dayjs';
+import TdCell from '@/helpers/TdCell';
+import StatusSelector from '@/components/StatusSelector';
 
 interface OrderTableProps {
   orders: Order[];
@@ -26,6 +28,7 @@ interface OrderTableProps {
 
 export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
   const [page, setPage] = useState(0);
+  const [editStatus, setEditStatus] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
@@ -39,10 +42,7 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
     setPage(0);
   };
 
-  const handleUpdateClick = (order: Order) => {
-    setSelectedOrder(order);
-    setUpdateDialogOpen(true);
-  };
+
 
   const handleUpdateSubmit = (data: Partial<Order>) => {
     if (selectedOrder) {
@@ -63,7 +63,9 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                 <TableCell>حالة الدفع</TableCell>
                 <TableCell>المبلغ المدفوع</TableCell>
                 <TableCell>تاريخ الإنشاء</TableCell>
-                <TableCell align="right">الإجراءات</TableCell>
+                <TableCell>تاريخ التسليم</TableCell>
+                <TableCell> تكلفه الطلب</TableCell>
+                {/* <TableCell align="right">الإجراءات</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -79,32 +81,32 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                     <TableCell>
                       {order?.customer?.name}
                     </TableCell>
-                    <TableCell>
-                      <StatusChip status={order.status} />
+                    <TableCell onClick={()=>setEditStatus(true)}>
+                       {editStatus ? <StatusSelector setSelectedOrder={null} selectedOrder={order}/> : <StatusChip status={order.status} />}
                     </TableCell>
                     <TableCell>{order.payment_type}</TableCell>
-                    <TableCell>
-                      {order.amount_paid}
-                    </TableCell>
+                    <TdCell sx={{width:'50px'}} table={'orders'} item={order}   colName={'amount_paid'}>{order.amount_paid}</TdCell>
                     <TableCell>
                       {dayjs(new Date(order.created_at)).format('YYYY-MM-DD H:m A')}
                     </TableCell>
-                    <TableCell align="right">
-                      <IconButton
+                    <TableCell>{order?.delivery_date}</TableCell>
+                    <TdCell sx={{width:'50px'}} table={'orders'} item={order}   colName={'cost'}>{order.cost}</TdCell>
+                    {/* <TableCell align="right"> */}
+                      {/* <IconButton
                         size="small"
                         onClick={() => handleUpdateClick(order)}
                         color="primary"
                       >
                         <Pencil size={16} />
-                      </IconButton>
-                      <IconButton
+                      </IconButton> */}
+                      {/* <IconButton
                         size="small"
                         onClick={() => onDelete(order.id)}
                         color="error"
                       >
-                        <Trash2 size={16} />
-                      </IconButton>
-                    </TableCell>
+                        <Trash2 size={16} /> */}
+                      {/* </IconButton> */}
+                    {/* </TableCell> */}
                   </TableRow>
                 ))}
             </TableBody>

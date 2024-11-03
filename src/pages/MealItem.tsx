@@ -40,11 +40,14 @@ function MealItem({meal,setOrder,selectedOrder,setSelectedOrder,selected}:MealIt
       className={`card shadow hover:opacity-45  ${selectEffect} ${selectedColor}`}
       style={{
         cursor: 'pointer',
-        display: 'grid',
-        gridTemplateColumns: '1fr',
-        gap: '16px',
-        padding: '16px',
-        margin: '8px',
+        display:'flex',
+        justifyContent:'center',
+        alignItems:'center',
+        // display: 'grid',
+        // gridTemplateColumns: '1fr',
+        gap: '4px',
+        padding: '4px',
+        margin: '4px',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         backdropFilter: 'blur(10px)',
         borderRadius: '8px',
@@ -52,11 +55,11 @@ function MealItem({meal,setOrder,selectedOrder,setSelectedOrder,selected}:MealIt
         border: selected ? '2px solid red' : 'none'
       }}
     >
-      <div className=" border">
+      {/* <div className=" "> */}
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {meal.name}
         </h3>
-      </div>
+      {/* </div> */}
     </div>
   )
 }

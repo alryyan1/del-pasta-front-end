@@ -6,6 +6,7 @@ import "./../magicCard.css";
 import { Stack } from "@mui/system";
 import CartItem from "./CartItem";
 import { ShoppingCart } from "lucide-react";
+import { TextField } from "@mui/material";
 interface CartProps {
   selectedOrder: Order;
   setSelectedOrder: (order) => void;
@@ -41,14 +42,18 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       })
       .then(({ data }) => {
         setSelectedOrder(data.order);
+        setTimeout(() => {
+            setSelectedOrder(null)
+        }, 300);
       });
   };
   const orderItemUpdateHandler = (e, orderMeal) => {
     axiosClient
-      .patch(`orderMeals/${orderMeal.id}`, {
+      .patch(`orders/${orderMeal.id}`, {
         delivery_fee: Number(e.target.value),
       })
       .then(({ data }) => {
+        console.log(data,'data')
         setSelectedOrder(data.order);
       });
   };
@@ -86,15 +91,17 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
            
             
 
-              {/* <div className="flex justify-between">
+              <div className="flex justify-between">
                 <span className="text-gray-600">رسوم التوصيل</span>
                 <span className="text-gray-900">
-                  <TextField
-                    onChange={orderItemUpdateHandler}
+                  <TextField type="number" translate="yes"  key={selectedOrder.id} variant="standard" sx={{width:'50px',direction:'ltr'}}
+                    onChange={(e)=>{
+                      orderItemUpdateHandler(e,selectedOrder)
+                    }}
                     defaultValue={selectedOrder.delivery_fee}
-                  ></TextField>
+                  ></TextField><span>OMR</span>
                 </span>
-              </div> */}
+              </div>
             </div>
 
             <LoadingButton

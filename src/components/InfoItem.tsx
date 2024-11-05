@@ -1,19 +1,21 @@
+import { Typography } from '@mui/material';
 import React from 'react'
 interface infoItemProps {
     name:string;
     value:number;
     InfoIcon:React.FC<React.SVGProps<SVGSVGElement>>;
+    moneyTxt:boolean
 }
-function InfoItem({name,value,InfoIcon}:infoItemProps) {
+function InfoItem({name,value,InfoIcon,moneyTxt}:infoItemProps) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-sm">
     <div className="flex items-center justify-between">
       <div>
-        <h1 className="text-sm font-medium text-gray-600">{name}</h1>
+        <Typography variant='h5' className="font-medium text-gray-600">{name}</Typography>
         <p className="mt-1 text-2xl font-semibold text-gray-900">{value}</p>
       </div>
       <div className="bg-indigo-50 p-3 rounded-full">
-        <InfoIcon className="h-6 w-6 text-indigo-600" />
+       {moneyTxt ? 'OMR':  <InfoIcon className="h-6 w-6 text-indigo-600" />}
       </div>
     </div>
     <div className="mt-4">

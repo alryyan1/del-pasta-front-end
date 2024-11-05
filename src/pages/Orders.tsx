@@ -9,16 +9,12 @@ import axiosClient from "@/helpers/axios-client";
 import { Stack } from "@mui/system";
 import { Search } from "lucide-react";
 import dayjs from "dayjs";
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import PDF, { OrderPDF } from "./orders/ReactPDF/OrdersPdf";
-import OrdersPDF from "./orders/ReactPDF/OrdersPdf";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import AppPdf from "./orders/ReactPDF/AppPdf";
 import { webUrl } from "@/helpers/constants";
 
 function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchQueryString, setSearchQueryStrings] = useState([]);
   useEffect(() => {
     //fetch orders
     axiosClient.get<Order[]>("orders").then(({ data }) => {
@@ -79,8 +75,13 @@ function Orders() {
           />
           <input onChange={(e)=>{
             setSearchQuery(e.target.value)
+            setSearchQueryStrings((query)=>{
+              return [...query,{name:'date',val: e.target.value}]
+
+              
+            })
           }} className=" bg-gray-50 p-8" type="date"/>
-          <Button variant="contained" href={`${webUrl}orders`}>التقرير</Button>
+          <Button variant="contained" href={`${webUrl}orders?s=1${searchQueryString.reduce((prev,curr)=>`${prev}&${curr.name}=${curr.val}`,'')}`}>التقرير</Button>
         </Stack>
 
         <OrderTable

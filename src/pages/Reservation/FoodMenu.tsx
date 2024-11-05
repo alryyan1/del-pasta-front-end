@@ -84,28 +84,7 @@ function FoodMenu() {
               <Utensils className="h-8 w-8 text-indigo-600" />
               <h1 className="text-2xl font-bold text-gray-900">قائمه الطعام </h1>
             </div>
-            <nav className="flex space-x-4">
-              <button
-                onClick={() => setActiveTab('order')}
-                className={`px-4 py-2 rounded-md ${
-                  activeTab === 'order'
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                الاطعمه 
-              </button>
-              <button
-                onClick={() => setActiveTab('reserve')}
-                className={`px-4 py-2 rounded-md ${
-                  activeTab === 'reserve'
-                    ? 'bg-indigo-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                حجز طلب 
-              </button>
-            </nav>
+           
           </div>
         </div>
       </header>

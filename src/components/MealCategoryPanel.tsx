@@ -59,7 +59,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     {/* Meals Display */}
     <div className=" w-full sm:w-2/3 md:w-3/4 p-1 overflow-y-auto mt-24 md:mt-0">
    
-      <div className="meal-container">
+      <div className="meal-container grid grid-cols-1 gap-1">
         {selectedCategory ? (
           selectedCategory.meals.map((meal, index) => (
             <MealItem  selected={selectedOrder?.meal_orders.find((m)=>m.meal.id==meal.id)!=undefined} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder}  meal={meal} setOrders={setOrders} />

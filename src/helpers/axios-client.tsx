@@ -20,7 +20,7 @@ axiosClient.interceptors.response.use(
   (res:AxiosResponse) => {
     
     console.log(res.data.status, "res");
-    if (res.data.status) {
+    if (res.data.show) {
       toast.success("تم العمليه بنجاح");
     }
     return res;
@@ -32,13 +32,7 @@ axiosClient.interceptors.response.use(
     console.log(response.data);
     console.log(response.status);
     if (response.status == 200) {
-      toast.success("تم العمليه بنجاح", {
-        autoClose: 2000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+     
     }
     if (response.status == 401) {
       console.log("removing access token");

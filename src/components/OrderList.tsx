@@ -14,9 +14,9 @@ function OrderList({orders,selectedOrder,setSelectedOrder}:OrderListProps) {
     <Stack direction={'column'} gap={1} sx={{p:1}} style={{ border: "1px solid" }}>
           <Typography textAlign={'center'}>Orders</Typography>
           {orders.map((order) => {
-            console.log(order);
+            // console.log(order);
             return (
-              <Badge color='secondary'  variant="standard" badgeContent={order?.meal_orders.length}>
+              <Badge key={order.id} color='secondary'  variant="standard" badgeContent={order?.meal_orders.length}>
                     <LoadingButton style={order.order_confirmed && selectedOrder?.id != order.id ? {backgroundColor:'green'}:null} sx={{backgroundColor:(theme)=>{
                 return selectedOrder?.id == order.id ? theme.palette.warning.light :''
               }}} onClick={()=>{

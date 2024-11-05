@@ -18,9 +18,9 @@ export const cacheRtl = createCache({
   key: 'muirtl',
   stylisPlugins: [prefixer, rtlPlugin],
 });
-export const host = 'intaj-starstechnology.com'
-export const schema = "https";
-// export const host = "127.0.0.1";
+// export const host = 'intaj-starstechnology.com'
+export const schema = "http";
+export const host = "127.0.0.1";
 // export const host = 'server1'مركز النعيم
 
 

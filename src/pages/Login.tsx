@@ -14,7 +14,7 @@ import { Label } from "../components/ui/label";
 import { useAuthContext } from "@/contexts/stateContext";
 import axiosClient from "@/helpers/axios-client";
 import { Button } from "@/components/ui/button";
-
+import loginBack from './../assets/images/table.jpg'
 function App() {
   const [error, setError] = useState({ val: false, msg: "" });
   const [loading, setLoading] = useState(false);
@@ -51,7 +51,7 @@ function App() {
         justifyContent: "center",
         alignItems: "center",
         backgroundImage:
-          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/src/assets/images/table.jpg')",
+          `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${loginBack})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

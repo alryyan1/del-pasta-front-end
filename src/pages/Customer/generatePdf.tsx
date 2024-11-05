@@ -1,13 +1,12 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { myFontAmiri } from './Amiri-Regular-normal';
 import { Customer } from '@/Types/types';
-
+import font  from './../../fonts/Cairo-Regular.ttf'
 export const generateCustomerReport = (customers: Customer[]) => {
   
   const doc = new jsPDF();
-  doc.addFileToVFS('Amiri-Regular-normal.ttf', myFontAmiri);
-  doc.addFont('Amiri-Regular-normal.ttf', 'Amiri-Regular', 'normal');
+  doc.addFileToVFS('Cairo.ttf', font);
+  doc.addFont('Cairo.ttf', 'Cairo-Regular', 'normal');
   // doc.addFileToVFS("Amiri-Regular-normal.ttf", myFontAmiri);
   // doc.addFont("MyFont.ttf", "MyFont", "normal");
   doc.setFontSize(20);

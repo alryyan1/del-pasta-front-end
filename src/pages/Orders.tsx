@@ -4,6 +4,7 @@ import {
   createTheme,
   CssBaseline,
   TextField,
+  Button,
 } from "@mui/material";
 import { AxiosDataShape, Customer, Order } from "@/Types/types";
 import { OrderTable } from "./orders/OrderTable";
@@ -12,6 +13,11 @@ import { Stack } from "@mui/system";
 import { Search } from "lucide-react";
 import dayjs from "dayjs";
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import PDF, { OrderPDF } from "./orders/ReactPDF/OrdersPdf";
+import OrdersPDF from "./orders/ReactPDF/OrdersPdf";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import AppPdf from "./orders/ReactPDF/AppPdf";
+import { webUrl } from "@/helpers/constants";
 
 function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -41,24 +47,26 @@ function Orders() {
 
 
  
-
+  console.log(searchQuery,'search query')
   // Filter orders based on search query
   const filteredOrders = orders.filter(
     (order) =>
       order?.customer?.name.includes(searchQuery) ||
       order?.customer?.phone.includes(searchQuery) ||
       order.status.includes(searchQuery) ||
-      order.amount_paid.toString().includes(searchQuery)||
-      dayjs(searchQuery).format('YYYY-MM-DD').includes( dayjs(order.created_at).format('YYYY-MM-DD'))
-      ||
-      dayjs(searchQuery).format('YYYY-MM-DD') == dayjs(order.delivery_date).format('YYYY-MM-DD')
+      order.amount_paid.toString().includes(searchQuery) ||
+      dayjs(order.created_at).isSame(  dayjs(searchQuery),'day') ||
+      dayjs(order.delivery_date).isSame(  dayjs(searchQuery),'day') 
+    
+  
     
   );
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        <Stack direction={'row'} justifyContent={'space-around'} >
+        <Stack alignItems={'center'} direction={'row'} justifyContent={'space-around'} >
+
           <h1 className="text-3xl font-bold mb-8">اداره الطلبات </h1>
           <TextField
             
@@ -75,6 +83,7 @@ function Orders() {
           <input onChange={(e)=>{
             setSearchQuery(e.target.value)
           }} className=" bg-gray-50 p-8" type="date"/>
+          <Button variant="contained" href={`${webUrl}orders`}>التقرير</Button>
         </Stack>
 
         <OrderTable
@@ -97,6 +106,8 @@ function Orders() {
             actions: "الإجراءات",
           }}
         />
+
+
       </div>
     </div>
   );

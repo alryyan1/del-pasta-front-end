@@ -61,7 +61,7 @@ const demoTheme = createTheme({
       xs: 0,
       sm: 600,
       md: 600,
-      lg: 1200,
+      lg: 1500,
       xl: 1536,
     },
   },
@@ -173,6 +173,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     <AppProvider 
       navigation={NAVIGATION}
       router={router}
+      
       theme={demoTheme}
       branding={{
         title: "Kitchen App",

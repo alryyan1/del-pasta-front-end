@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouteObject } from "react-router-dom";
+import { createBrowserRouter, createHashRouter, RouteObject } from "react-router-dom";
 import Error from "./Error";
 import GuestLayout from "./components/GuestLayout";
 import NewOrder from "./pages/NewOrder";
@@ -97,5 +97,5 @@ const guest: RouteObject = {
   children: [login, signup],
 };
 
-export const router = createBrowserRouter([authoroized, guest]);
+export const router = createHashRouter([authoroized, guest]);
 

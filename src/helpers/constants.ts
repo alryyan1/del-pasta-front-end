@@ -19,8 +19,8 @@ export const cacheRtl = createCache({
   stylisPlugins: [prefixer, rtlPlugin],
 });
 // export const host = 'sahara-pharma.com'
-export const schema = "http";
-export const host = "127.0.0.1";
+export const schema = "https";
+export const host = "intaj-starstechnology.com";
 // export const host = 'server1'مركز النعيم
 
 

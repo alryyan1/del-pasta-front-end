@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-
-import { Alert, Box, Stack,  } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import { Link } from "react-router-dom";
+import { Alert, Box, Stack, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { t } from "i18next";
 import {
@@ -13,12 +10,12 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Input } from "../components/ui/input";
-import { Label } from "./../components/ui/label";
+import { Label } from "../components/ui/label";
 import { useAuthContext } from "@/contexts/stateContext";
-import axiosClient from "@/helpers/axios-client"; 
+import axiosClient from "@/helpers/axios-client";
+import { Button } from "@/components/ui/button";
 
 function App() {
-  console.log("login page");
   const [error, setError] = useState({ val: false, msg: "" });
   const [loading, setLoading] = useState(false);
   const { authenticate, setUser } = useAuthContext();
@@ -26,16 +23,15 @@ function App() {
   const [password, setPassword] = useState("");
   const {
     handleSubmit,
-    formState: { errors, isSubmitted },
+    formState: { errors },
     register,
   } = useForm();
-  const sumbitHamdler = (data) => {
+
+  const submitHandler = (data) => {
     setLoading(true);
-    console.log(data);
     axiosClient
       .post("login", data)
       .then(({ data }) => {
-        console.log(data, "success data");
         if (data.status) {
           setUser(data.user);
           authenticate(data.token);
@@ -46,99 +42,108 @@ function App() {
       })
       .finally(() => setLoading(false));
   };
+
   return (
     <Box
       sx={{
         display: "flex",
-        height: "90vh",
+        height: "100vh",
         justifyContent: "center",
-        alignContent: "center",
         alignItems: "center",
+        backgroundImage:
+          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/src/assets/images/table.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
-      <Stack
-        justifyContent={"center"}
-        alignItems={"center"}
-        direction={"column"}
-      >
-        {/* <img height='300px'  src={logo2}/> */}
-
-        <Card className="w-[450px]  rtl text-right col-span-3 mt-4 ">
+      <Stack justifyContent="center" alignItems="center" direction="column">
+        <Card className="w-[450px] rtl text-right shadow-md rounded-lg bg-white p-6 text-gray-800">
           <CardHeader>
-            <CardTitle> Register login data</CardTitle>
+            <CardTitle className="text-center text-2xl font-bold">
+              تسجيل الدخول
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <form noValidate dir="rtl" onSubmit={handleSubmit(sumbitHamdler)}>
-              <Stack direction={'column'} gap={2}>
-   <div className="grid w-full items-center gap-4">
-                {/** User Name  */}
-                <div className="flex flex-col space-y-1.5 text-right">
-                  <Label htmlFor="name"> Username </Label>
-                  <Input
-                    className="text-right"
-                    error={errors.username != null}
-                    {...register("username", {
-                      required: {
-                        value: true,
-                        message: t("usernameValidation"),
-                      },
-                      minLength: {
-                        value: 6,
-                        message: t("usernameValidationMessage"),
-                      },
-                    })}
-                    sx={{ mb: 1 }}
-                    variant="standard"
-                    label={t("username")}
-                    helperText={errors?.username?.message}
-                    value={username}
-                    onChange={(value) => setUsername(value.target.value)}
-                  />
-                </div>
-                {/** password */}
-                {errors.username && errors.username.message}
+            <form noValidate dir="rtl" onSubmit={handleSubmit(submitHandler)}>
+              <Stack direction="column" gap={3}>
+                <div className="grid w-full items-center gap-4">
+                  <div className="flex flex-col space-y-1.5 text-right">
+                    <Label htmlFor="username">اسم المستخدم</Label>
+                    <Input
+                      id="username"
+                      className="text-right"
+                      style={{
+                        borderRadius: "5px",
+                        direction: "rtl",
+                        padding: "10px",
+                      }}
+                      error={!!errors.username}
+                      {...register("username", {
+                        required: {
+                          value: true,
+                          message: "اسم المستخدم مطلوب",
+                        },
+                      })}
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                    {errors.username && (
+                      <Typography variant="caption" color="error">
+                        {errors.username.message}
+                      </Typography>
+                    )}
+                  </div>
 
-                <div className="flex flex-col space-y-1.5 text-right">
-                  <Label htmlFor="cash_percentage"> Password</Label>
-                  <Input
-                    className="text-right"
-                    error={errors.password != null}
-                    sx={{ mb: 1 }}
-                    {...register("password", {
-                      required: {
-                        value: true,
-                        message: t("passwordValidationMessage"),
-                      },
-                      minLength: {
-                        value: 8,
-                        message: t("passwordValidationMessageLength"),
-                      },
-                    })}
-                    variant="standard"
-                    label={t("password")}
-                    type="password"
-                    helperText={errors?.password?.message}
-                    value={password}
-                    onChange={(value) => setPassword(value.target.value)}
-                  />
+                  <div className="flex flex-col space-y-1.5 text-right">
+                    <Label htmlFor="password">كلمة المرور</Label>
+                    <Input
+                      id="password"
+                      className="text-right"
+                      style={{
+                        borderRadius: "5px",
+                        direction: "rtl",
+                        padding: "10px",
+                      }}
+                      error={!!errors.password}
+                      {...register("password", {
+                        required: {
+                          value: true,
+                          message: "يجب ادخال كلمة مرور",
+                        },
+                      })}
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                    />
+                    {errors.password && (
+                      <Typography variant="caption" color="error">
+                        {errors.password.message}
+                      </Typography>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <LoadingButton
-                loading={loading}
-                type="submit"
-                sx={{ m: 1 }}
-                variant="contained"
-                style={{ display: "block", margin: "0 auto" }}
-              >
-                تسجيل
-              </LoadingButton>
+                <Button
+                  type="submit"
+                  style={{
+                    borderRadius: "5px",
+                    padding: "10px",
+                    fontWeight: "bold",
+                    color: "white",
+                  }}
+                  disabled={loading}
+                >
+                  {loading ? " جاري تسجيل الدخول" : " تسجيل"}
+                </Button>
               </Stack>
-           
             </form>
           </CardContent>
-          <CardFooter className="flex justify-between">
-            {error.val && <Alert severity="error">{error.msg}</Alert>}
+          <CardFooter className="flex justify-center mt-2 text-white">
+            {error.val && (
+              <Alert severity="error" variant="outlined" sx={{ width: "100%" }}>
+                {error.msg}
+              </Alert>
+            )}
           </CardFooter>
         </Card>
       </Stack>

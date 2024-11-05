@@ -6,7 +6,7 @@ export interface CategoryStoreProps {
     categories: Category[];
     selectedCategory: Category | null;
     fetchCategories: () => void;
-    add: (name,img) => void;
+    add: (name:string,img:string) => void;
     delete: () => void;
   
 }

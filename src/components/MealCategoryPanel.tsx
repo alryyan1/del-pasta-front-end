@@ -6,7 +6,7 @@ import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
 
 interface MealCategoryPanelProps {
-    setSelectedOrder: (order: string) => void;
+    setSelectedOrder: () => void;
     selectedOrder :Order|null;
     setOrders:(orders:Order[])=>void
 }

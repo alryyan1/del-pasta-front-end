@@ -5,13 +5,13 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "strict": false,
+    "skipLibCheck": true,
+    "noEmit": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "include": [
-      "src",
-      "jest.d.ts" // Include your declaration file
-    ]
+    }
+    
   }
 }

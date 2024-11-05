@@ -20,7 +20,10 @@ export type AxiosResponseProps<T>  ={
   data : T;
   status:boolean
 }
-
+export type User = {
+  id: number;
+  username: string;
+}
 
 
 export interface Customer {

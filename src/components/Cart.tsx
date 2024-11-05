@@ -11,7 +11,6 @@ interface CartProps {
   setSelectedOrder: (order) => void;
 }
 
-interface Cart {}
 
 function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
   const updateQuantity = (increment: boolean, item: Mealorder) => {

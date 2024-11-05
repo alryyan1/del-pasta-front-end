@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import * as THREE from 'three';
 import { useStore } from './store';
 
 export function Tooth({ position, toothNumber }) {

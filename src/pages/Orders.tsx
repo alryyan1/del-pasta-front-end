@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  ThemeProvider,
-  createTheme,
-  CssBaseline,
   TextField,
   Button,
 } from "@mui/material";

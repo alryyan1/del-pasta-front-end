@@ -1,7 +1,5 @@
-import { useAuthContext } from '@/contexts/stateContext';
 import axiosClient from '@/helpers/axios-client';
 import { Meal, Order } from '@/Types/types';
-import { Button, Card } from '@mui/material'
 import 'animate.css';
 import { useState } from 'react';
 
@@ -9,14 +7,13 @@ interface MealItemProps {
     meal: Meal;
     setOrders : (meal:Meal)=>void ;
     selectedOrder : Order|null;
-    setSelectedOrder:(order)=>void;
+    setSelectedOrder:(order:Order)=>void;
     selected:boolean
 }
 
-function MealItem({meal,setOrder,selectedOrder,setSelectedOrder,selected}:MealItemProps) {
+function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) {
   const [selectEffect,setSelectEffect] = useState('')
   console.log('meal is selected',selected)
-  const {add} = useAuthContext()
   
   const mealOrderHandler = ()=>{
     setSelectEffect('animate__animated animate__bounce')

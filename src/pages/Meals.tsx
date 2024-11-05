@@ -2,8 +2,6 @@ import ProductForm from "@/components/forms/meal";
 import MealTable from "@/components/MealsTable";
 import { Grid } from "@mui/material";
 import React from "react";
-import CreateMeal from "./meals/CreateMeal";
-import { GridSize } from "@mui/material/Grid";
 
 function Meals() {
   return (

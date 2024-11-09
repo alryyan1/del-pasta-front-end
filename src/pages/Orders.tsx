@@ -62,6 +62,7 @@ function Orders() {
 
           <h1 className="text-3xl font-bold mb-8">اداره الطلبات </h1>
           <TextField
+           size="small"
             
             variant="outlined"
             placeholder="Search orders..."

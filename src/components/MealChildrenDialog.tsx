@@ -79,7 +79,7 @@ const MealChildrenDialog = ({
             </Stack>
           </form>
           <div>
-            <MealChildrenTable data={selectedMeal?.child_meals}/>
+            <MealChildrenTable setSelectedMeal={setSelectedMeal} data={selectedMeal?.child_meals}/>
           </div>
         </DialogContent>
         <DialogActions>

@@ -22,8 +22,8 @@ export default function BasicPopover({title,content
   const id = open ? 'simple-popover' : undefined;
 
   return (
-    <div>
-      <Button aria-describedby={id}  onClick={handleClick}>
+    <div style={{flexGrow:1}}>
+      <Button className='ellipsis' aria-describedby={id}  onClick={handleClick}>
         {title}
       </Button>
       <Popover

@@ -22,9 +22,11 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
-import { Beef, LayoutPanelTop, PersonStanding, Users } from "lucide-react";
+import { Beef, LayoutPanelTop, List, PersonStanding, Users } from "lucide-react";
 import logo from './../assets/logo.png'
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
+import SidebarFooter from "@/components/footer";
+import NavActions from "@/components/NavActions";
 const demoTheme = createTheme({
   // direction: "rtl",
   typography: {
@@ -78,22 +80,8 @@ interface DemoProps {
 export default function DashboardLayoutBasic(props: DemoProps) {
   const { window } = props;
 
-  const [loading, setLoading] = React.useState(false);
-  const { authenticate, setUser } = useAuthContext();
-  const navigate = useNavigate();
-  const logoutHandler = () => {
-    setLoading(true);
-    console.log("navigate to to login");
-    axiosClient
-      .post("logout")
-      .then(() => {
-        authenticate(null);
-        setUser(null);
-        localStorage.clear();
-        navigate("/dashboard");
-      })
-      .finally(() => setLoading(false));
-  };
+
+ 
   const NAVIGATION: Navigation = [
     {
       kind: "header",
@@ -105,15 +93,18 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       icon: <DashboardIcon />,
     },
     {
-      segment: "orders",
-      title: "الطلبات",
-      icon: <ShoppingCartIcon />,
-    },
-    {
       segment: "makeOrder",
       title: "طلب جديد",
       icon: <AddShoppingCartIcon />,
+    }
+    ,
+
+    {
+      segment: "orders",
+      title: "الطلبات",
+      icon: <List />,
     },
+    
     {
       segment: "reservations2",
       title: "الحجوزات",
@@ -137,6 +128,13 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       title: "Analytics",
     },
     {
+      segment: "customers",
+      title: "الزبائن",
+      icon: <Users />,
+    },
+    
+
+    {
       segment: "config",
       title: "الاعدادات",
       icon: <SettingsIcon />,
@@ -151,19 +149,10 @@ export default function DashboardLayoutBasic(props: DemoProps) {
           title: "الاقسام",
           icon: <LayoutPanelTop />,
         },
-        {
-          segment: "customers",
-          title: "الزبائن",
-          icon: <Users />,
-        },
+    
       ],
     },
-    {
-      segment: "login",
-      title: "تسجيل خروج",
-      icon: <LayersIcon />,
-      action: <Button onClick={logoutHandler}>logout</Button>,
-    },
+ 
   ];
   // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
@@ -171,6 +160,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
   return (
     // preview-start
     <AppProvider 
+    
       navigation={NAVIGATION}
       router={router}
       
@@ -184,8 +174,12 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       <CacheProvider value={cacheRtl}>
         <AuthProvider>
           {/* sx={{height:'90vh'}}  */}
-          <DashboardLayout >
-            <PageContainer sx={{ margin: 0,p:0 }}>
+          <DashboardLayout slots={{
+            sidebarFooter:SidebarFooter,
+            toolbarActions:NavActions
+            
+          }} >
+            <PageContainer className="root-container" sx={{ margin: 0,p:0 }}>
               <Outlet />
             </PageContainer>{" "}
           </DashboardLayout>

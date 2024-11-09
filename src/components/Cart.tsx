@@ -58,10 +58,8 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       });
   };
   return (
-    <div className="h-full bg-gray-50 flex justify-center px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm">
-        <div className="p-6">
-          <div className="flex items-center space-x-4 mb-6"></div>
+    <div className=" flex justify-center px-4">
+          <div className="flex items-center "></div>
           <Stack
             className=""
             direction={"column"}
@@ -82,6 +80,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
                 );
               })}
             </div>
+            
 
             <div className="space-y-2 text-sm mb-6">
               <div className="flex justify-between">
@@ -114,8 +113,6 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               تاكيد
             </LoadingButton>
           </Stack>
-        </div>
-      </div>
     </div>
   );
 }

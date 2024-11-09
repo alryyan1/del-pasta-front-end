@@ -1,4 +1,4 @@
-import { createBrowserRouter, createHashRouter, RouteObject } from "react-router-dom";
+import { createBrowserRouter, createHashRouter, Navigate, RouteObject } from "react-router-dom";
 import Error from "./Error";
 import GuestLayout from "./components/GuestLayout";
 import NewOrder from "./pages/NewOrder";
@@ -16,6 +16,8 @@ import Customers from "./pages/Customer/Customers";
 import Reservations from "./pages/Reservation/FoodMenu";
 import FoodMenu from "./pages/Reservation/FoodMenu";
 import ReservationCalendar from "./chatgpt/Calender";
+import Foribidden from "./pages/Foribidden";
+import ProtectedRoute from "./pages/Protected";
 
 const login: RouteObject = {
   path: "login",
@@ -32,7 +34,7 @@ const makeOrder: RouteObject = {
 };
 const landingPage: RouteObject = {
   path: "/dashboard",
-  element: <Dashboard />,
+  element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
 };
 //confgiuration
 const MealCategoriesConfig: RouteObject = {
@@ -86,10 +88,14 @@ const authoroized: RouteObject = {
     expenses,
     reservation,
     menu,
-    reservation2
+    reservation2,
+    
   ],
 };
-
+const forbidden :RouteObject = {
+  path : '/forbidden',
+  element:<Foribidden/>
+}
 const guest: RouteObject = {
   path: "/",
   errorElement: <Error />,
@@ -97,5 +103,5 @@ const guest: RouteObject = {
   children: [login, signup],
 };
 
-export const router = createHashRouter([authoroized, guest]);
+export const router = createHashRouter([authoroized, guest,forbidden]);
 

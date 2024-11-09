@@ -32,9 +32,11 @@ function App() {
     axiosClient
       .post("login", data)
       .then(({ data }) => {
+        console.log(data,'data')
         if (data.status) {
           setUser(data.user);
           authenticate(data.token);
+          localStorage.setItem('user_type',data.user.user_type)
         }
       })
       .catch((error) => {

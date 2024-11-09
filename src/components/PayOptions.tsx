@@ -55,11 +55,11 @@ export default function PayOptions({selectedOrder:activeSell,setSelectedOrder}:P
     <React.Fragment>
       <ButtonGroup  sx={{m:1}}
       
-        variant="contained"
+        // variant="contained"
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <LoadingButton loading={loading} fullWidth onClick={handleClick}>{payment}</LoadingButton>
+        <LoadingButton loading={loading} size='small'  onClick={handleClick}>{payment}</LoadingButton>
         <Button
          
           size="small"

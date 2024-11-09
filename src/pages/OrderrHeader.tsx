@@ -6,18 +6,20 @@ import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
 import { Button, TextField } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Plus } from "lucide-react";
+import { Plus, UserPlus } from "lucide-react";
 import React, { useEffect } from "react";
 import { useCustomerStore } from "./Customer/useCustomer";
 interface OrderHeaderProps {
   selectedOrder: Order | null;
   setSelectedOrder: (order: Order) => void;
   newOrderHandler: () => void;
+  setIsFormOpen: (isOpen: boolean) => void;
 }
 function OrderHeader({
   selectedOrder,
   setSelectedOrder,
   newOrderHandler,
+  setIsFormOpen
 }: OrderHeaderProps) {
   const { customers, addCustomer, updateCustomer,fetchData} = useCustomerStore();
   useEffect(()=>{
@@ -25,16 +27,26 @@ function OrderHeader({
   },[])
   return (
     <Stack
+      justifyContent={'space-around'}
       gap={2}
       direction={"row"}
-      sx={{ borderRadius: "1px solid black", mb: 1, alignItems: "end" }}
+      sx={{ alignItems: "end" }}
       alignItems={"center"}
     >
-      <LoadingButton onClick={newOrderHandler} variant="contained">
-        +
+      <LoadingButton variant="outlined" onClick={newOrderHandler}>
+        <Plus/>
       </LoadingButton>
     
       {selectedOrder && (
+       <Stack direction={'row'} alignItems={'center'}>
+         <Button
+            size="small"
+            onClick={() => {
+              setIsFormOpen(true);
+            }}
+          >
+            <UserPlus/>
+          </Button>
         <Autocomplete
           value={selectedOrder?.customer}
           sx={{ width: "200px", mb: 1 }}
@@ -61,6 +73,7 @@ function OrderHeader({
             );
           }}
         ></Autocomplete>
+       </Stack>
       )}
       {selectedOrder && (
         <MyDateField2

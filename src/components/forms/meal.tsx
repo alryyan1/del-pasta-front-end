@@ -10,7 +10,8 @@ import {
   InputLabel,
   FormControl,
   Typography,
-  Card
+  Card,
+  Stack
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
@@ -62,8 +63,8 @@ const ProductForm = () => {
          اضافه بوفيه
       </Typography>
       <form  style={{direction:'rtl'}}  onSubmit={handleSubmit(submitForm)}>
-        {/* Name */}
-        <TextField
+         <Stack direction={'column'} gap={1}>
+         <TextField
          size='small'
           label="الاسم"
           fullWidth
@@ -103,29 +104,11 @@ const ProductForm = () => {
             ))}
           </Select>
         </FormControl>
+         </Stack>
+        {/* Name */}
+     
         {/* Prep Time */}
-        <TextField
-         size='small'
-          label="وقت التحضير (بالدقائق)"
-          type="number"
-          fullWidth
-          
-          variant="standard"
-          {...register('prep_time')}
-        />
-
-        {/* Spice Level */}
-        <TextField
-         size='small'
-          label="درجة الحارة (1-5)"
-          type="number"
-          fullWidth
-          
-          variant="standard"
-          inputProps={{ min: 1, max: 5 }}
-          {...register('spice_level')}
-        />
-
+    
    
 
         {/* Submit Button */}

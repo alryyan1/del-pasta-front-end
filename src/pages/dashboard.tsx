@@ -5,6 +5,7 @@ import axiosClient from '@/helpers/axios-client';
 import { Customer } from '@/Types/types';
 import InfoItem from '@/components/InfoItem';
 import { Order } from '../Types/types';
+import { useAuthContext } from '@/contexts/stateContext';
 
 interface Info {
   totalRevenue: number;
@@ -16,7 +17,8 @@ interface Info {
 export default function Dashboard() {
   const [data,setData] = useState([])
   const [orders,setOrders] = useState([])
-
+  const {user}= useAuthContext()
+  console.log(user,'user')
   const [info, setInfo] = React.useState<Info>({
     totalRevenue: 0,
     totalOrders: 0,

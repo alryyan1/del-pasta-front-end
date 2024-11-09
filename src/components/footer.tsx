@@ -1,8 +1,14 @@
+import { Typography } from "@mui/material";
 
-function Footer() {
+ function SidebarFooter({ mini }) {
   return (
-    <div>Footer</div>
-  )
+    <Typography
+      variant="caption"
+      sx={{ m: 1, whiteSpace: 'nowrap', overflow: 'hidden' }}
+    >
+      {mini ? '© MUI' : `© ${new Date().getFullYear()} Made By IntajStars `}
+    </Typography>
+  );
 }
 
-export default Footer
+export default SidebarFooter;

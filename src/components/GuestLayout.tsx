@@ -6,7 +6,7 @@ import Header from './header'
 function GuestLayout() {
     const {token} =useAuthContext()
     if (token) {
-      return <Navigate to={'/dashboard'}></Navigate>
+      return <Navigate to={'/'}></Navigate>
     }
   return (
     <div>

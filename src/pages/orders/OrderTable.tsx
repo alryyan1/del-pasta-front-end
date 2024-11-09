@@ -97,7 +97,7 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                     </TableCell>
                     <TableCell>{order.payment_type}</TableCell>
                     <TableCell>{
-                      order.meal_orders.reduce((prev,curr)=>prev + curr.meal.price,0)
+                      order.totalPrice
                       }</TableCell>
                     <TdCell
                       sx={{ width: "50px" }}

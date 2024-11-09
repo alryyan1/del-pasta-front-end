@@ -6,7 +6,16 @@
   font-family: 'cairo'!important;
  }
 
-
+.root-container{
+  background-image: linear-gradient(45deg, #f48fb1
+  , transparent);
+}
+header{
+  background-color: #e91e63!important;
+}
+nav{
+  /* background-color: #e1bee7!important; */
+}
 .css-hikx3c-MuiDrawer-docked{
   background-color: lightblue; /* example style */
   /* width: 240px!important; */
@@ -45,5 +54,34 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(50px, 100px));
     text-align: center;
   }
-   
-   
+  
+ .MuiStack-root,.muirtl-lhpdre-MuiStack-root,.muirtl-dznnl1-MuiStack-root,.muirtl-lhpdre-MuiStack-root>:not(style)~:not(style){
+    margin: 0!important;
+   }
+
+   .layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    margin-top: 5px;
+    gap: 5px;
+    
+    
+   }
+   .orders-cart,.right-section{
+    height: 90vh;
+    /* linear gradient */
+    /* background:linear-gradient() */
+   }
+ 
+   .orders-cart{
+    display: grid;
+    gap: 5px;
+    grid-template-columns: minmax(285px,1fr) 1fr;
+   }
+
+   .layout div {
+    max-width: 100%;
+    /* overflow: hidden; */
+   }
+
+ 

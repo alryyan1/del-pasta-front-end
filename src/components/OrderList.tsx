@@ -11,7 +11,7 @@ interface OrderListProps {
 }
 function OrderList({orders,selectedOrder,setSelectedOrder}:OrderListProps) {
   return (
-    <Stack direction={'column'} gap={1} sx={{p:1}} style={{ border: "1px solid" }}>
+    <Stack direction={'column'} gap={1} sx={{p:1}} style={{ border: "1px dashed lightpink" }}>
           <Typography textAlign={'center'}>Orders</Typography>
           {orders.map((order) => {
             // console.log(order);

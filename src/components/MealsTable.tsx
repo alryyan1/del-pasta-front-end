@@ -66,6 +66,16 @@ const MealTable: React.FC = () => {
       setData(data)
     })
   },[])
+  useEffect(()=>{
+     console.log('useefect',selectedMeal)
+    data.map((m)=>{
+      if(m.id == selectedMeal?.id){
+        return selectedMeal
+      }else{
+        return m
+      }
+    })
+  },[selectedMeal])
   return (
     <TableContainer component={Paper} dir="rtl">
       <Typography variant='h5' textAlign={'center'}>كل الوجبات</Typography>

@@ -56,6 +56,7 @@ export interface Order {
   updated_at: string;
   meal_orders: Mealorder[];
   cost : number;
+  totalPrice:number;
 }
 
 

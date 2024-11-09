@@ -24,11 +24,11 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     
   return (
     <div
-    style={{ border: "1px solid" }}
-    className="flex flex-1 overflow-hidden"
+    style={{ border: "1px " }}
+    className="flex flex-1 overflow-hidden "
   >
     {/* Sidebar */}
-    <div className="w-full sm:w-1/3 md:w-1/3 bg-white shadow-lg p-6 rounded-lg  z-10 md:sticky md:top-0">
+    <div className="w-full h-screen  sm:w-1/3 md:w-1/3 shadow-lg p-6 rounded-lg  z-10 md:sticky md:top-0">
       <h2 className="text-xl font-semibold mb-6 text-gray-800">
         أصناف الطعام
       </h2>
@@ -57,7 +57,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     </div>
 
     {/* Meals Display */}
-    <div className=" w-full sm:w-2/3 md:w-3/4 p-1 overflow-y-auto mt-24 md:mt-0">
+    <div className=" w-full meals sm:w-2/3 md:w-3/4 p-1 overflow-y-auto mt-24 md:mt-0">
    
       <div className="meal-container grid grid-cols-1 gap-1">
         {selectedCategory ? (

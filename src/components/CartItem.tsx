@@ -15,10 +15,9 @@ function CartItem({isMultible,updateQuantity,item}:CartItemProbs) {
       
       className={`flex items-center justify-between px-4 py-2 bg-white rounded-xl shadow-md ${isMultible}`}
     >
-      <div className="flex items-center space-x-3">
-        <BasicPopover title={item.meal.name} content={<span className="text-gray-700">{<MealChildrenTable data={item.meal.child_meals}/>}</span>}/>
-      </div>
-      <div className="flex items-center space-x-4">
+        <BasicPopover  title={item.meal.name} content={<span className="text-gray-700">{<MealChildrenTable data={item.meal.child_meals}/>}</span>}/>
+      
+      <div className="flex items-center space-x-4 ">
         <button
           onClick={() => updateQuantity(false, item)}
           className="p-1 hover:bg-gray-100 rounded"

@@ -49,7 +49,7 @@ export default function Dashboard() {
          <InfoItem moneyTxt={false}  InfoIcon={Users} name='العملاء النشطون' value={info.activeCustomers}/>
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm">
+      <div className=" p-6 rounded-lg shadow-sm">
         <h3 className="text-lg font-medium text-gray-900 mb-4">نظرة عامة على المبيعات</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">

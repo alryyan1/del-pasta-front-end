@@ -50,9 +50,9 @@ const MealChildrenDialog = ({
   };
   return (
     <div className="">
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog  open={open} onClose={handleClose}>
         <DialogTitle>اضافه صنف لقائمه</DialogTitle>
-        <DialogContent className="grid grid-cols-2 w-cal[100vw/2] gap-1">
+        <DialogContent  className="grid grid-cols-2  gap-1">
           <form onSubmit={handleSubmit(submitHandler)}>
             <Stack gap={2} direction={"column"}>
               <TextField
@@ -73,6 +73,21 @@ const MealChildrenDialog = ({
                         message:'الحقل مطلوب'
                     }
                 })}
+                size="small"
+              ></TextField>
+                <TextField
+                label="السعر"
+                {...register("price")}
+                size="small"
+              ></TextField>
+               <TextField
+                label="عدد الاشخاص"
+                {...register("people_count")}
+                size="small"
+              ></TextField>
+              <TextField
+                label="الوزن"
+                {...register("weight")}
                 size="small"
               ></TextField>
               <Button type="submit" variant="contained"> +</Button>

@@ -15,6 +15,9 @@ import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
 import { Meal } from '@/Types/types';
 import MealChildrenDialog from './MealChildrenDialog';
+import placeHolder from './../assets/images/ph.jpg'
+import TdCell from '@/helpers/TdCell';
+import { useMealsStore } from '@/stores/MealsStore';
 
 // Define the Meal interface
 
@@ -24,9 +27,8 @@ const MealTable: React.FC = () => {
   const [file, setFile] = useState(null);
   const [src, setSrc] = useState(null);
   const [selectedMeal, setSelectedMeal] = useState<Meal|null>(null)
-  const {data,setData,deleteItem,add} = useAuthContext()     
   const [open, setOpen] = useState(false);
-
+ const {addMeal,fetchMeals,deleteMeal,meals} =  useMealsStore()
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -58,17 +60,15 @@ const MealTable: React.FC = () => {
   
   const saveToDb = (data,meal) => {
     axiosClient.patch(`meals/${meal.id}`, { image:data }).then(({ data }) => {
-      add(data)
+      addMeal(data)
     });
   };
   useEffect(()=>{
-    axiosClient.get<Meal[]>('meals').then(({data})=>{
-      setData(data)
-    })
+    fetchMeals()
   },[])
   useEffect(()=>{
      console.log('useefect',selectedMeal)
-    data.map((m)=>{
+     meals.map((m)=>{
       if(m.id == selectedMeal?.id){
         return selectedMeal
       }else{
@@ -77,11 +77,12 @@ const MealTable: React.FC = () => {
     })
   },[selectedMeal])
   return (
-    <TableContainer component={Paper} dir="rtl">
+    <TableContainer  dir="rtl">
       <Typography variant='h5' textAlign={'center'}>كل الوجبات</Typography>
       <Table size='small' className="text-sm border border-gray-300">
         <TableHead className="bg-gray-100">
           <TableRow>
+            <TableCell className="p-2">كود</TableCell>
             <TableCell className="p-2">اسم</TableCell>
             <TableCell className="p-2">السعر </TableCell>
             <TableCell className="p-2"> الفئة</TableCell>
@@ -94,13 +95,14 @@ const MealTable: React.FC = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((meal:Meal, index) => (
-            <TableRow key={index} className="hover:bg-gray-50">
-              <TableCell className="p-2">{meal.name}</TableCell>
+          {meals.map((meal:Meal, index) => (
+            <TableRow key={meal.id} className="hover:bg-gray-50">
+              <TableCell className="p-2">{meal.id}</TableCell>
+              <TdCell table={'meals'} colName={'name'} item={meal}  >{meal.name}</TdCell>
               <TableCell className="p-2">{meal.price}</TableCell>
               <TableCell className="p-2">{meal?.category?.name}</TableCell>
               <TableCell className="p-2">
-                <img src={meal.image} alt={meal.name} style={{ width: '100px' }} />
+                <img src={meal?.image ?? placeHolder} alt={meal.name} style={{ width: '100px' }} />
               </TableCell>
            
               {/* <TableCell className="p-2">{meal.prep_time ?? 'N/A'}</TableCell> */}

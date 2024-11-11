@@ -6,12 +6,12 @@
   font-family: 'cairo'!important;
  }
 
-.root-container{
+main{
   background-image: linear-gradient(45deg, #f48fb1
   , transparent);
 }
 header{
-  background-color: #e91e63!important;
+  background-color: #e91e6312 !important
 }
 nav{
   /* background-color: #e1bee7!important; */
@@ -61,22 +61,18 @@ body {
 
    .layout {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr 1fr;
     margin-top: 5px;
     gap: 5px;
     
     
    }
-   .orders-cart,.right-section{
-    height: 90vh;
-    /* linear gradient */
-    /* background:linear-gradient() */
-   }
+  
  
    .orders-cart{
     display: grid;
     gap: 5px;
-    grid-template-columns: minmax(285px,1fr) 1fr;
+    grid-template-columns: minmax(285px,1fr) 80px;
    }
 
    .layout div {
@@ -84,4 +80,6 @@ body {
     /* overflow: hidden; */
    }
 
- 
+ .muirtl-112x4te-MuiContainer-root{
+  max-width: unset!important;
+ }

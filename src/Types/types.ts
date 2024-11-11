@@ -62,6 +62,25 @@ export interface Order {
 
 
 
+
+
+
+
+export interface ChildMeal {
+  id: number;
+  name: string;
+  meal:Meal;
+  quantity:number;
+  people_count: string;
+  price:number;
+  weight:string;
+}
+export interface CostCategory {
+  id: number;
+  name: string;
+  
+}
+
 export interface Mealorder {
   id: number;
   order_id: number;
@@ -72,35 +91,46 @@ export interface Mealorder {
   created_at: string;
   updated_at: string;
   meal: Meal;
+  requested_child_meals: Requestedchildmeal[];
+  totalPrice: number;
 }
 
+export interface Requestedchildmeal {
+  id: number;
+  order_meal_id: number;
+  child_meal_id: number;
+  quantity: number;
+  price: number;
+  child_meal: Childmeal;
+}
 
 export interface Meal {
   id: number;
   name: string;
   price: number;
-  category_id?: number;
-  description?: string;
-  image?: string;
-  available?: boolean;
-  calories?: number;
-  prep_time?: number;
-  spice_level?: number;
-  is_vegan?: boolean;
-  is_gluten_free?: boolean;
-  category?:Category;
-  child_meals:ChildMeal[]
-  
+  category_id: number;
+  description: null;
+  image: null;
+  available: number;
+  calories: null;
+  prep_time: null;
+  spice_level: null;
+  is_vegan: number;
+  is_gluten_free: number;
+  created_at: null;
+  updated_at: null;
+  people_count: string;
+  child_meals: Childmeal[];
 }
 
-export interface ChildMeal {
+export interface Childmeal {
   id: number;
+  meal_id: number;
+  quantity: number;
   name: string;
-  meal:Meal;
-  quantity:number
-}
-export interface CostCategory {
-  id: number;
-  name: string;
-  
+  created_at: string;
+  updated_at: string;
+  price: number;
+  people_count: string;
+  weight: string;
 }

@@ -58,15 +58,7 @@ const demoTheme = createTheme({
     colorSchemeSelector: "data-toolpad-color-scheme",
   },
   colorSchemes: { light: true, dark: true },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1500,
-      xl: 1536,
-    },
-  },
+ 
 });
 
 interface DemoProps {
@@ -127,11 +119,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       kind: "header",
       title: "Analytics",
     },
-    {
-      segment: "customers",
-      title: "الزبائن",
-      icon: <Users />,
-    },
+   
     
 
     {
@@ -149,7 +137,11 @@ export default function DashboardLayoutBasic(props: DemoProps) {
           title: "الاقسام",
           icon: <LayoutPanelTop />,
         },
-    
+        {
+          segment: "customers",
+          title: "الزبائن",
+          icon: <Users />,
+        },
       ],
     },
  
@@ -179,7 +171,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
             toolbarActions:NavActions
             
           }} >
-            <PageContainer className="root-container" sx={{ margin: 0,p:0 }}>
+            <PageContainer className="root-container" sx={{ margin: 0,p:1 }}>
               <Outlet />
             </PageContainer>{" "}
           </DashboardLayout>

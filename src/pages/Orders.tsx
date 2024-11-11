@@ -56,7 +56,7 @@ function Orders() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className=" bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
         <Stack alignItems={'center'} direction={'row'} justifyContent={'space-around'} >
 

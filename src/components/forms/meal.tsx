@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import React, { useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import {
   TextField,
   Checkbox,
@@ -11,108 +11,106 @@ import {
   FormControl,
   Typography,
   Card,
-  Stack
-} from '@mui/material';
-import axiosClient from '@/helpers/axios-client';
-import { useAuthContext } from '@/contexts/stateContext';
+  Stack,
+} from "@mui/material";
+import axiosClient from "@/helpers/axios-client";
+import { useAuthContext } from "@/contexts/stateContext";
+import { useMealsStore } from "@/stores/MealsStore";
+import { Category, Meal } from "@/Types/types";
 
 interface ICategory {
   id: number;
   name: string;
 }
 
-interface IFormInput {
-  name: string;
-  price: number;
-  category_id: number;
-  description: string;
-  image: string;
-  available: boolean;
-  calories?: number;
-  prep_time?: number;
-  spice_level?: number;
-  is_vegan: boolean;
-  is_gluten_free: boolean;
-}
+
 
 const ProductForm = () => {
-
   const [categories, setCategories] = React.useState<ICategory[]>([]);
-  useEffect(()=>{
-    axiosClient.get<Category>(`categories`).then(({data})=>{
-      setCategories(data)
-    })
-  },[])
-  
-  const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>();
-  const  {setData,data,add,deleteItem,setAction} =   useAuthContext()
+  useEffect(() => {
+    axiosClient.get<Category>(`categories`).then(({ data }) => {
+      setCategories(data);
+    });
+  }, []);
 
-  const submitForm: SubmitHandler<IFormInput> = (data) => {
-    console.log(data)
-    axiosClient.post('meals', data).then(({ data }) => {
-      console.log(data,'data')
-      add(data)
-    })
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    defaultValues: {
+  
+      people_count: "1",
+    },
+  });
+  const addMeal = useMealsStore((state)=>state.addMeal)
+
+  const submitForm: SubmitHandler<Meal> = (data) => {
+      addMeal(data);
+   
   };
 
-
-
   return (
-    <Card sx={{p:1}}>
+    <Card sx={{ p: 1 }}>
       <Typography variant="h4" align="center" gutterBottom>
-         اضافه بوفيه
+        اضافه بوفيه
       </Typography>
-      <form  style={{direction:'rtl'}}  onSubmit={handleSubmit(submitForm)}>
-         <Stack direction={'column'} gap={1}>
-         <TextField
-         size='small'
-          label="الاسم"
-          fullWidth
-          
-          variant="standard"
-          {...register('name', { required: 'Name is required' })}
-          error={!!errors.name}
-          helperText={errors.name?.message}
-        />
+      <form style={{ direction: "rtl" }} onSubmit={handleSubmit(submitForm)}>
+        <Stack direction={"column"} gap={1}>
+          <TextField
+            size="small"
+            label="الاسم"
+            fullWidth
+            variant="standard"
+            {...register("name", { required: "Name is required" })}
+            error={!!errors.name}
+            helperText={errors.name?.message}
+          />
 
-        {/* Price */}
-        <TextField
-         size='small'
-          label="السعر"
-          type="number"
-          fullWidth
-          
-          variant="standard"
-          {...register('price', { required: 'Price is required', min: 0 })}
-          error={!!errors.price}
-          helperText={errors.price?.message}
-        />
+          {/* Price */}
+          {/* <TextField
+            size="small"
+            label="السعر"
+            fullWidth
+            variant="standard"
+            {...register("price", { required: "Price is required", min: 0 })}
+            error={!!errors.price}
+            helperText={errors.price?.message}
+          /> */}
 
-        {/* Category */}
-        <FormControl fullWidth >
-          <InputLabel>الفئة</InputLabel>
-          <Select
-          variant='standard'
-            label="الفئة"
-            defaultValue=""
-            {...register('category_id')}
-          >
-            {categories.map((category) => (
-              <MenuItem key={category.id} value={category.id}>
-                {category.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-         </Stack>
+          {/* Category */}
+          <FormControl  fullWidth>
+            <InputLabel>الفئة</InputLabel>
+            <Select
+              variant="standard"
+              label="الفئة"
+              defaultValue=""
+              {...register("category_id")}
+            >
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          
+          {/* Price */}
+          <TextField
+            size="small"
+            label="عدد الاشخاص"
+            fullWidth
+            variant="standard"
+            {...register("people_count")}
+          />
+
+        </Stack>
         {/* Name */}
-     
+
         {/* Prep Time */}
-    
-   
 
         {/* Submit Button */}
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+        <Button sx={{ mt: 1 }} type="submit" variant="contained" color="primary" fullWidth>
           حفظ
         </Button>
       </form>

@@ -84,7 +84,7 @@ const NewOrder = () => {
         newOrderHandler={newOrderHandler}
       />
 
-      <div className="layout  h-[calc(100vh-110px)]">
+      <div className="layout ">
         <div className="right-section">
           {selectedOrder ? (
             <MealCategoryPanel

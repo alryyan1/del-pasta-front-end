@@ -72,7 +72,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
                     ? "animate__animated animate__rubberBand"
                     : "";
                 return (
-                  <CartItem
+                  <CartItem setSelectedOrder={setSelectedOrder}
                     updateQuantity={updateQuantity}
                     isMultible={isMultible}
                     item={item}
@@ -85,7 +85,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
             <div className="space-y-2 text-sm mb-6">
               <div className="flex justify-between">
                 <span className="text-gray-600">إجمالي العناصر</span>
-                <span className="text-gray-900">{itemTotal.toFixed(2)}</span>
+                <span className="text-gray-900">{selectedOrder.totalPrice.toFixed(2)}</span>
               </div>
            
             

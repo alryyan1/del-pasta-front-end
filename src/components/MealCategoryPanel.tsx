@@ -28,7 +28,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     className="flex flex-1 overflow-hidden "
   >
     {/* Sidebar */}
-    <div className="w-full h-screen  sm:w-1/3 md:w-1/3 shadow-lg p-6 rounded-lg  z-10 md:sticky md:top-0">
+    <div className="w-full   sm:w-1/3 md:w-1/3 shadow-lg p-6 rounded-lg  z-10 md:sticky md:top-0">
       <h2 className="text-xl font-semibold mb-6 text-gray-800">
         أصناف الطعام
       </h2>
@@ -62,7 +62,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
       <div className="meal-container grid grid-cols-1 gap-1">
         {selectedCategory ? (
           selectedCategory.meals.map((meal, index) => (
-            <MealItem  selected={selectedOrder?.meal_orders.find((m)=>m.meal.id==meal.id)!=undefined} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder}  meal={meal} setOrders={setOrders} />
+            <MealItem   selected={selectedOrder?.meal_orders.find((m)=>m.meal.id==meal.id)!=undefined} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder}  meal={meal} setOrders={setOrders} />
           ))
         ) : (
           <p className="text-gray-600 text-lg text-center mt-10">

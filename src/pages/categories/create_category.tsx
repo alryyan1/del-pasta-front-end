@@ -58,7 +58,7 @@ function CreateCategory() {
     <>
       <Header />
       <div
-        className="flex justify-center items-center min-h-screen bg-gray-50"
+        className="flex justify-center items-center  bg-gray-50"
         dir="rtl"
       >
         <Card className="max-w-md w-full shadow-lg">

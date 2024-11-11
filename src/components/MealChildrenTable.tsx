@@ -1,4 +1,5 @@
 import axiosClient from "@/helpers/axios-client";
+import TdCell from "@/helpers/TdCell";
 import { ChildMeal } from "@/Types/types";
 import {
   TableBody,
@@ -26,6 +27,9 @@ function MealChildrenTable({ data ,setSelectedMeal}: MealTableDataProps) {
         <TableRow>
           <TableCell>اسم</TableCell>
           <TableCell>العدد</TableCell>
+          <TableCell>سعر</TableCell>
+          <TableCell>الاشخاص</TableCell>
+          <TableCell>الوزن</TableCell>
           <TableCell>-</TableCell>
         </TableRow>
       </TableHead>
@@ -34,8 +38,11 @@ function MealChildrenTable({ data ,setSelectedMeal}: MealTableDataProps) {
           console.log(meal,'meal')
           return (
             <TableRow key={index}>
-              <TableCell>{meal.name}</TableCell>
-              <TableCell>{meal.quantity}</TableCell>
+              <TdCell item={meal} colName={'name'}  table={'childMeals'}>{meal.name}</TdCell>
+              <TdCell item={meal} colName={'quantity'}  table={'childMeals'}>{meal.quantity}</TdCell>
+              <TdCell item={meal} colName={'price'}  table={'childMeals'}>{meal.price}</TdCell>
+              <TdCell item={meal} colName={'people_count'}  table={'childMeals'}>{meal.people_count}</TdCell>
+              <TdCell item={meal} colName={'weight'}  table={'childMeals'}>{meal.weight}</TdCell>
               <TableCell>
            
                     <IconButton

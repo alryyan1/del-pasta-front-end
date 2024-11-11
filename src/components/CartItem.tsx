@@ -25,7 +25,7 @@ function CartItem({
   };
   return (
     <div
-      className={`flex items-center justify-between px-4 py-2 bg-white rounded-xl shadow-md ${isMultible}`}
+      className={`flex items-center justify-between px-4 py-2 bg-white rounded-xl shadow-md  ${isMultible}`}
     >
       <BasicPopover
         title={item.meal.name}

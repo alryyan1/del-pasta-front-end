@@ -6,7 +6,7 @@ import "./../magicCard.css";
 import { Stack } from "@mui/system";
 import CartItem from "./CartItem";
 import { ShoppingCart } from "lucide-react";
-import { TextField } from "@mui/material";
+import { TextField, Typography } from "@mui/material";
 interface CartProps {
   selectedOrder: Order;
   setSelectedOrder: (order) => void;
@@ -58,14 +58,17 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       });
   };
   return (
-    <div className=" flex justify-center px-4">
-          <div className="flex items-center "></div>
+    <div style={{height:'100%'}} className=" flex justify-center px-4">
           <Stack
-            className=""
+            className="shadow-lg"
             direction={"column"}
             justifyContent={"space-between"}
+            sx={{
+              p:2
+            }}
+            
           >
-            <div className="space-y-4 mb-6">
+            <div className="space-y-4 mb-6 ">
               {selectedOrder.meal_orders.map((item) => {
                 const isMultible =
                   item.quantity > 1
@@ -82,11 +85,12 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
             </div>
             
 
-            <div className="space-y-2 text-sm mb-6">
-              <div className="flex justify-between">
-                <span className="text-gray-600">إجمالي العناصر</span>
+            <div>
+                 <div className="space-y-2 text-sm mb-6">
+              <Typography variant="h4" className="flex justify-between text-lg">
+                <span className="text-gray-600">اجمالي الملبغ</span>
                 <span className="text-gray-900">{selectedOrder.totalPrice.toFixed(2)}</span>
-              </div>
+              </Typography>
            
             
 
@@ -112,6 +116,8 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
             >
               تاكيد
             </LoadingButton>
+            </div>
+         
           </Stack>
     </div>
   );

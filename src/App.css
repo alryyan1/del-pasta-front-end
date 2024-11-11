@@ -83,3 +83,45 @@ body {
  .muirtl-112x4te-MuiContainer-root{
   max-width: unset!important;
  }
+ .menu {
+  display: grid;
+  grid-template-columns:repeat(2,1fr);
+  gap: 10px;
+ }
+
+
+ .meal-category {
+  font-size: 24px;
+    border-radius: 5px;
+    box-shadow: 4px 5px 9px lightcoral;
+    background-color: orange;
+    font-weight: 600;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+ }
+
+ .mealDiv{
+  padding: 5px;
+  margin-bottom: 5px;
+ }
+ .mealDiv h5{
+  /* background-color: #ff7961; */
+  border-radius: 5px;
+  box-shadow: 3px 2px 4px #ff7961;
+ }
+ .category-grid{
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(285px,1fr));
+ }
+
+ @media (min-width: 768px ){
+  .category-grid{
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(508px,1fr));
+   }
+ }

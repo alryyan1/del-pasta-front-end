@@ -101,7 +101,7 @@ const NewOrder = () => {
           <div className="orders-cart">
             <div
               style={{ border: "1px dashed lightgray" }}
-              className="flex justify-center items-center"
+              className="flex justify-center items-center h-[calc(90vh-50px)] shadow-lg"
             >
               {selectedOrder && selectedOrder.meal_orders.length > 0 && (
                 <Cart

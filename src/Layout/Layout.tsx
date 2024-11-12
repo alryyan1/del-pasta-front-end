@@ -22,7 +22,7 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
-import { Beef, LayoutPanelTop, List, PersonStanding, Users } from "lucide-react";
+import { Beef, LayoutPanelTop, List, PersonStanding, Scale, Users } from "lucide-react";
 import logo from './../assets/logo.png'
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import SidebarFooter from "@/components/footer";
@@ -103,6 +103,11 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       icon: <BookmarkAddedIcon />,
     },
     {
+      segment: "stats",
+      title: "كميات الطلبات",
+      icon: <Scale />,
+    },
+    {
       segment: "expenses",
       title: "المصروفات",
       icon: <AttachMoneyIcon />,
@@ -142,6 +147,12 @@ export default function DashboardLayoutBasic(props: DemoProps) {
           title: "الزبائن",
           icon: <Users />,
         },
+        {
+          segment: "settings",
+          title: "اخري",
+          icon: <Users />,
+        },
+        
       ],
     },
  

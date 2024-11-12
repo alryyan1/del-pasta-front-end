@@ -5,7 +5,7 @@ import { Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import FoodMenuItem from "@/components/FoodmenuItem";
 import FoodMenuItemVertical from "@/components/FoodMenuItemVertical";
-
+import logo from './../../assets/images/logo.png';
 function FoodMenu() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [width, setWidth] = useState(window.innerWidth);
@@ -23,7 +23,8 @@ function FoodMenu() {
   console.log(categories, "categories");
 
   return (
-    <div className="bg-white  p-1">
+    <div className="  p-1">
+      <img width={'100%'} src={logo} alt="logo" className="logo"/>
       {categories.map((category) => {
         return (
           <div key={category.id}>
@@ -31,14 +32,14 @@ function FoodMenu() {
               {category.name}
             </Typography>
 
-            <div className="category-grid">
+            <div className="category-grid ">
               {category.meals.map((meal) => {
                 return (
                   <Stack
                     direction={"column"}
                     gap={1}
                     sx={{ p: 2 }}
-                    className="shadow-lg"
+                    className="shadow-lg bg-white"
                     key={meal.id}
                   >
                     <Typography

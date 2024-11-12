@@ -126,7 +126,7 @@ const ReservationCalendar = () => {
         <DialogContent>
           <TextField
            multiline
-            rows={8}
+            rows={12}
             sx={{width:'500px'}}
             autoFocus
             margin="dense"

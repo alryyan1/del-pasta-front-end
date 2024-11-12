@@ -11,6 +11,8 @@ import MenuList from '@mui/material/MenuList';
 import { LoadingButton } from '@mui/lab';
 import axiosClient from '@/helpers/axios-client';
 import { Order } from '@/Types/types';
+import { IconButton } from '@mui/material';
+import { Printer } from 'lucide-react';
 
 const options:[string] = ['Cash','Transfer','Card'];
 
@@ -60,6 +62,7 @@ export default function PayOptions({selectedOrder:activeSell,setSelectedOrder}:P
         aria-label="Button group with a nested menu"
       >
         <LoadingButton loading={loading} size='small'  onClick={handleClick}>{payment}</LoadingButton>
+  
         <Button
          
           size="small"

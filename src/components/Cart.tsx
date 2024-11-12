@@ -41,6 +41,9 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
         order_confirmed: 1,
       })
       .then(({ data }) => {
+        if (data.status) {
+          axiosClient.post(`orderConfirmed/${selectedOrder.id}`)
+        }
         setSelectedOrder(data.order);
         setTimeout(() => {
             setSelectedOrder(null)

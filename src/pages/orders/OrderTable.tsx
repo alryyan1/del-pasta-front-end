@@ -23,6 +23,7 @@ import BasicPopover from "@/components/Mypopover";
 import MealChildrenTable, {
   OrderMealsTable,
 } from "@/components/MealChildrenTable";
+import MyDateField2 from "@/components/MYDate";
 
 interface OrderTableProps {
   orders: Order[];
@@ -112,7 +113,7 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                         "YYYY-MM-DD H:m A"
                       )}
                     </TableCell>
-                    <TableCell>{order?.delivery_date}</TableCell>
+                    <TableCell><MyDateField2 path={`orders`} item={order} colName="delivery_date" val={order.delivery_date} label="تاريخ التسليم"/></TableCell>
                     <TdCell
                       sx={{ width: "50px" }}
                       table={"orders"}

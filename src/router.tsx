@@ -18,6 +18,8 @@ import FoodMenu from "./pages/Reservation/FoodMenu";
 import ReservationCalendar from "./chatgpt/Calender";
 import Foribidden from "./pages/Foribidden";
 import ProtectedRoute from "./pages/Protected";
+import Settings from "./pages/Settings";
+import Stats from "./pages/Stats";
 
 const login: RouteObject = {
   path: "login",
@@ -27,7 +29,10 @@ const signup: RouteObject = {
   path: "signup",
   element: <Signup />,
 };
-
+const settings: RouteObject = {
+  path: "settings",
+  element: <Settings />,
+};
 const makeOrder: RouteObject = {
   path: "makeOrder",
   element: <NewOrder />,
@@ -51,11 +56,15 @@ const customers: RouteObject = {
 };
 const config: RouteObject = {
   path: "/config",
-  children: [MealCategoriesConfig, mealConfig,customers],
+  children: [MealCategoriesConfig, mealConfig,customers,settings],
 };
 const orders: RouteObject = {
   path: "/orders",
   element: <Orders />,
+};
+const stats: RouteObject = {
+  path: "/stats",
+  element: <Stats />,
 };
 
 const expenses: RouteObject = {
@@ -89,7 +98,7 @@ const authoroized: RouteObject = {
     reservation,
     menu,
     reservation2,
-    
+    stats
   ],
 };
 const forbidden :RouteObject = {

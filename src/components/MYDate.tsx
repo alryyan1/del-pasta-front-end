@@ -6,7 +6,7 @@ import { useState } from "react";
 
 //create interface 
 interface MyDateProps {
-    val: string;
+    val: any;
     item: any;
     disabled: boolean;
     label?: string;

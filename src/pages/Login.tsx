@@ -59,7 +59,7 @@ function App() {
       }}
     >
       <Stack justifyContent="center" alignItems="center" direction="column">
-        <Card className="w-[450px] rtl text-right shadow-md rounded-lg bg-white p-6 text-gray-800">
+        <Card className=" rtl text-right shadow-md rounded-lg bg-white p-6 text-gray-800">
           <CardHeader>
             <CardTitle className="text-center text-2xl font-bold">
               تسجيل الدخول

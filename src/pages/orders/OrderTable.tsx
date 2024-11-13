@@ -10,6 +10,7 @@ import {
   IconButton,
   Typography,
   TablePagination,
+  useMediaQuery,
 } from "@mui/material";
 import { Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
@@ -54,11 +55,12 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
       onUpdate(selectedOrder.id, data);
     }
   };
+  const isMobile = useMediaQuery('(max-width:600px)'); // adjust based on screen size
 
   return (
     <>
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
+      <Paper sx={{ width: "100%",mt:1}}>
+        <TableContainer sx={{ maxHeight: 440 ,overflowX:'auto',width:isMobile ? '400px':'auto'}}>
           <Table stickyHeader>
             <TableHead>
               <TableRow>
@@ -113,7 +115,7 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                         "YYYY-MM-DD H:m A"
                       )}
                     </TableCell>
-                    <TableCell><MyDateField2 path={`orders`} item={order} colName="delivery_date" val={order.delivery_date} label="تاريخ التسليم"/></TableCell>
+                    <TableCell><MyDateField2  path={`orders`} item={order} colName="delivery_date" val={order.delivery_date} label="تاريخ التسليم"/></TableCell>
                     <TdCell
                       sx={{ width: "50px" }}
                       table={"orders"}

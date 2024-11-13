@@ -8,7 +8,7 @@ interface infoItemProps {
 }
 function InfoItem({name,value,InfoIcon,moneyTxt}:infoItemProps) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="dashborad-stats p-6 rounded-lg shadow-lg">
     <div className="flex items-center justify-between">
       <div>
         <Typography variant='h5' className="font-medium text-gray-600">{name}</Typography>

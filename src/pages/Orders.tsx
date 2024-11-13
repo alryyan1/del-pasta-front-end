@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import {
   TextField,
   Button,
+  Typography,
 } from "@mui/material";
 import { AxiosDataShape, Customer, Order } from "@/Types/types";
 import { OrderTable } from "./orders/OrderTable";
 import axiosClient from "@/helpers/axios-client";
-import { Stack } from "@mui/system";
+import { Stack, useMediaQuery } from "@mui/system";
 import { Search } from "lucide-react";
 import dayjs from "dayjs";
 import { webUrl } from "@/helpers/constants";
@@ -54,13 +55,13 @@ function Orders() {
   
     
   );
-
+  const isMobile =  useMediaQuery('(max-width:600px)')
   return (
-    <div className=" bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <Stack alignItems={'center'} direction={'row'} justifyContent={'space-around'} >
+    <div className=" ">
+      <div className="max-w-7xl mx-auto ">
+        <Stack   alignItems={'center'} gap={1} direction={isMobile ? 'column':'row'} justifyContent={'space-around'} >
 
-          <h1 className="text-3xl font-bold mb-8">اداره الطلبات </h1>
+          <Typography className="text-3xl font-bold mb-8">اداره الطلبات </Typography>
           <TextField
            size="small"
             
@@ -81,7 +82,7 @@ function Orders() {
 
               
             })
-          }} className=" bg-gray-50 p-8" type="date"/>
+          }} type="date"/>
           <Button variant="contained" href={`${webUrl}orders?s=1${searchQueryString.reduce((prev,curr)=>`${prev}&${curr.name}=${curr.val}`,'')}`}>التقرير</Button>
         </Stack>
 

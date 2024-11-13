@@ -8,24 +8,24 @@ import { Button, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
 import React, { useEffect } from "react";
-import { useCustomerStore } from "./Customer/useCustomer";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
+import { useCustomerStore } from "@/pages/Customer/useCustomer";
 
-interface OrderHeaderProps {
+interface OrderHeaderMobileProps {
   selectedOrder: Order | null;
   setSelectedOrder: (order: Order) => void;
   newOrderHandler: () => void;
   setIsFormOpen: (isOpen: boolean) => void;
   showOrderSettings : boolean;
 }
-function OrderHeader({
+function OrderHeaderMobile({
   selectedOrder,
   setSelectedOrder,
   newOrderHandler,
   setIsFormOpen,
   showOrderSettings,
-}: OrderHeaderProps) {
+}: OrderHeaderMobileProps) {
   const { customers, addCustomer, updateCustomer, fetchData } =
     useCustomerStore();
   useEffect(() => {
@@ -49,25 +49,17 @@ function OrderHeader({
           type: "pdf",
         });
 
-        // if (userSettings?.node_dialog) {
-        //   fetch("http://127.0.0.1:4000/", {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/x-www-form-urlencoded",
-        //     },
-
-        //     body: form,
-        //   }).then(() => {});
-        // }
+      
       });
   };
   return (
     <Stack
-      justifyContent={"space-around"}
       gap={2}
-      direction={"row"}
+      sx={{mb:1,background:'purple'}}
+
+      direction={"column" }
       // sx={{ alignItems: "end" }}
-      alignItems={"center"}
+      alignItems={'start'}
       className="shadow-lg items-center rounded-sm order-header"
     >
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
@@ -159,4 +151,4 @@ function OrderHeader({
   );
 }
 
-export default OrderHeader;
+export default OrderHeaderMobile;

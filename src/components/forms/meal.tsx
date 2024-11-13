@@ -46,6 +46,7 @@ const ProductForm = () => {
   const addMeal = useMealsStore((state)=>state.addMeal)
 
   const submitForm: SubmitHandler<Meal> = (data) => {
+    // alert('dd')
       addMeal(data);
    
   };
@@ -53,7 +54,7 @@ const ProductForm = () => {
   return (
     <Card sx={{ p: 1 }}>
       <Typography variant="h4" align="center" gutterBottom>
-        اضافه بوفيه
+        اضافه خدمه
       </Typography>
       <form style={{ direction: "rtl" }} onSubmit={handleSubmit(submitForm)}>
         <Stack direction={"column"} gap={1}>
@@ -96,13 +97,13 @@ const ProductForm = () => {
           </FormControl>
           
           {/* Price */}
-          <TextField
+          {/* <TextField
             size="small"
             label="عدد الاشخاص"
             fullWidth
             variant="standard"
             {...register("people_count")}
-          />
+          /> */}
 
         </Stack>
         {/* Name */}

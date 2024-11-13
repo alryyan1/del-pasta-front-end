@@ -30,7 +30,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     {/* Sidebar */}
     <div className="w-full   sm:w-1/3 md:w-1/3 shadow-lg p-6 rounded-lg  z-10 md:sticky md:top-0">
       <h2 className="text-xl font-semibold mb-6 text-gray-800">
-        أصناف الطعام
+        اقسام الخدمات 
       </h2>
       <ul className="space-y-4">
         {data.map((category: Category) => (
@@ -44,7 +44,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
               }
               className={`w-full text-lg font-medium rounded-lg transition-all duration-300 ${
                 selectedCategory?.id === category.id
-                  ? "bg-primary text-white"
+                  ? "bg-blue-400 text-white"
                   : "border-gray-300 text-gray-800 hover:bg-gray-200"
               }`}
               style={{ borderRadius: "10px" }}

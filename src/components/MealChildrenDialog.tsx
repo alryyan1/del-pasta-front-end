@@ -5,6 +5,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Divider,
   Stack,
   Table,
   TableBody,
@@ -39,6 +40,8 @@ const MealChildrenDialog = ({
     console.log(data,'data')
     axiosClient.post<AxiosResponseProps<Meal>>(`childMeals`,{
         ...data,
+        quantity:1,
+        people_count:1,
         meal_id :selectedMeal?.id
     }).then(({data})=>{
         console.log(data,'child meals add')
@@ -51,8 +54,8 @@ const MealChildrenDialog = ({
   return (
     <div className="">
       <Dialog  open={open} onClose={handleClose}>
-        <DialogTitle>اضافه صنف لقائمه</DialogTitle>
-        <DialogContent  className="grid grid-cols-2  gap-1">
+        <DialogTitle>اضافه خدمه فرعيه</DialogTitle>
+        <DialogContent  className="grid gap-1">
           <form onSubmit={handleSubmit(submitHandler)}>
             <Stack gap={2} direction={"column"}>
               <TextField
@@ -65,7 +68,7 @@ const MealChildrenDialog = ({
                 })}
                 size="small"
               ></TextField>
-              <TextField
+              {/* <TextField
                 label="العدد"
                 {...register("quantity",{
                     required:{
@@ -74,28 +77,27 @@ const MealChildrenDialog = ({
                     }
                 })}
                 size="small"
-              ></TextField>
+              ></TextField> */}
                 <TextField
                 label="السعر"
                 {...register("price")}
                 size="small"
               ></TextField>
-               <TextField
+               {/* <TextField
                 label="عدد الاشخاص"
                 {...register("people_count")}
                 size="small"
-              ></TextField>
-              <TextField
+              ></TextField> */}
+              {/* <TextField
                 label="الوزن"
                 {...register("weight")}
                 size="small"
-              ></TextField>
+              ></TextField> */}
               <Button type="submit" variant="contained"> +</Button>
             </Stack>
           </form>
-          <div>
+          <Divider/>
             <MealChildrenTable setSelectedMeal={setSelectedMeal} data={selectedMeal?.child_meals}/>
-          </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">

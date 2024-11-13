@@ -2,7 +2,7 @@ import axiosClient from '@/helpers/axios-client';
 import { Meal, Order } from '@/Types/types';
 import 'animate.css';
 import { useState } from 'react';
-
+import ph from './../assets/images/ph.jpg'
 interface MealItemProps {
     meal: Meal;
     setOrders : (meal:Meal)=>void ;
@@ -37,7 +37,6 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
       className={`card shadow hover:opacity-45  ${selectEffect} ${selectedColor}`}
       style={{
         cursor: 'pointer',
-        display:'flex',
         justifyContent:'center',
         alignItems:'center',
         // display: 'grid',
@@ -53,6 +52,9 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
       }}
     >
       {/* <div className=" "> */}
+        <div>
+            <img src={meal?.image ?? ph} alt={meal.name} className="w-20 h-20 object-cover" />
+        </div>
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {meal.name}
         </h3>

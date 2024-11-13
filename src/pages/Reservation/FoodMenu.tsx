@@ -24,7 +24,7 @@ function FoodMenu() {
 
   return (
     <div className="  p-1">
-      <img width={'100%'} src={logo} alt="logo" className="logo"/>
+      {/* <img width={'100%'} src={logo} alt="logo" className="logo"/> */}
       {categories.map((category) => {
         return (
           <div key={category.id}>

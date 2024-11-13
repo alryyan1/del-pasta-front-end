@@ -14,7 +14,7 @@ import { Label } from "../components/ui/label";
 import { useAuthContext } from "@/contexts/stateContext";
 import axiosClient from "@/helpers/axios-client";
 import { Button } from "@/components/ui/button";
-import loginBack from './../assets/images/table.jpg'
+import loginBack from './../assets/images/laundry-1.jpg'
 function App() {
   const [error, setError] = useState({ val: false, msg: "" });
   const [loading, setLoading] = useState(false);
@@ -126,7 +126,7 @@ function App() {
                 </div>
 
                 <Button
-                  type="submit"
+                  type="submit" className="bg-blue-800 hover:bg-blue-900"
                   style={{
                     borderRadius: "5px",
                     padding: "10px",

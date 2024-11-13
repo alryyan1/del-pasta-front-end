@@ -96,6 +96,7 @@ function TdCell({
           color: "black",
           fontSize: "16px",
           fontWeight: "bolder",
+          textWrap:'nowrap'
         }}>{iniVal}</span>
       )}
     </TableCell>

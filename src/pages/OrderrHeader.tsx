@@ -66,7 +66,7 @@ function OrderHeader({
       direction={"row"}
       // sx={{ alignItems: "end" }}
       alignItems={"center"}
-      className="shadow-lg items-center rounded-sm"
+      className="shadow-sm items-center rounded-sm order-header"
     >
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />

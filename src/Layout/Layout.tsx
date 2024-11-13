@@ -23,7 +23,7 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
 import { Beef, LayoutPanelTop, List, PersonStanding, Scale, Users } from "lucide-react";
-import logo from './../assets/logo.png'
+import logo from './../assets/images/h2o-logo.png'
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import SidebarFooter from "@/components/footer";
 import NavActions from "@/components/NavActions";
@@ -114,7 +114,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     },
     {
       segment: "menu",
-      title: "قائمه الطعام",
+      title: "قائمه المعرض",
       icon: <RestaurantMenuIcon />,
     },
     {
@@ -134,7 +134,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       children: [
         {
           segment: "meals",
-          title: "باقات الوجبات",
+          title: "باقات الخدمات",
           icon: <Beef />,
         },
         {
@@ -169,9 +169,11 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       
       theme={demoTheme}
       branding={{
-        title: "Kitchen App",
+        title: "Laundry App",
         logo :<img src={logo}/>
+        
       }}
+    
       window={demoWindow}
     >
       <CacheProvider value={cacheRtl}>

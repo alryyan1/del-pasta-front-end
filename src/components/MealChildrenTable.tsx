@@ -28,8 +28,8 @@ function MealChildrenTable({ data ,setSelectedMeal}: MealTableDataProps) {
           <TableCell>اسم</TableCell>
           <TableCell>العدد</TableCell>
           <TableCell>سعر</TableCell>
-          <TableCell>الاشخاص</TableCell>
-          <TableCell>الوزن</TableCell>
+          {/* <TableCell>الاشخاص</TableCell> */}
+          {/* <TableCell>الوزن</TableCell> */}
           <TableCell>-</TableCell>
         </TableRow>
       </TableHead>
@@ -41,8 +41,8 @@ function MealChildrenTable({ data ,setSelectedMeal}: MealTableDataProps) {
               <TdCell item={meal} colName={'name'}  table={'childMeals'}>{meal.name}</TdCell>
               <TdCell item={meal} colName={'quantity'}  table={'childMeals'}>{meal.quantity}</TdCell>
               <TdCell item={meal} colName={'price'}  table={'childMeals'}>{meal.price}</TdCell>
-              <TdCell item={meal} colName={'people_count'}  table={'childMeals'}>{meal.people_count}</TdCell>
-              <TdCell item={meal} colName={'weight'}  table={'childMeals'}>{meal.weight}</TdCell>
+              {/* <TdCell item={meal} colName={'people_count'}  table={'childMeals'}>{meal.people_count}</TdCell> */}
+              {/* <TdCell item={meal} colName={'weight'}  table={'childMeals'}>{meal.weight}</TdCell> */}
               <TableCell>
            
                     <IconButton

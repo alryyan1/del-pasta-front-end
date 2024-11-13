@@ -60,7 +60,7 @@ const MealTable: React.FC = () => {
   
   const saveToDb = (data,meal) => {
     axiosClient.patch(`meals/${meal.id}`, { image:data }).then(({ data }) => {
-      addMeal(data)
+      fetchMeals()
     });
   };
   useEffect(()=>{
@@ -114,7 +114,7 @@ const MealTable: React.FC = () => {
                 <Button onClick={()=>{
                   
                   handleClickOpen()
-                  setSelectedMeal(meal)}}>الوجبات</Button>
+                  setSelectedMeal(meal)}}>الخدمات</Button>
               </TableCell>
            {/* <TableCell> */}
            {/* <img width={100} src={URL.createObjectURL(meal.image)} alt="" /> */}

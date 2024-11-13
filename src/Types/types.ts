@@ -57,6 +57,8 @@ export interface Order {
   meal_orders: Mealorder[];
   cost : number;
   totalPrice:number;
+  delivery_time:string;
+  receiptLocation:string;
 }
 
 

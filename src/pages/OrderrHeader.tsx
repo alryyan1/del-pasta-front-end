@@ -10,6 +10,7 @@ import { Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
 import React, { useEffect } from "react";
 import { useCustomerStore } from "./Customer/useCustomer";
 import printJS from "print-js";
+import BasicTimePicker from "@/components/TimePicker";
 
 interface OrderHeaderProps {
   selectedOrder: Order | null;
@@ -28,11 +29,9 @@ function OrderHeader({
   useEffect(() => {
     fetchData();
   }, []);
-  const sendHandler = ()=>{
-    axiosClient.post(`send/${selectedOrder?.id}`).then(({data})=>{
-      
-    })
-  }
+  const sendHandler = () => {
+    axiosClient.post(`send/${selectedOrder?.id}`).then(({ data }) => {});
+  };
   const printHandler = () => {
     const form = new URLSearchParams();
     axiosClient
@@ -67,7 +66,7 @@ function OrderHeader({
       direction={"row"}
       // sx={{ alignItems: "end" }}
       alignItems={"center"}
-      className='shadow-lg items-center rounded-sm'
+      className="shadow-lg items-center rounded-sm"
     >
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />
@@ -119,7 +118,8 @@ function OrderHeader({
       )}
       {selectedOrder && (
         <>
-          <MyDateField2
+        <Stack direction={'row'} gap={1} alignItems={'center'} justifyContent={'center'}>
+        <MyDateField2
             label="تاريخ التسليم"
             path="orders"
             colName="delivery_date"
@@ -127,6 +127,9 @@ function OrderHeader({
             val={selectedOrder?.delivery_date ?? new Date()}
             item={selectedOrder}
           />
+          {/* <BasicTimePicker/> */}
+        </Stack>
+        
           <PayOptions
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
@@ -136,16 +139,18 @@ function OrderHeader({
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
           />
-          <IconButton onClick={printHandler}>
-            <Tooltip title=" طباعه الفاتورة">
-              <Printer />
-            </Tooltip>
-          </IconButton>
-          <IconButton onClick={sendHandler}>
-            <Tooltip title=" ارسال رساله ">
-              <Send />
-            </Tooltip>
-          </IconButton>
+          <Stack direction={"row"} gap={1}>
+            <IconButton onClick={printHandler}>
+              <Tooltip title=" طباعه الفاتورة">
+                <Printer />
+              </Tooltip>
+            </IconButton>
+            <IconButton onClick={sendHandler}>
+              <Tooltip title=" ارسال رساله ">
+                <Send />
+              </Tooltip>
+            </IconButton>
+          </Stack>
         </>
       )}
     </Stack>

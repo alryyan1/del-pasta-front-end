@@ -6,7 +6,7 @@ import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
 import { Button, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Plus, Printer, PrinterIcon, UserPlus } from "lucide-react";
+import { Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
 import React, { useEffect } from "react";
 import { useCustomerStore } from "./Customer/useCustomer";
 import printJS from "print-js";
@@ -28,22 +28,26 @@ function OrderHeader({
   useEffect(() => {
     fetchData();
   }, []);
-  const printHandler = ()=>{
-    
+  const sendHandler = ()=>{
+    axiosClient.post(`send/${selectedOrder?.id}`).then(({data})=>{
+      
+    })
+  }
+  const printHandler = () => {
     const form = new URLSearchParams();
     axiosClient
       .get(`printSale?order_id=${selectedOrder?.id}&base64=1`)
       .then(({ data }) => {
         form.append("data", data);
-        form.append("node_direct",'0');
+        form.append("node_direct", "0");
         // console.log(data, "daa");
-        
-          printJS({
-            printable: data.slice(data.indexOf("JVB")),
-            base64: true,
-            type: "pdf",
-          });
-        
+
+        printJS({
+          printable: data.slice(data.indexOf("JVB")),
+          base64: true,
+          type: "pdf",
+        });
+
         // if (userSettings?.node_dialog) {
         //   fetch("http://127.0.0.1:4000/", {
         //     method: "POST",
@@ -55,15 +59,15 @@ function OrderHeader({
         //   }).then(() => {});
         // }
       });
-  
-}
+  };
   return (
     <Stack
       justifyContent={"space-around"}
       gap={2}
       direction={"row"}
-      sx={{ alignItems: "end" }}
+      // sx={{ alignItems: "end" }}
       alignItems={"center"}
+      className='shadow-lg items-center rounded-sm'
     >
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />
@@ -133,9 +137,13 @@ function OrderHeader({
             setSelectedOrder={setSelectedOrder}
           />
           <IconButton onClick={printHandler}>
-            
-            <Tooltip  title=" طباعه الفاتورة">
-            <Printer />
+            <Tooltip title=" طباعه الفاتورة">
+              <Printer />
+            </Tooltip>
+          </IconButton>
+          <IconButton onClick={sendHandler}>
+            <Tooltip title=" ارسال رساله ">
+              <Send />
             </Tooltip>
           </IconButton>
         </>

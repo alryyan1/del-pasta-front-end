@@ -70,7 +70,6 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
             </TableHead>
             <TableBody>
               {orders
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((order) => (
                   <TableRow key={order.id} hover>
                     <TableCell>
@@ -125,15 +124,7 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={orders.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+     
       </Paper>
 
       {/* <UpdateOrderDialog

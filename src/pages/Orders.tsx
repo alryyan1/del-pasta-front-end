@@ -19,6 +19,7 @@ import {
 function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [search, setSearch] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState("");
   const [page, setPage] = useState(10);
   const [links, setLinks] = useState([]);
   const updateItemsTable = (link, setLoading) => {
@@ -39,23 +40,16 @@ function Orders() {
   };
   
 
-  const handleDelete = (id: number) => {
-    axiosClient
-      .delete<AxiosDataShape<Order>>(`orders/${id}`)
-      .then(({ data }) => {
-        if (data.status) {
-          setOrders(orders.filter((order) => order.id !== id));
-        }
-      });
-  };
+
 
 
   useEffect(() => {
     // alert('ss')
     const timer = setTimeout(() => {
       const q = search != '' ? `?name=${search}` :''
+      const del = deliveryDate != '' ? `?delivery_date=${deliveryDate}` :''
       axiosClient
-        .get(`orders/pagination/${page}${q}`)
+        .get(`orders/pagination/${page}${q}${del}`)
         .then(({ data: { data, links } }) => {
           console.log(data,'data from pagination');
           console.log(links);
@@ -66,7 +60,7 @@ function Orders() {
         ;
     }, 300);
     return () => clearTimeout(timer);
-  }, [page,search]);
+  }, [page,search,deliveryDate]);
 
   
   const isMobile = useMediaQuery("(max-width:600px)");
@@ -96,6 +90,7 @@ function Orders() {
           />
           <input
             onChange={(e) => {
+              setDeliveryDate(e.target.value);
             }}
             type="date"
           />

@@ -42,7 +42,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {initialData ? 'Edit Customer' : 'Add New Customer'}
+        {initialData ? ' تعديل' : 'اضافه  '}
       </DialogTitle>
       <form  onSubmit={handleSubmit(onSubmitHandler)}>
         <DialogContent>
@@ -51,7 +51,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
               
               size='small'
               {...register('name', { required: 'First name is required' })}
-              label="First Name"
+              label="الاسم"
               defaultValue={initialData?.name}
               error={!!errors.name}
               helperText={errors.name?.message}
@@ -64,26 +64,42 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
 
               size='small'
               {...register('phone')}
-              label="Phone"
+              label="الهاتف"
               fullWidth
             />
-            <TextField
+            {/* <TextField
               defaultValue={initialData?.address}
 
               size='small'
               {...register('address')}
-              label="Address"
+              label="العنوان"
               fullWidth
               multiline
-              rows={2}
-            />
+            /> */}
+              <TextField
+              defaultValue={initialData?.address}
+
+              size='small'
+              {...register('area')}
+              label="المنطقه"
+              fullWidth
+              multiline
+            />  <TextField
+            defaultValue={initialData?.address}
+
+            size='small'
+            {...register('state')}
+            label="الولايه"
+            fullWidth
+            multiline
+          />
          
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>الغاء</Button>
           <Button type="submit" variant="contained" color="primary">
-            {initialData ? 'Update' : 'Add'} Customer
+            {initialData ? 'تعديل' : 'اضافه'} الزبون
           </Button>
         </DialogActions>
       </form>

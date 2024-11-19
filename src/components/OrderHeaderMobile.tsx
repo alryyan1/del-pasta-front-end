@@ -55,12 +55,12 @@ function OrderHeaderMobile({
   return (
     <Stack
       gap={2}
-      sx={{mb:1,background:'purple'}}
+      sx={{mb:1,background:'#d0a1d099'}}
 
       direction={"column" }
       // sx={{ alignItems: "end" }}
       alignItems={'start'}
-      className="shadow-lg items-center rounded-sm order-header"
+      className="shadow-lg items-center mobile-header rounded-sm order-header"
     >
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />

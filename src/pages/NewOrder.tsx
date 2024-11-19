@@ -5,7 +5,7 @@ import axiosClient from "@/helpers/axios-client";
 import { useAuthContext } from "@/contexts/stateContext";
 import { Category, Customer, Order } from "@/Types/types";
 import MealItem from "./MealItem";
-import { Box, Button, IconButton, Slide, Tooltip } from "@mui/material";
+import { Badge, Box, Button, IconButton, Slide, Tooltip } from "@mui/material";
 import Cart from "@/components/Cart";
 import MealCategoryPanel from "@/components/MealCategoryPanel";
 import OrderList from "@/components/OrderList";
@@ -101,7 +101,7 @@ const NewOrder = () => {
   return (
     <>
     
-      {width < 800 && (
+      {width < 830 && (
         <Box sx={{mb:1}}>
           <div className="order-header">
             <IconButton
@@ -119,7 +119,7 @@ const NewOrder = () => {
                 setShowCategories(!showCategories);
               }}
             >
-              {showCategories ? <ShoppingCart /> : <ShoppingBag />}
+              {showCategories ? <Badge badgeContent={selectedOrder?.meal_orders.length} color="primary"> <ShoppingCart  /></Badge>  : <ShoppingBag />}
             </IconButton>
           </div>
         </Box>
@@ -139,7 +139,7 @@ const NewOrder = () => {
        
         </Slide>
       )}
-      {width > 800 && (
+      {width > 830 && (
         <OrderHeader
           showOrderSettings={showOrderSettings}
           setIsFormOpen={setIsFormOpen}

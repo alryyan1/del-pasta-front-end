@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Mealorder, Order } from "@/Types/types";
+import { Mealorder, Order, Requestedchildmeal } from "@/Types/types";
 import axiosClient from "@/helpers/axios-client";
 import { LoadingButton } from "@mui/lab";
 import "./../magicCard.css";
@@ -13,12 +13,12 @@ interface CartProps {
 }
 
 function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
-  const updateQuantity = (increment: boolean, item: Mealorder) => {
+  const updateQuantity = (increment: boolean, item: Requestedchildmeal) => {
     axiosClient
-      .patch(`orderMeals/${item.id}`, {
-        quantity: increment
-          ? item.quantity + 1
-          : Math.max(0, item.quantity - 1),
+      .patch(`RequestedChild/${item.id}`, {
+        count: increment
+          ? item.count + 1
+          : Math.max(0, item.count - 1),
       })
       .then(({ data }) => {
         setSelectedOrder(data.order);
@@ -62,7 +62,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
   return (
     <div style={{ height: "100%" }} className=" flex justify-center px-4">
       <Stack
-        className="shadow-lg"
+        className="shadow-lg overflow-auto"
         direction={"column"}
         justifyContent={"space-between"}
         sx={{
@@ -100,7 +100,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
             <Typography variant="h4" className="flex justify-between text-lg">
               <span className="text-gray-600">اجمالي الملبغ</span>
               <span className="text-gray-900">
-                {selectedOrder.totalPrice.toFixed(2)}
+                {selectedOrder.totalPrice.toFixed(3)}
               </span>
             </Typography>
       

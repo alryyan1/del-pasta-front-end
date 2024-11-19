@@ -5,16 +5,12 @@ import React from "react";
 
 function Meals() {
   return (
-    <Grid container spacing={1}>
-      <Grid  sx={{p:1}} item={true} xs={3}>
+    <div className="gird gap-1">
         <ProductForm />
         {/* <CreateMeal/> */}
-      </Grid>  
-      <Grid item={true} xs={9}>
         <MealTable />
-      </Grid>
     
-    </Grid>
+    </div>
   );
 }
 

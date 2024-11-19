@@ -20,7 +20,7 @@ export const cacheRtl = createCache({
 });
 // export const host = 'intaj-starstechnology.com'
 export const schema = "http";
-export const host = "192.168.100.4";
+export const host = "127.0.0.1";
 // export const host = 'server1'مركز النعيم
 
 

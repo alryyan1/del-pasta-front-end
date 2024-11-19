@@ -2,159 +2,175 @@
 @tailwind components;
 @tailwind utilities;
 
- button,h1,h2,h3,table,td,th {
-  font-family: 'cairo'!important;
- }
-
-main{
-  background-image:linear-gradient(180deg, #f48fb1, transparent)
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  /* outline: 1px solid lime; */
+  /* overflow: hidden!important; */
 }
-header{
-  
-  background-color: #D6A2E8 !important
+button,
+h1,
+h2,
+h3,
+table,
+td,
+th {
+  font-family: "cairo" !important;
 }
-nav{
+.requested-meal {
+  overflow: auto !important;
+}
+main {
+  background-image: linear-gradient(180deg, #f48fb1, transparent);
+}
+header {
+  background-color: #d6a2e8 !important;
+}
+nav {
   /* background-color: #e1bee7!important; */
 }
-.css-hikx3c-MuiDrawer-docked{
+.css-hikx3c-MuiDrawer-docked {
   background-color: lightblue; /* example style */
   /* width: 240px!important; */
 }
 body {
   overflow: hidden;
 }
-.MuiDrawer-paper{
-  /* width: 240px!important; */
-
+.MuiDrawer-paper,
+.MuiDrawer-root,
+.MuiDrawer-docked,
+.muirtl-bz90rz-MuiDrawer-docked {
+  max-width: 223px !important;
 }
-.css-lhpdre-MuiStack-root ,.css-lhpdre-MuiStack-root>:not(style)~:not(style),.muirtl-lhpdre-MuiStack-root{
-  margin: 0!important;
+.css-lhpdre-MuiStack-root,
+.css-lhpdre-MuiStack-root > :not(style) ~ :not(style),
+.muirtl-lhpdre-MuiStack-root {
+  margin: 0 !important;
 }
-*{
+* {
   /* outline: 1px solid lightblue; */
 }
-/* From Uiverse.io by absoluteSTrange */ 
+/* From Uiverse.io by absoluteSTrange */
 .card {
- 
-    background: white;
-    border-radius: 10px;
-    transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-   }
-   
-   .shadow {
-    box-shadow: inset 0 -3em 3em rgba(0,0,0,0.1),
-                0 0  0 2px rgb(190, 190, 190),
-                0.3em 0.3em 1em rgba(0,0,0,0.3);
-   }
+  background: white;
+  border-radius: 10px;
+  transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-   .meal-container {
-    display: grid;
-    gap: 16px; /* Space between grid items */
-    padding: 16px;
-    grid-template-columns: repeat(auto-fit, minmax(50px, 100px));
-    text-align: center;
-    align-content: start;
-    align-items: center;
-  }
-  .meal-container > div{
-    min-height: 184px;
-  }
-  
- .MuiStack-root,.muirtl-lhpdre-MuiStack-root,.muirtl-dznnl1-MuiStack-root,.muirtl-lhpdre-MuiStack-root>:not(style)~:not(style){
-    margin: 0!important;
-   }
+.shadow {
+  box-shadow:
+    inset 0 -3em 3em rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgb(190, 190, 190),
+    0.3em 0.3em 1em rgba(0, 0, 0, 0.3);
+}
 
-  
-  
- 
-
-
-   .layout div {
-    max-width: 100%;
-    /* overflow: hidden; */
-   }
-
- .muirtl-112x4te-MuiContainer-root{
-  max-width: unset!important;
- }
- .menu {
+.meal-container {
   display: grid;
-  grid-template-columns:repeat(2,1fr);
+  gap: 16px; /* Space between grid items */
+  padding: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  text-align: center;
+  align-content: start;
+  align-items: center;
+}
+.meal-container > div {
+  /* min-height: 184px; */
+}
+
+.MuiStack-root,
+.muirtl-lhpdre-MuiStack-root,
+.muirtl-dznnl1-MuiStack-root,
+.muirtl-lhpdre-MuiStack-root > :not(style) ~ :not(style) {
+  margin: 0 !important;
+}
+
+.layout div {
+  max-width: 100%;
+  /* overflow: hidden; */
+}
+
+.muirtl-112x4te-MuiContainer-root {
+  max-width: unset !important;
+}
+.menu {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
- }
+}
 
-
- .meal-category {
+.meal-category {
   font-size: 24px;
-    border-radius: 5px;
-    box-shadow: 4px 5px 9px lightcoral;
-    background-color: orange;
-    font-weight: 600;
-    min-height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
- }
+  border-radius: 5px;
+  box-shadow: 4px 5px 9px lightcoral;
+  background-color: orange;
+  font-weight: 600;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
 
- .mealDiv{
+.mealDiv {
   padding: 5px;
   margin-bottom: 5px;
- }
- .mealDiv h5{
+}
+.mealDiv h5 {
   /* background-color: #ff7961; */
   border-radius: 5px;
   box-shadow: 3px 2px 4px #ff7961;
- }
- .category-grid{
+}
+.category-grid {
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(285px,1fr));
- }
-
- @media (min-width: 768px ){
-  .category-grid{
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(508px,1fr));
-   }
- }
-
- .rbc-calendar{
-  width: 700px;
- }
-
-
-
-
- .order-header{
-  background-color: #e91e6312;
-    padding: 5px;
-    border-radius: 10px;
-    border: 1px dashed
+  grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
 }
 
-@media (min-width: 768px){
+@media (min-width: 768px) {
+  .category-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(508px, 1fr));
+  }
+}
+
+.rbc-calendar {
+  width: 700px;
+}
+
+.order-header {
+  background-color: #e91e6312;
+  padding: 5px;
+  border-radius: 10px;
+  border: 1px dashed;
+}
+
+@media (min-width: 768px) {
   .layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     margin-top: 5px;
     gap: 5px;
-    
-    
-   }
-   .orders-cart{
+  }
+  .orders-cart {
     display: grid;
     gap: 5px;
-    grid-template-columns: minmax(285px,1fr) 80px;
-   }
-}
+    grid-template-columns: minmax(285px, 1fr) 80px;
+  }
 
+  .mobile-header {
+    display: grid!important;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+    align-items: center;
+  }
+}
 
 .dashborad-stats {
   background: linear-gradient(45deg, #f8a5c2, transparent);
-    border-radius: 40px;
+  border-radius: 40px;
 }
 .muirtl-16wn5uk-MuiTypography-root {
-  color: black !important;;
+  color: black !important;
 }

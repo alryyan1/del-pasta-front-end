@@ -7,13 +7,9 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton,
-  Typography,
   TablePagination,
   useMediaQuery,
 } from "@mui/material";
-import { Pencil, Trash2 } from "lucide-react";
-import { format } from "date-fns";
 import { Order } from "@/Types/types";
 import { StatusChip } from "./StatusShip";
 import { UpdateOrderDialog } from "./UpdateOrderDialog";
@@ -21,18 +17,15 @@ import dayjs from "dayjs";
 import TdCell from "@/helpers/TdCell";
 import StatusSelector from "@/components/StatusSelector";
 import BasicPopover from "@/components/Mypopover";
-import MealChildrenTable, {
-  OrderMealsTable,
-} from "@/components/MealChildrenTable";
+
 import MyDateField2 from "@/components/MYDate";
+import { OrderMealsTable } from "@/components/MealChildrenTable";
 
 interface OrderTableProps {
   orders: Order[];
-  onDelete: (id: number) => void;
-  onUpdate: (id: number, data: Partial<Order>) => void;
 }
 
-export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
+export const OrderTable = ({ orders }: OrderTableProps) => {
   const [page, setPage] = useState(0);
   const [editStatus, setEditStatus] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -50,11 +43,7 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
     setPage(0);
   };
 
-  const handleUpdateSubmit = (data: Partial<Order>) => {
-    if (selectedOrder) {
-      onUpdate(selectedOrder.id, data);
-    }
-  };
+ 
   const isMobile = useMediaQuery('(max-width:600px)'); // adjust based on screen size
 
   return (
@@ -66,13 +55,16 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
               <TableRow>
                 <TableCell>رقم الطلب</TableCell>
                 <TableCell> الزبون</TableCell>
+                <TableCell> الولايه</TableCell>
+                <TableCell> المنطقه</TableCell>
                 <TableCell>الحالة</TableCell>
-                <TableCell>حالة الدفع</TableCell>
+                {/* <TableCell>حالة الدفع</TableCell> */}
                 <TableCell> اجمالي</TableCell>
                 <TableCell> المدفوع</TableCell>
+                <TableCell> المتبقي</TableCell>
                 <TableCell>تاريخ الإنشاء</TableCell>
                 <TableCell>تاريخ التسليم</TableCell>
-                <TableCell> تكلفه الطلب</TableCell>
+                {/* <TableCell> تكلفه الطلب</TableCell> */}
                 {/* <TableCell align="right">الإجراءات</TableCell> */}
               </TableRow>
             </TableHead>
@@ -84,10 +76,12 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                     <TableCell>
                       <BasicPopover
                         title={order.id}
-                        content={<OrderMealsTable data={order.meal_orders} />}
+                        content={<OrderMealsTable  data={order.meal_orders} />}
                       />
                     </TableCell>
                     <TableCell>{order?.customer?.name}</TableCell>
+                    <TableCell>{order?.customer?.state}</TableCell>
+                    <TableCell>{order?.customer?.area}</TableCell>
                     <TableCell onClick={() => setEditStatus(true)}>
                       {editStatus ? (
                         <StatusSelector
@@ -98,9 +92,9 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                         <StatusChip status={order.status} />
                       )}
                     </TableCell>
-                    <TableCell>{order.payment_type}</TableCell>
+                    {/* <TableCell>{order.payment_type}</TableCell> */}
                     <TableCell>{
-                      order.totalPrice
+                      order.totalPrice.toFixed(3)
                       }</TableCell>
                     <TdCell
                       sx={{ width: "50px" }}
@@ -108,38 +102,24 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
                       item={order}
                       colName={"amount_paid"}
                     >
-                      {order.amount_paid}
+                    {order.amount_paid}
                     </TdCell>
+                    <TableCell>{ (order.totalPrice - order.amount_paid).toFixed(3)}</TableCell>
                     <TableCell>
                       {dayjs(new Date(order.created_at)).format(
-                        "YYYY-MM-DD H:m A"
+                        "YYYY-MM-DD "
                       )}
                     </TableCell>
                     <TableCell><MyDateField2  path={`orders`} item={order} colName="delivery_date" val={order.delivery_date} label="تاريخ التسليم"/></TableCell>
-                    <TdCell
+                    {/* <TdCell
                       sx={{ width: "50px" }}
                       table={"orders"}
                       item={order}
                       colName={"cost"}
                     >
                       {order.cost}
-                    </TdCell>
-                    {/* <TableCell align="right"> */}
-                    {/* <IconButton
-                        size="small"
-                        onClick={() => handleUpdateClick(order)}
-                        color="primary"
-                      >
-                        <Pencil size={16} />
-                      </IconButton> */}
-                    {/* <IconButton
-                        size="small"
-                        onClick={() => onDelete(order.id)}
-                        color="error"
-                      >
-                        <Trash2 size={16} /> */}
-                    {/* </IconButton> */}
-                    {/* </TableCell> */}
+                    </TdCell> */}
+                  
                   </TableRow>
                 ))}
             </TableBody>
@@ -156,12 +136,12 @@ export const OrderTable = ({ orders, onDelete, onUpdate }: OrderTableProps) => {
         />
       </Paper>
 
-      <UpdateOrderDialog
+      {/* <UpdateOrderDialog
+
         open={updateDialogOpen}
         onClose={() => setUpdateDialogOpen(false)}
         order={selectedOrder}
-        onUpdate={handleUpdateSubmit}
-      />
+      /> */}
     </>
   );
 };

@@ -6,8 +6,10 @@ import {
   TableHead,
   TableRow,
   Table,
+  TextField,
 } from "@mui/material";
 import MyCheckbox from "./MyCheckbox";
+import { ChangeEvent } from "react";
 interface RequestedChildrenTablePrps {
   mealOrder: Mealorder;
   setSelectedOrder: (order) => void;
@@ -18,13 +20,19 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
         setSelectedOrder(data.order)
     })
   }
+  function changeMealCountHandler(e:ChangeEvent<HTMLInputElement>,child:ChildMeal) {
+    axiosClient.patch(`RequestedChild/${child.id}?order_meal_id=${mealOrder.id}&count=${e.target.value}`)
+   .then(({data})=>{
+    console.log(data,'update count data')
+   })
+  }
   return (
     <Table size="small">
       <TableHead>
         <TableRow>
           <TableCell>-</TableCell>
           <TableCell>اسم</TableCell>
-          <TableCell>العدد</TableCell>
+          <TableCell>الكميه</TableCell>
           <TableCell>سعر</TableCell>
           <TableCell>الاشخاص</TableCell>
           <TableCell>الوزن</TableCell>
@@ -44,6 +52,7 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
               <TableCell>{child.price}</TableCell>
               <TableCell>{child.people_count}</TableCell>
               <TableCell>{child.weight}</TableCell>
+             
               {/* <TableCell>
                 <div className="flex items-center gap-2">
                   <button

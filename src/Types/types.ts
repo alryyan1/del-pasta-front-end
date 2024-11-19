@@ -31,6 +31,8 @@ export interface Customer {
   name: string;
   phone: string;
   address: string;
+  area: string;
+  state:string;
 }
 export interface Order {
   id: number;
@@ -99,11 +101,13 @@ export interface Mealorder {
 
 export interface Requestedchildmeal {
   id: number;
+  order_meal:Mealorder;
   order_meal_id: number;
   child_meal_id: number;
   quantity: number;
   price: number;
   child_meal: Childmeal;
+  count: number;
 }
 
 export interface Meal {

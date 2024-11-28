@@ -44,10 +44,11 @@ export const CustomerList: React.FC<CustomerListProps> = ({
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>address</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>الاسم</TableCell>
+              <TableCell>الهاتف</TableCell>
+              <TableCell>المنطقه</TableCell>
+              <TableCell>الولايه</TableCell>
+              <TableCell align="right">-</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -59,7 +60,8 @@ export const CustomerList: React.FC<CustomerListProps> = ({
                     {customer.name} 
                   </TableCell>
                   <TableCell>{customer.phone}</TableCell>
-                  <TableCell>{customer.address}</TableCell>
+                  <TableCell>{customer.area}</TableCell>
+                  <TableCell>{customer.state}</TableCell>
                   <TableCell align="right">
                     <IconButton
                       color="primary"

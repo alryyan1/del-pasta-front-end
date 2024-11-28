@@ -20,6 +20,7 @@ import Foribidden from "./pages/Foribidden";
 import ProtectedRoute from "./pages/Protected";
 import Settings from "./pages/Settings";
 import Stats from "./pages/Stats";
+import Services from "./pages/Services";
 
 const login: RouteObject = {
   path: "login",
@@ -46,6 +47,10 @@ const MealCategoriesConfig: RouteObject = {
   path: "MealCategories",
   element: <MealCategoryForm />,
 };
+const services: RouteObject = {
+  path: "services",
+  element: <Services />,
+};
 const mealConfig: RouteObject = {
   path: "meals",
   element: <Meals />,
@@ -56,12 +61,13 @@ const customers: RouteObject = {
 };
 const config: RouteObject = {
   path: "/config",
-  children: [MealCategoriesConfig, mealConfig,customers,settings],
+  children: [MealCategoriesConfig, mealConfig,customers,settings,services],
 };
 const orders: RouteObject = {
   path: "/orders",
   element: <Orders />,
 };
+
 const stats: RouteObject = {
   path: "/stats",
   element: <Stats />,

@@ -10,6 +10,7 @@ import {
   Checkbox,
   Typography,
   Button,
+  TextField,
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
@@ -24,11 +25,12 @@ import { useMealsStore } from '@/stores/MealsStore';
 // Sample data for meals
 
 const MealTable: React.FC = () => {
+  const [search,setSearch] = useState(null)
   const [file, setFile] = useState(null);
   const [src, setSrc] = useState(null);
   const [selectedMeal, setSelectedMeal] = useState<Meal|null>(null)
   const [open, setOpen] = useState(false);
- const {addMeal,fetchMeals,deleteMeal,meals} =  useMealsStore()
+ let {addMeal,fetchMeals,deleteMeal,meals} =  useMealsStore()
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -65,7 +67,7 @@ const MealTable: React.FC = () => {
   };
   useEffect(()=>{
     fetchMeals()
-  },[])
+  },[selectedMeal])
   useEffect(()=>{
      console.log('useefect',selectedMeal)
      meals.map((m)=>{
@@ -76,41 +78,52 @@ const MealTable: React.FC = () => {
       }
     })
   },[selectedMeal])
+   meals  = meals.filter((m)=>{
+    if (search !=null) {
+     return m.name.includes(search)
+    }else{
+      return true
+    }
+   })
   return (
-    <TableContainer  dir="rtl">
-      <Typography variant='h5' textAlign={'center'}>كل الوجبات</Typography>
+    <TableContainer sx={{mt:1}}  dir="rtl">
+      <TextField onChange={(e)=>{
+        setSearch(e.target.value)
+      }} size='small'/>
+      <Typography variant='h5' textAlign={'center'}>الخدمات الاساسيه</Typography>
       <Table size='small' className="text-sm border border-gray-300">
         <TableHead className="bg-gray-100">
           <TableRow>
-            <TableCell className="p-2">كود</TableCell>
-            <TableCell className="p-2">اسم</TableCell>
-            <TableCell className="p-2">السعر </TableCell>
-            <TableCell className="p-2"> الفئة</TableCell>
-            <TableCell className="p-2">صورة</TableCell>
-            {/* <TableCell className="p-2">وقت التحضير (دقائق)</TableCell> */}
-            {/* <TableCell className="p-2">مستوى التوابل (1-5)</TableCell> */}
-            <TableCell className="p-2"> الصوره</TableCell>
-            <TableCell className="p-2"> فرعي</TableCell>
-            <TableCell className="p-2">حذف</TableCell>
+            <TableCell className="">كود</TableCell>
+            <TableCell className="">اسم</TableCell>
+            <TableCell className=""> الفئة</TableCell>
+            <TableCell className="">صورة</TableCell>
+            {/* <TableCell className="">وقت التحضير (دقائق)</TableCell> */}
+            {/* <TableCell className="">مستوى التوابل (1-5)</TableCell> */}
+            <TableCell className=""> الصوره</TableCell>
+            <TableCell className=""> فرعي</TableCell>
+            <TableCell className="">حذف</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {meals.map((meal:Meal, index) => (
             <TableRow key={meal.id} className="hover:bg-gray-50">
-              <TableCell className="p-2">{meal.id}</TableCell>
+              <TableCell className="">{meal.id}</TableCell>
               <TdCell table={'meals'} colName={'name'} item={meal}  >{meal.name}</TdCell>
-              <TableCell className="p-2">{meal.price}</TableCell>
-              <TableCell className="p-2">{meal?.category?.name}</TableCell>
-              <TableCell className="p-2">
+              <TableCell className="">{meal?.category?.name}</TableCell>
+              <TableCell className="">
                 <img src={meal?.image ?? placeHolder} alt={meal.name} style={{ width: '100px' }} />
               </TableCell>
            
-              {/* <TableCell className="p-2">{meal.prep_time ?? 'N/A'}</TableCell> */}
-              {/* <TableCell className="p-2">{meal.spice_level ?? 'N/A'}</TableCell> */}
-              <input onChange={(e)=>{
+              {/* <TableCell className="">{meal.prep_time ?? 'N/A'}</TableCell> */}
+              {/* <TableCell className="">{meal.spice_level ?? 'N/A'}</TableCell> */}
+              <TableCell>
+                <input onChange={(e)=>{
           handleFileChange(e,meal)
         }} type="file"></input>
-              <TableCell className="p-2">
+              </TableCell>
+              
+              <TableCell className="">
                 <Button onClick={()=>{
                   
                   handleClickOpen()
@@ -119,7 +132,7 @@ const MealTable: React.FC = () => {
            {/* <TableCell> */}
            {/* <img width={100} src={URL.createObjectURL(meal.image)} alt="" /> */}
            {/* </TableCell> */}
-              <TableCell className="p-2">
+              <TableCell className="">
                 <button onClick={() => {
                   axiosClient.delete(`meals/${meal.id}`).then(()=>{
                     deleteItem(meal)

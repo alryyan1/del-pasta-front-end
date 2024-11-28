@@ -199,7 +199,7 @@ import axiosClient from "@/helpers/axios-client";
         </Grid>
         <Grid xs={3}>
             <Box sx={{p:1}}>
-             <TextField defaultValue={settings?.header_contentr} sx={{mb:1}}  rows={3} label='محتوي الترويسه' multiline fullWidth onChange={(e)=>{
+             <TextField defaultValue={settings?.header_contentr} sx={{mb:1}}  rows={10} label='محتوي الرساله' multiline fullWidth onChange={(e)=>{
                axiosClient.post("settings", {
                 colName: "header_content",
                 data: e.target.value,

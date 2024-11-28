@@ -1,94 +1,123 @@
 import { useEffect, useState } from "react";
-import {
-  TextField,
-  Button,
-} from "@mui/material";
+import { TextField, Button, Typography, Grid } from "@mui/material";
 import { AxiosDataShape, Customer, Order } from "@/Types/types";
 import { OrderTable } from "./orders/OrderTable";
 import axiosClient from "@/helpers/axios-client";
-import { Stack } from "@mui/system";
+import { Stack, useMediaQuery } from "@mui/system";
 import { Search } from "lucide-react";
 import dayjs from "dayjs";
 import { webUrl } from "@/helpers/constants";
+import MyLoadingButton from "@/components/MyLoadingButton";
+import {
+  ArrowBack,
+  ArrowForward,
+  DeleteOutline,
+  DeleteOutlineOutlined,
+  ShoppingCart,
+} from "@mui/icons-material";
 
 function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchQueryString, setSearchQueryStrings] = useState([]);
-  useEffect(() => {
-    //fetch orders
-    axiosClient.get<Order[]>("orders").then(({ data }) => {
-      setOrders(data);
-    });
-  }, []);
-
-  const handleDelete = (id: number) => {
-    axiosClient
-      .delete<AxiosDataShape<Order>>(`orders/${id}`)
+  const [search, setSearch] = useState("");
+  const [deliveryDate, setDeliveryDate] = useState("");
+  const [page, setPage] = useState(10);
+  const [links, setLinks] = useState([]);
+  const updateItemsTable = (link, setLoading) => {
+    console.log(search);
+    setLoading(true);
+    axiosClient(`${link.url}&word=${search}`)
       .then(({ data }) => {
-        if (data.status) {
-          setOrders(orders.filter((order) => order.id !== id));
-        }
+        console.log(data, "pagination data");
+        setOrders(data.data);
+        setLinks(data.links);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
-
-  const handleUpdate = (id: number, data: Partial<Order>) => {
-    setOrders(
-      orders.map((order) => (order.id === id ? { ...order, ...data } : order))
-    );
-  };
-
-
- 
-  console.log(searchQuery,'search query')
-  // Filter orders based on search query
-  const filteredOrders = orders.filter(
-    (order) =>
-      order?.customer?.name.includes(searchQuery) ||
-      order?.customer?.phone.includes(searchQuery) ||
-      order.status.includes(searchQuery) ||
-      order.amount_paid.toString().includes(searchQuery) ||
-      dayjs(order.created_at).isSame(  dayjs(searchQuery),'day') ||
-      dayjs(order.delivery_date).isSame(  dayjs(searchQuery),'day') 
-    
   
-    
-  );
 
+
+
+
+  useEffect(() => {
+    // alert('ss')
+    const timer = setTimeout(() => {
+      const q = search != '' ? `?name=${search}` :''
+      const del = deliveryDate != '' ? `?delivery_date=${deliveryDate}` :''
+      axiosClient
+        .get(`orders/pagination/${page}${q}${del}`)
+        .then(({ data: { data, links } }) => {
+          console.log(data,'data from pagination');
+          console.log(links);
+          setOrders(data);
+          // console.log(links)
+          setLinks(links);
+        })
+        ;
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [page,search,deliveryDate]);
+
+  
+  const isMobile = useMediaQuery("(max-width:600px)");
   return (
-    <div className=" bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <Stack alignItems={'center'} direction={'row'} justifyContent={'space-around'} >
-
-          <h1 className="text-3xl font-bold mb-8">اداره الطلبات </h1>
+    <div className=" ">
+      <div className="max-w-7xl mx-auto ">
+        <Stack
+          alignItems={"center"}
+          gap={1}
+          direction={isMobile ? "column" : "row"}
+          justifyContent={"space-around"}
+        >
+          <Typography className="text-3xl font-bold mb-8">
+            اداره الطلبات{" "}
+          </Typography>
           <TextField
-           size="small"
-            
+            size="small"
             variant="outlined"
             placeholder="Search orders..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             InputProps={{
               startAdornment: (
                 <Search size={20} className="mr-2 text-gray-500" />
               ),
             }}
           />
-          <input onChange={(e)=>{
-            setSearchQuery(e.target.value)
-            setSearchQueryStrings((query)=>{
-              return [...query,{name:'date',val: e.target.value}]
-
-              
-            })
-          }} className=" bg-gray-50 p-8" type="date"/>
-          <Button variant="contained" href={`${webUrl}orders?s=1${searchQueryString.reduce((prev,curr)=>`${prev}&${curr.name}=${curr.val}`,'')}`}>التقرير</Button>
+          <input
+            onChange={(e) => {
+              setDeliveryDate(e.target.value);
+            }}
+            type="date"
+          />
+          <select
+            onChange={(val) => {
+              setPage(val.target.value);
+            }}
+          >
+            <option value="5">5</option>
+            <option selected value="10">
+              10
+            </option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <Button
+            variant="contained"
+            href={`${webUrl}orders`}
+          >
+            التقرير
+          </Button>
         </Stack>
 
         <OrderTable
-          orders={filteredOrders}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
+          orders={orders}
           // Pass translated column headers to OrderTable component
           columnHeaders={{
             orderNumber: "رقم الطلب",
@@ -106,7 +135,51 @@ function Orders() {
           }}
         />
 
-
+       {links.length > 0  && <Grid sx={{ gap: "4px", mt: 1 }} style={{direction:'ltr'}} container>
+          {links.map((link, i) => {
+            if (i == 0) {
+              return (
+                <Grid item xs={1} key={i}>
+                  <MyLoadingButton
+                    onClick={(setLoading) => {
+                      updateItemsTable(link, setLoading);
+                    }}
+                    variant="contained"
+                    key={i}
+                  >
+                    <ArrowBack />
+                  </MyLoadingButton>
+                </Grid>
+              );
+            } else if (links.length - 1 == i) {
+              return (
+                <Grid item xs={1} key={i}>
+                  <MyLoadingButton
+                    onClick={(setLoading) => {
+                      updateItemsTable(link, setLoading);
+                    }}
+                    variant="contained"
+                    key={i}
+                  >
+                    <ArrowForward />
+                  </MyLoadingButton>
+                </Grid>
+              );
+            } else
+              return (
+                <Grid item xs={1} key={i}>
+                  <MyLoadingButton
+                    active={link.active}
+                    onClick={(setLoading) => {
+                      updateItemsTable(link, setLoading);
+                    }}
+                  >
+                    {link.label}
+                  </MyLoadingButton>
+                </Grid>
+              );
+          })}
+        </Grid>}
       </div>
     </div>
   );

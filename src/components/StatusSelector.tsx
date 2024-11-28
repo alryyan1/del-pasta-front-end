@@ -8,6 +8,7 @@ const statusOptions = [
   { label: "Pending", value: "pending" },
   { label: "Confirmed", value: "confirmed" },
   { label: "In Preparation", value: "in preparation" },
+  { label: "Completed", value: "Completed" },
   { label: "Delivered", value: "delivered" },
   { label: "Cancelled", value: "cancelled" },
 ];

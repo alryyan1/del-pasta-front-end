@@ -8,11 +8,11 @@ interface infoItemProps {
 }
 function InfoItem({name,value,InfoIcon,moneyTxt}:infoItemProps) {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
+    <div className="dashborad-stats p-6 rounded-lg shadow-lg">
     <div className="flex items-center justify-between">
       <div>
         <Typography variant='h5' className="font-medium text-gray-600">{name}</Typography>
-        <p className="mt-1 text-2xl font-semibold text-gray-900">{value}</p>
+        <p className="mt-1 text-2xl font-semibold text-gray-900">{value.toFixed(3)}</p>
       </div>
       <div className="bg-indigo-50 p-3 rounded-full">
        {moneyTxt ? 'OMR':  <InfoIcon className="h-6 w-6 text-indigo-600" />}

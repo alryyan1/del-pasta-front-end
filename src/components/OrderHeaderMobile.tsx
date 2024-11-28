@@ -6,51 +6,33 @@ import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
 import { Button, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
+import { Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
 import React, { useEffect } from "react";
-import { useCustomerStore } from "./Customer/useCustomer";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
-import { Message } from "@mui/icons-material";
-import { toast } from "react-toastify";
+import { useCustomerStore } from "@/pages/Customer/useCustomer";
 
-interface OrderHeaderProps {
+interface OrderHeaderMobileProps {
   selectedOrder: Order | null;
   setSelectedOrder: (order: Order) => void;
   newOrderHandler: () => void;
   setIsFormOpen: (isOpen: boolean) => void;
   showOrderSettings : boolean;
 }
-function OrderHeader({
+function OrderHeaderMobile({
   selectedOrder,
   setSelectedOrder,
   newOrderHandler,
   setIsFormOpen,
   showOrderSettings,
-}: OrderHeaderProps) {
+}: OrderHeaderMobileProps) {
   const { customers, addCustomer, updateCustomer, fetchData } =
     useCustomerStore();
   useEffect(() => {
     fetchData();
   }, []);
   const sendHandler = () => {
-    axiosClient
-    .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
-    .then(({data}) => {
-      console.log(data,'message sent')
-      toast.success(data.msg);
-        
-    })
-  };
-  const sendMsg = () => {
-    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {});
-  };
-  const deliveryHandler = () => {
-    axiosClient.patch(`orders/${selectedOrder?.id}`,{
-      is_delivery:!selectedOrder?.is_delivery
-    }).then(({ data }) => {
-      setSelectedOrder(data.order);
-    });
+    axiosClient.post(`send/${selectedOrder?.id}`).then(({ data }) => {});
   };
   const printHandler = () => {
     const form = new URLSearchParams();
@@ -67,26 +49,18 @@ function OrderHeader({
           type: "pdf",
         });
 
-        // if (userSettings?.node_dialog) {
-        //   fetch("http://127.0.0.1:4000/", {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/x-www-form-urlencoded",
-        //     },
-
-        //     body: form,
-        //   }).then(() => {});
-        // }
+      
       });
   };
   return (
     <Stack
-      justifyContent={"space-around"}
       gap={2}
-      direction={"row"}
+      sx={{mb:1,background:'#d0a1d099'}}
+
+      direction={"column" }
       // sx={{ alignItems: "end" }}
-      alignItems={"center"}
-      className="shadow-lg items-center rounded-sm order-header"
+      alignItems={'start'}
+      className="shadow-lg items-center mobile-header rounded-sm order-header"
     >
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />
@@ -165,19 +139,9 @@ function OrderHeader({
                 <Printer />
               </Tooltip>
             </IconButton>
-            <IconButton onClick={sendMsg}>
-              <Tooltip title=" ارسال رساله ">
-                <Message />
-              </Tooltip>
-            </IconButton>
             <IconButton onClick={sendHandler}>
-              <Tooltip title=" ارسال الفاتوره ">
-                <File />
-              </Tooltip>
-            </IconButton>
-            <IconButton color="success" onClick={deliveryHandler}>
-              <Tooltip title="  توصيل ">
-               {selectedOrder.is_delivery ?  <Car  /> : <HomeIcon/>}
+              <Tooltip title=" ارسال رساله ">
+                <Send />
               </Tooltip>
             </IconButton>
           </Stack>
@@ -187,4 +151,4 @@ function OrderHeader({
   );
 }
 
-export default OrderHeader;
+export default OrderHeaderMobile;

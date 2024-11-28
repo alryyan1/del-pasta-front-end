@@ -57,7 +57,7 @@ const ProductForm = () => {
         اضافه خدمه
       </Typography>
       <form style={{ direction: "rtl" }} onSubmit={handleSubmit(submitForm)}>
-        <Stack direction={"column"} gap={1}>
+        <Stack direction={"column"} justifyContent={'start'} alignContent={'start'} alignItems={'start'} justifyItems={'start'} gap={1}>
           <TextField
             size="small"
             label="الاسم"

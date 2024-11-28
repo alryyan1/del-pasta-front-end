@@ -22,7 +22,7 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
-import { Beef, LayoutPanelTop, List, PersonStanding, Scale, Users } from "lucide-react";
+import { Beef, Grid2x2PlusIcon, HandPlatter, LayoutPanelTop, List, PersonStanding, Scale, Users } from "lucide-react";
 import logo from './../assets/images/h2o-logo.png'
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import SidebarFooter from "@/components/footer";
@@ -134,8 +134,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       children: [
         {
           segment: "meals",
-          title: "باقات الخدمات",
-          icon: <Beef />,
+          title: " الخدمات",
+          icon: <Grid2x2PlusIcon />,
         },
         {
           segment: "MealCategories",
@@ -146,6 +146,11 @@ export default function DashboardLayoutBasic(props: DemoProps) {
           segment: "customers",
           title: "الزبائن",
           icon: <Users />,
+        },
+        {
+          segment: "services",
+          title: "خدمات الفرعيه",
+          icon: <HandPlatter />,
         },
         {
           segment: "settings",

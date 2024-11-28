@@ -33,7 +33,6 @@ export const UpdateOrderDialog = ({
   open,
   onClose,
   order,
-  onUpdate,
 }: UpdateOrderDialogProps) => {
   const {
     register,
@@ -46,7 +45,7 @@ export const UpdateOrderDialog = ({
   });
 
   const onSubmit = (data: OrderFormData) => {
-    onUpdate(data);
+    // onUpdate(data);
     onClose();
     reset();
   };

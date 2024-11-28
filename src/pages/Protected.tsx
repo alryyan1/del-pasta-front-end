@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
 function ProtectedRoute({ children }) {
  
 const type = localStorage.getItem('user_type')
-  if (type  == 'admin') {
+  if (type  == 'staff') {
     // Redirect to "403 Forbidden" page if not authorized
     return <Navigate to="/forbidden" />;
   }

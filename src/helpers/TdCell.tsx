@@ -68,6 +68,7 @@ function TdCell({
     >
       {show || edited ? (
         <TextField
+        
         disabled={disabled}
           multiline={multiline}
          
@@ -85,7 +86,7 @@ function TdCell({
           onChange={changeHandler}
           value={iniVal}
           type={type}
-          autoComplete="false"
+          autoComplete="off"
         ></TextField>
       ) : (
         isNum ? <span style={{    

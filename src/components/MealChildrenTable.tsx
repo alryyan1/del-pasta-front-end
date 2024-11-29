@@ -105,6 +105,69 @@ function MealChildrenTable({
     </>
   );
 }
+export function MealChildrenTableMobile({
+  data,
+  setSelectedMeal,
+  selectedMeal,
+}: MealTableDataProps) {
+  const onDelete = (meal: ChildMeal) => {
+    axiosClient.delete(`childMeals/${meal.id}`).then(({ data }) => {
+      setSelectedMeal(data.data);
+    });
+  };
+
+  return (
+    <>
+      <Tooltip title="اضافه الخدمات">
+        <IconButton
+          onClick={() => {
+            axiosClient
+              .post(`defineServices/${selectedMeal.id}`)
+              .then(({ data }) => {
+                console.log(data.data, "data");
+                setSelectedMeal(data.data);
+                
+              });
+          }}
+        >
+          <Download />
+        </IconButton>
+      </Tooltip>
+
+      <Table size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell>اسم</TableCell>
+            <TableCell>سعر</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {data.map((meal, index) => {
+            console.log(meal, "meal");
+            return (
+              <TableRow key={index}>
+                <TdCell item={meal} colName={"name"} table={"childMeals"}>
+                  {meal.name}
+                </TdCell>
+          
+                <TdCell
+                  show
+                  sx={{ width: "60px", textAlign: "center" }}
+                  item={meal}
+                  colName={"price"}
+                  table={"childMeals"}
+                >
+                  {meal.price}
+                </TdCell>
+               
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </>
+  );
+}
 export function OrderMealsTable({ data }: PopOverDataPropbs) {
   return (
     <Table size="small">

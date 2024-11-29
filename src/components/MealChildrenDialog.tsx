@@ -18,7 +18,9 @@ import {
 import { useForm } from "react-hook-form";
 import axiosClient from "@/helpers/axios-client";
 import { AxiosResponseProps, Meal } from "@/Types/types";
-import MealChildrenTable from "./MealChildrenTable";
+import MealChildrenTable, {
+  MealChildrenTableMobile,
+} from "./MealChildrenTable";
 
 interface MealChildrenDialogProps {
   open: boolean;
@@ -35,6 +37,8 @@ const MealChildrenDialog = ({
   selectedMeal,
   setSelectedMeal,
 }: MealChildrenDialogProps) => {
+  const [width, setWidth] = useState(window.innerWidth);
+
   const { handleSubmit, register } = useForm();
   const submitHandler = (data) => {
     console.log(data, "data");
@@ -53,23 +57,26 @@ const MealChildrenDialog = ({
   return (
     <div className="">
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle><Typography variant="h4">{selectedMeal?.name}</Typography>  </DialogTitle>
-        <DialogContent className="grid gap-1">
+        <DialogTitle>
+          <Typography variant="h4">{selectedMeal?.name}</Typography>{" "}
+        </DialogTitle>
+        <DialogContent className="">
+          <Typography>اضافه خدمه</Typography>
+
           <form onSubmit={handleSubmit(submitHandler)}>
             <Stack gap={2} direction={"column"}>
-              <Stack direction={"row"} gap={1}>
-                {" "}
-                <TextField
-                  label="الاسم"
-                  {...register("name", {
-                    required: {
-                      value: true,
-                      message: "الحقل مطلوب",
-                    },
-                  })}
-                  size="small"
-                ></TextField>
-                <TextField
+              {" "}
+              <TextField
+                label="الاسم"
+                {...register("name", {
+                  required: {
+                    value: true,
+                    message: "الحقل مطلوب",
+                  },
+                })}
+                size="small"
+              ></TextField>
+              {/* <TextField
                   label="العدد"
                   {...register("quantity", {
                     required: {
@@ -78,16 +85,15 @@ const MealChildrenDialog = ({
                     },
                   })}
                   size="small"
-                ></TextField>
-                <TextField
-                  label="السعر"
-                  {...register("price")}
-                  size="small"
-                ></TextField>
-              </Stack>
+                ></TextField> */}
+              <TextField
+                label="السعر"
+                {...register("price")}
+                size="small"
+              ></TextField>
               <Stack direction={"row"} gap={1}>
                 {" "}
-                <TextField
+                {/* <TextField
                   label="عدد الاشخاص"
                   {...register("people_count")}
                   size="small"
@@ -96,22 +102,28 @@ const MealChildrenDialog = ({
                   label="الوزن"
                   {...register("weight")}
                   size="small"
-                ></TextField>
+                ></TextField> */}
               </Stack>
-
-              <Button sx={{width:'100px'}} type="submit" variant="contained">
+              <Button sx={{ width: "100px" }} type="submit" variant="contained">
                 {" "}
                 +
               </Button>
             </Stack>
           </form>
           <div>
-            <MealChildrenTable
-             selectedMeal={selectedMeal}
-                 
-             setSelectedMeal={setSelectedMeal}
-              data={selectedMeal?.child_meals}
-            />
+            {width > 700 ? (
+              <MealChildrenTable
+                selectedMeal={selectedMeal}
+                setSelectedMeal={setSelectedMeal}
+                data={selectedMeal?.child_meals}
+              />
+            ) : (
+              <MealChildrenTableMobile
+                selectedMeal={selectedMeal}
+                setSelectedMeal={setSelectedMeal}
+                data={selectedMeal?.child_meals}
+              />
+            )}
           </div>
         </DialogContent>
         <DialogActions>

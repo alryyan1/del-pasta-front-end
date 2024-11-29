@@ -12,6 +12,7 @@ import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
 import { useCustomerStore } from "@/pages/Customer/useCustomer";
 import { Message } from "@mui/icons-material";
+import { toast } from "react-toastify";
 
 interface OrderHeaderMobileProps {
   selectedOrder: Order | null;
@@ -34,7 +35,13 @@ function OrderHeaderMobile({
     fetchData();
   }, []);
   const sendHandler = () => {
-    axiosClient.post(`send/${selectedOrder?.id}`).then(({ data }) => {});
+    axiosClient
+    .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
+    .then(({data}) => {
+      console.log(data,'message sent')
+      toast.success(data.message);
+        
+    })
   };
   const sendMsg = () => {
     axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {

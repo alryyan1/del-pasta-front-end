@@ -6,11 +6,12 @@ import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
 import { Button, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
+import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
 import React, { useEffect } from "react";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
 import { useCustomerStore } from "@/pages/Customer/useCustomer";
+import { Message } from "@mui/icons-material";
 
 interface OrderHeaderMobileProps {
   selectedOrder: Order | null;
@@ -19,6 +20,7 @@ interface OrderHeaderMobileProps {
   setIsFormOpen: (isOpen: boolean) => void;
   showOrderSettings : boolean;
 }
+
 function OrderHeaderMobile({
   selectedOrder,
   setSelectedOrder,
@@ -33,6 +35,18 @@ function OrderHeaderMobile({
   }, []);
   const sendHandler = () => {
     axiosClient.post(`send/${selectedOrder?.id}`).then(({ data }) => {});
+  };
+  const sendMsg = () => {
+    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {
+      
+    });
+  };
+  const deliveryHandler = () => {
+    axiosClient.patch(`orders/${selectedOrder?.id}`,{
+      is_delivery:!selectedOrder?.is_delivery
+    }).then(({ data }) => {
+      setSelectedOrder(data.order);
+    });
   };
   const printHandler = () => {
     const form = new URLSearchParams();
@@ -134,14 +148,19 @@ function OrderHeaderMobile({
             setSelectedOrder={setSelectedOrder}
           />
           <Stack direction={"row"} gap={1}>
-            <IconButton onClick={printHandler}>
-              <Tooltip title=" طباعه الفاتورة">
-                <Printer />
+          <IconButton onClick={sendMsg}>
+              <Tooltip title=" ارسال رساله ">
+                <Message />
               </Tooltip>
             </IconButton>
             <IconButton onClick={sendHandler}>
-              <Tooltip title=" ارسال رساله ">
-                <Send />
+              <Tooltip title=" ارسال الفاتوره ">
+                <File />
+              </Tooltip>
+            </IconButton>
+            <IconButton color="success" onClick={deliveryHandler}>
+              <Tooltip title="  توصيل ">
+               {selectedOrder.is_delivery ?  <Car  /> : <HomeIcon/>}
               </Tooltip>
             </IconButton>
           </Stack>

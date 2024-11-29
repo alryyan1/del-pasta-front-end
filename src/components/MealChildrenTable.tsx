@@ -127,6 +127,7 @@ export function OrderMealsTable({ data }: PopOverDataPropbs) {
                     <span className="text-gray-700">
                       {
                         <RequestedServices
+                        details={false}
                           item={meal}
                           show={true}
                           updateQuantity={() => {}}

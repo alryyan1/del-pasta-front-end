@@ -38,12 +38,14 @@ function OrderHeader({
     .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
     .then(({data}) => {
       console.log(data,'message sent')
-      toast.success(data.msg);
+      toast.success(data.message);
         
     })
   };
   const sendMsg = () => {
-    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {});
+    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {
+      
+    });
   };
   const deliveryHandler = () => {
     axiosClient.patch(`orders/${selectedOrder?.id}`,{

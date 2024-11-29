@@ -21,13 +21,13 @@ import BasicPopover from "@/components/Mypopover";
 
 import MyDateField2 from "@/components/MYDate";
 import { OrderMealsTable } from "@/components/MealChildrenTable";
+import MyTableCellStatusSelector from "@/components/MyTableCellStatusSelector";
 
 interface OrderTableProps {
   orders: Order[];
 }
 
 export const OrderTable = ({ orders }: OrderTableProps) => {
-  const [editStatus, setEditStatus] = useState(false);
   const isMobile = useMediaQuery("(max-width:600px)"); // adjust based on screen size
 
   return (
@@ -50,7 +50,7 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                 <TableCell>الحالة</TableCell>
                 {/* <TableCell>حالة الدفع</TableCell> */}
                 <TableCell> اجمالي</TableCell>
-                <TableCell> المدفوع</TableCell>
+                <TableCell width={'5%'}> المدفوع</TableCell>
                 {/* <TableCell> المتبقي</TableCell> */}
                 <TableCell>تاريخ الإنشاء</TableCell>
                 <TableCell>تاريخ التسليم</TableCell>
@@ -66,22 +66,13 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                   <TableCell>
                     <BasicPopover
                       title={order.id}
-                      content={<OrderMealsTable data={order.meal_orders} />}
+                      content={<OrderMealsTable  data={order.meal_orders} />}
                     />
                   </TableCell>
                   <TableCell>{order?.customer?.name}</TableCell>
                   {/* <TableCell>{order?.customer?.state}</TableCell> */}
                   <TableCell>{order?.customer?.area}</TableCell>
-                  <TableCell onClick={() => setEditStatus(true)}>
-                    {editStatus ? (
-                      <StatusSelector
-                        setSelectedOrder={null}
-                        selectedOrder={order}
-                      />
-                    ) : (
-                      <StatusChip status={order.status} />
-                    )}
-                  </TableCell>
+                  <MyTableCellStatusSelector order={order} setSelectedOrder={null} />
                   {/* <TableCell>{order.payment_type}</TableCell> */}
                   <TableCell>{order.totalPrice.toFixed(3)}</TableCell>
                   <TdCell
@@ -125,11 +116,11 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                 <TableCell></TableCell>
                 {/* <TableCell>حالة الدفع</TableCell> */}
                 <TableCell>
-                 <Typography variant="h4"> {orders.reduce((prev, curr) => prev + curr.totalPrice, 0)}ريال</Typography>
+                 <Typography variant="h4"> {orders.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}ريال</Typography>
                 </TableCell>
                 <TableCell>
                   
-                  <Typography variant="h4">{orders.reduce((prev, curr) => prev + curr.amount_paid, 0)}ريال</Typography>
+                  <Typography variant="h4">{orders.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}ريال</Typography>
                 </TableCell>
                 {/* <TableCell> المتبقي</TableCell> */}
                 <TableCell> </TableCell>

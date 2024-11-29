@@ -199,12 +199,16 @@ import axiosClient from "@/helpers/axios-client";
         </Grid>
         <Grid xs={3}>
             <Box sx={{p:1}}>
-             <TextField defaultValue={settings?.header_contentr} sx={{mb:1}}  rows={10} label='محتوي الرساله' multiline fullWidth onChange={(e)=>{
-               axiosClient.post("settings", {
-                colName: "header_content",
-                data: e.target.value,
-              });
+              <Divider>الرساله  الترحيبيه</Divider>
+             <TextField  defaultValue={settings?.header_content} sx={{mb:1}}  rows={10}  multiline fullWidth onChange={(e)=>{
+              setTimeout(() => {
+                axiosClient.post("settings", {
+                  colName: "header_content",
+                  data: e.target.value,
+                });
+              }, 300);
             }}/>
+
             <Divider/>
             <TextField defaultValue={settings?.footer_content} rows={3}  label='محتوي الفوتر' multiline fullWidth onChange={(e)=>{
                axiosClient.post("settings", {

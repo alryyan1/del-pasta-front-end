@@ -14,9 +14,10 @@ interface RequestedServicesProbs {
  
     updateQuantity:()=>void;
     item:Mealorder;
-    show:boolean
+    show:boolean;
+    details?:boolean
 }
-function RequestedServices({updateQuantity,item,show}:RequestedServicesProbs) {
+function RequestedServices({updateQuantity,item,show,details=true}:RequestedServicesProbs) {
   return (
     <Slide unmountOnExit  in={show} >
           <div className="border-red-100 bg-blue-300 requested-meal p-2 rounded-md shadow-sm">
@@ -35,10 +36,10 @@ function RequestedServices({updateQuantity,item,show}:RequestedServicesProbs) {
                 <TableRow key={requested.id}>
                   {/* <TableCell>{requested.order_meal.meal.name}</TableCell> */}
                   <TableCell>{requested.child_meal.name}</TableCell>
-                  <TableCell>{requested.child_meal.price}</TableCell>
+                 {details && <TableCell>{requested.child_meal.price}</TableCell>}
 
                   {/* <TableCell>{requested.child_meal.quantity}</TableCell> */}
-                  <TableCell className="text-center">
+                  {details &&     <TableCell className="text-center">
                     <Stack direction={"column"} justifyContent={'center'}>
                       <button
                         onClick={() => updateQuantity(false, requested)}
@@ -56,10 +57,10 @@ function RequestedServices({updateQuantity,item,show}:RequestedServicesProbs) {
                         <Plus size={16} />
                       </button>
                     </Stack>
-                  </TableCell>
-                  <TableCell>
+                  </TableCell>}
+                  {details &&     <TableCell>
                     {(requested.child_meal.price * requested.count).toFixed(3)}   
-                  </TableCell>
+                  </TableCell>}
                 </TableRow>
               ))}
             </TableBody>

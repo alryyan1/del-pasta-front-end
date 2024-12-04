@@ -91,9 +91,13 @@ const MealChildrenDialog = ({
                 {...register("price")}
                 size="small"
               ></TextField>
-              <Stack direction={"row"} gap={1}>
+               <Button sx={{ width: "100px" }} type="submit" variant="contained">
                 {" "}
-                {/* <TextField
+                +
+              </Button>
+              {/* <Stack direction={"row"} gap={1}>
+                {" "}
+                <TextField
                   label="عدد الاشخاص"
                   {...register("people_count")}
                   size="small"
@@ -102,12 +106,9 @@ const MealChildrenDialog = ({
                   label="الوزن"
                   {...register("weight")}
                   size="small"
-                ></TextField> */}
-              </Stack>
-              <Button sx={{ width: "100px" }} type="submit" variant="contained">
-                {" "}
-                +
-              </Button>
+                ></TextField>
+              </Stack> */}
+             
             </Stack>
           </form>
           <div>

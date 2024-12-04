@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 interface RequestedServicesProbs {
  
-    updateQuantity:()=>void;
+    updateQuantity:(() => void) | null;
     item:Mealorder;
     show:boolean;
     details?:boolean
@@ -39,8 +39,8 @@ function RequestedServices({updateQuantity,item,show,details=true}:RequestedServ
                  {details && <TableCell>{requested.child_meal.price}</TableCell>}
 
                   {/* <TableCell>{requested.child_meal.quantity}</TableCell> */}
-                  {details &&     <TableCell className="text-center">
-                    <Stack direction={"column"} justifyContent={'center'}>
+                  {/* {details &&     <TableCell className="text-center"> */}
+                    {/* <Stack direction={"column"} justifyContent={'center'}>
                       <button
                         onClick={() => updateQuantity(false, requested)}
                         className="p-1 text-center bg-gray-100 rounded"
@@ -56,11 +56,11 @@ function RequestedServices({updateQuantity,item,show,details=true}:RequestedServ
                       >
                         <Plus size={16} />
                       </button>
-                    </Stack>
-                  </TableCell>}
-                  {details &&     <TableCell>
+                    </Stack> */}
+                  {/* </TableCell>} */}
+                  {/* {details &&     <TableCell>
                     {(requested.child_meal.price * requested.count).toFixed(3)}   
-                  </TableCell>}
+                  </TableCell>} */}
                 </TableRow>
               ))}
             </TableBody>

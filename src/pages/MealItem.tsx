@@ -37,24 +37,23 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
       className={`card shadow hover:opacity-45  ${selectEffect} ${selectedColor}`}
       style={{
         cursor: 'pointer',
-        justifyContent:'center',
-        alignItems:'center',
+        display: 'flex',
+        justifyContent: 'center',
+        gap:'5px' ,
+        padding:'5px',
+        alignItems: 'center',
         // display: 'grid',
         // gridTemplateColumns: '1fr',
-        gap: '4px',
-        padding: '4px',
-        margin: '4px',
+        flexDirection: 'column',
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         backdropFilter: 'blur(10px)',
         borderRadius: '8px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        border: selected ? '2px solid red' : 'none'
+        border: selected ? '2px dashed #cf060559' : 'none'
       }}
     >
       {/* <div className=" "> */}
-        <div>
             <img src={meal?.image ?? ph} alt={meal.name} className="w-20 h-20 object-cover" />
-        </div>
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {meal.name}
         </h3>

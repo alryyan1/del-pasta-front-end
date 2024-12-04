@@ -19,9 +19,10 @@ import axiosClient from "@/helpers/axios-client";
 import RequestedChildrenTable from "./RequestedChildrenTable";
 import { Box } from "@mui/system";
 import RequestedServices from "./RequestedServices";
+import Incremenor from "./Incremenor";
 interface CartItemProbs {
   item: Mealorder;
-  updateQuantity: (increment: boolean, item: Requestedchildmeal) => void;
+  updateQuantity: (increment: boolean, item: Mealorder) => void;
   isMultible: string;
   setSelectedOrder: (item: Mealorder) => void;
 }
@@ -59,7 +60,7 @@ function CartItem({
       <div style={{border:'1px dashed lightblue',width:'100%'}}
     >
       <Box  sx={{overflow:'hidden'}}
-        className={` flex items-center justify-between px-4 p-2 bg-white rounded-xl shadow-md  ${isMultible}`}
+        className={` flex items-center justify-between px-4 p-2 bg-white rounded-xl shadow-md cart-item  ${isMultible}`}
       >
         <BasicPopover
           title={item.meal.name}
@@ -76,7 +77,7 @@ function CartItem({
         />
 
         <div className="flex items-center  ">
-          <span className="w-16 text-center">{item.totalPrice.toFixed(3)}</span>
+          <span className="w-16 text-center">{(item.totalPrice * item.quantity).toFixed(3) }</span>
           <IconButton color="error" onClick={() => onDelete(item)} size="small">
             <Trash2 size={18} />
           </IconButton>
@@ -89,6 +90,7 @@ function CartItem({
           <ColorPicker value={item.color} onChange={(e:ColorPickerChangeEvent)=>{
             setColor(e.value)
           }} />
+          <Incremenor updateQuantity={updateQuantity} requested={item} />
 
         </div>
       </Box>

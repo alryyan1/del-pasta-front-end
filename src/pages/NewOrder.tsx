@@ -166,10 +166,10 @@ const NewOrder = () => {
         )}
 
         <Box dir="rtl">
-          <div className="orders-cart">
+          <div className="orders-cart h-[calc(100vh-200px)] ">
             {showCart && (
               <div
-                style={{ border: "1px dashed lightgray" }}
+           
                 className="flex justify-center items-center  "
               >
                 {selectedOrder?.meal_orders?.length > 0 && (

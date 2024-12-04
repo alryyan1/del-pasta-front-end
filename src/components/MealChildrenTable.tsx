@@ -55,7 +55,7 @@ function MealChildrenTable({
         </IconButton>
       </Tooltip>
 
-      <Table size="small">
+      <Table style={{direction:'ltr'}} size="small">
         <TableHead>
           <TableRow>
             <TableCell>اسم</TableCell>
@@ -78,6 +78,7 @@ function MealChildrenTable({
                   {meal.quantity}
                 </TdCell>
                 <TdCell
+                 update={setSelectedMeal}
                   show
                   sx={{ width: "60px", textAlign: "center" }}
                   item={meal}

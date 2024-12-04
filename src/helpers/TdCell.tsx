@@ -47,8 +47,10 @@ function TdCell({
            [colName]:
        val,
         })
-        .then((data) => {
-   
+        .then(({data}) => {
+          if (update) {
+            update(data.data)
+          }
         })
      
     }

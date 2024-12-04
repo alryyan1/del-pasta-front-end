@@ -19,6 +19,7 @@ import MealChildrenDialog from './MealChildrenDialog';
 import placeHolder from './../assets/images/ph.jpg'
 import TdCell from '@/helpers/TdCell';
 import { useMealsStore } from '@/stores/MealsStore';
+import { theme } from '@/helpers/constants';
 
 // Define the Meal interface
 
@@ -107,7 +108,9 @@ const MealTable: React.FC = () => {
         </TableHead>
         <TableBody>
           {meals.map((meal:Meal, index) => (
-            <TableRow key={meal.id} className="hover:bg-gray-50">
+            <TableRow sx={{background:(theme)=>{
+              return meal.id == selectedMeal?.id? '#f1f1f1' : 'white' 
+            }}} key={meal.id} className="hover:bg-gray-50">
               <TableCell className="">{meal.id}</TableCell>
               <TdCell table={'meals'} colName={'name'} item={meal}  >{meal.name}</TdCell>
               <TableCell className="">{meal?.category?.name}</TableCell>

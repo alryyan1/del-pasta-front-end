@@ -10,6 +10,8 @@
    /* overflow: auto!important; */
 
 }
+
+
 button,
 h1,
 h2,
@@ -42,6 +44,10 @@ nav {
   background-color: lightblue; /* example style */
   /* width: 240px!important; */
 }
+:root{
+  --primary: #3f51b5;
+  --secondary: #ff9800;
+}
 body {
   overflow: hidden;
 }
@@ -64,6 +70,7 @@ body {
   background: white;
   border-radius: 10px;
   transition: border-radius 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  min-height: 212px;
 }
 
 .shadow {
@@ -176,9 +183,32 @@ body {
 }
 
 .dashborad-stats {
-  background: linear-gradient(45deg, #f8a5c2, transparent);
+  background: linear-gradient(45deg, #7bc7d4, transparent);
   border-radius: 40px;
 }
 .muirtl-16wn5uk-MuiTypography-root {
   color: black !important;
+}
+
+.cart-items-div{
+  counter-reset: item;
+}
+
+.cart-item {
+  counter-increment: item;
+  position: relative;
+}
+.cart-item::before{
+  content: counter(item);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* //material color */
+    background-color: #9FA8DA;
+  color: white;
+  /* background-color: red; */
+
 }

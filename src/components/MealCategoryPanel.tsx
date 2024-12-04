@@ -59,7 +59,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     {/* Meals Display */}
     <div className=" w-full meals sm:w-2/3 md:w-3/4 p-1 overflow-y-auto  md:mt-0">
    
-      <div className="meal-container  h-[calc(100vh-100px)] overflow-auto">
+      <div className="meal-container  h-[calc(100vh-200px)] overflow-auto">
         
         {selectedCategory ? (
           selectedCategory.meals.map((meal, index) => (

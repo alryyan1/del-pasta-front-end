@@ -4,15 +4,16 @@ interface infoItemProps {
     name:string;
     value:number;
     InfoIcon:React.FC<React.SVGProps<SVGSVGElement>>;
-    moneyTxt:boolean
+    moneyTxt:boolean;
+    decimalPoins?:number; // for currency, default is 3 decimal points.
 }
-function InfoItem({name,value,InfoIcon,moneyTxt}:infoItemProps) {
+function InfoItem({name,value,InfoIcon,moneyTxt,decimalPoins=3}:infoItemProps) {
   return (
     <div className="dashborad-stats p-6 rounded-lg shadow-lg">
     <div className="flex items-center justify-between">
       <div>
         <Typography variant='h5' className="font-medium text-gray-600">{name}</Typography>
-        <p className="mt-1 text-2xl font-semibold text-gray-900">{value.toFixed(3)}</p>
+        <p className="mt-1 text-2xl font-semibold text-gray-900">{value.toFixed(decimalPoins)}</p>
       </div>
       <div className="bg-indigo-50 p-3 rounded-full">
        {moneyTxt ? 'OMR':  <InfoIcon className="h-6 w-6 text-indigo-600" />}

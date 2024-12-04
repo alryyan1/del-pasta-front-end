@@ -22,7 +22,15 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
         setSelectedOrder(data.order);
       });
   };
-
+  const updateMealOrderQuantity = (increment: boolean, item: Mealorder) => {
+    axiosClient
+      .patch(`orderMeals/${item.id}`, {
+        quantity: increment ? item.quantity + 1 : Math.max(0, item.quantity - 1),
+      })
+      .then(({ data }) => {
+        setSelectedOrder(data.order);
+      });
+  };
   const itemTotal = selectedOrder.meal_orders.reduce(
     (sum, item) => sum + item.meal.price * item.quantity,
     0
@@ -58,7 +66,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       });
   };
   return (
-    <div style={{ height: "100%" }} className=" flex justify-center px-4">
+    <div style={{ height: "100%" }} className="cart-items-div flex justify-center px-4">
       <Stack
         className="shadow-lg overflow-auto"
         direction={"column"}
@@ -74,7 +82,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
             return (
               <CartItem
                 setSelectedOrder={setSelectedOrder}
-                updateQuantity={updateQuantity}
+                updateQuantity={updateMealOrderQuantity}
                 isMultible={isMultible}
                 item={item}
               />
@@ -147,7 +155,6 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
             onClick={orderUpdateHandler}
             variant="contained"
             sx={{}}
-            className="card w-full bg-blue-500 text-white py-4 rounded-xl hover:bg-blue-600 transition-colors"
           >
             تاكيد
           </LoadingButton>

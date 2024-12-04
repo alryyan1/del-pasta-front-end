@@ -6,6 +6,8 @@ import { Customer } from '@/Types/types';
 import InfoItem from '@/components/InfoItem';
 import { Order } from '../Types/types';
 import { useAuthContext } from '@/contexts/stateContext';
+import { FormControl, InputLabel, Menu, MenuItem, Select } from '@mui/material';
+import dayjs from 'dayjs';
 
 interface Info {
   totalRevenue: number;
@@ -16,6 +18,7 @@ interface Info {
 
 export default function Dashboard() {
   const [data,setData] = useState([])
+  const [selectedMonth,setSelectedMonth] = useState(dayjs().format('MMMM'))
   const [orders,setOrders] = useState([])
   const {user}= useAuthContext()
   console.log(user,'user')
@@ -26,31 +29,62 @@ export default function Dashboard() {
     conversionRate: 0,
   });
   useEffect(()=>{
-    axiosClient.get<Info>('info').then(({data})=>{
+    axiosClient(`ordersInfoGraphic?month=${selectedMonth}`).then(({data})=>{
+      console.log(data,'d')
+      setData(data)
+    })
+    axiosClient.get<Info>(`info?month=${selectedMonth}`).then(({data})=>{
       setInfo(data)
     })
-  },[])
+
+
+    
+
+
+  },[selectedMonth])
   useEffect(()=>{
     axiosClient.get<Order[]>("orders?today=1").then(({ data }) => {
       setOrders(data);
     });
 
-  axiosClient.get('ordersInfoGraphic').then(({data})=>{
-    console.log(data,'d')
-    setData(data)
-  })
+ 
   },[])
+  const handleChange = (e)=>{
+      console.log(e.target.value,'change')
+      setSelectedMonth(e.target.value)
+      
+  }
+  const startOfYear = dayjs().startOf('year');
+  const monthArr = [];
+  // Loop over all months
+for (let i = 0; i < 12; i++) {
+  const month = startOfYear.add(i, 'month');
+  monthArr.push(month.format('MMMM'));
+}
   return (
     <div className="space-y-8">
+     <FormControl fullWidth>
+  <InputLabel id="demo-simple-select-label">Month</InputLabel>
+  <Select
+    id="demo-simple-select"
+    value={selectedMonth}
+    label="Month"
+    onChange={handleChange}
+  >
+    {monthArr.map((m,i)=>{
+      return <MenuItem value={i+1}>{m}</MenuItem>
+    })}
+  </Select>
+</FormControl>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
          <InfoItem moneyTxt={true}  InfoIcon={DollarSign} name='إجمالي الإيرادات' value={info.totalRevenue}/>
-         <InfoItem moneyTxt={false}  InfoIcon={ShoppingBag} name='إجمالي الطلبات' value={info.totalOrders}/>
-         <InfoItem moneyTxt={false}  InfoIcon={ShoppingBag} name='طلبات اليوم' value={orders.length}/>
-         <InfoItem moneyTxt={false}  InfoIcon={Users} name='العملاء النشطون' value={info.activeCustomers}/>
+         <InfoItem moneyTxt={false} decimalPoins={0} InfoIcon={ShoppingBag} name='إجمالي الطلبات' value={info.totalOrders}/>
+         <InfoItem moneyTxt={false} decimalPoins={0}  InfoIcon={ShoppingBag} name='طلبات اليوم' value={orders.length}/>
+         <InfoItem moneyTxt={false} decimalPoins={0}  InfoIcon={Users} name='العملاء ' value={info.activeCustomers}/>
       </div>
 
       <div className=" p-6 rounded-lg shadow-sm">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">نظرة عامة على المبيعات</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">نظرة عامة على الايرادات</h3>
         <div className="h-80">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data}>

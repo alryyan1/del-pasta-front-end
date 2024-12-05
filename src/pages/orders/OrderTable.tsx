@@ -35,7 +35,7 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
       <Paper sx={{ width: "100%", mt: 1 }}>
         <TableContainer
           sx={{
-            maxHeight: 500,
+            // maxHeight: 600,
             overflowX: "auto",
             width: isMobile ? "500px" : "auto",
           }}
@@ -108,28 +108,7 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                   <TableCell>{order.notes}</TableCell>
                 </TableRow>
               ))}
-                       <TableRow>
-                <TableCell> </TableCell>
-                <TableCell> </TableCell>
-                {/* <TableCell> الولايه</TableCell> */}
-                <TableCell> </TableCell>
-                <TableCell></TableCell>
-                {/* <TableCell>حالة الدفع</TableCell> */}
-                <TableCell>
-                 <Typography variant="h4"> {orders.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}ريال</Typography>
-                </TableCell>
-                <TableCell>
-                  
-                  <Typography variant="h4">{orders.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}ريال</Typography>
-                </TableCell>
-                {/* <TableCell> المتبقي</TableCell> */}
-                <TableCell> </TableCell>
-                <TableCell> </TableCell>
-                <TableCell> </TableCell>
-                <TableCell> </TableCell>
-                {/* <TableCell> تكلفه الطلب</TableCell> */}
-                {/* <TableCell align="right">الإجراءات</TableCell> */}
-              </TableRow>
+                    
             </TableBody>
             
           </Table>

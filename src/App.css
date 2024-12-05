@@ -45,7 +45,7 @@ nav {
   /* width: 240px!important; */
 }
 :root{
-  --primary: #3f51b5;
+  --primary: rgb(144 202 249 / 34%);
   --secondary: #ff9800;
 }
 body {
@@ -97,7 +97,7 @@ body {
 .muirtl-lhpdre-MuiStack-root,
 .muirtl-dznnl1-MuiStack-root,
 .muirtl-lhpdre-MuiStack-root > :not(style) ~ :not(style) {
-  margin: 0 !important;
+  margin: 0;
 }
 
 .layout div {
@@ -126,7 +126,9 @@ body {
   justify-content: center;
   margin-bottom: 10px;
 }
-
+.rbc-calendar{
+  width: auto!important;
+}
 .mealDiv {
   padding: 5px;
   margin-bottom: 5px;

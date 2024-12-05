@@ -44,7 +44,7 @@ function Orders() {
   const [search, setSearch] = useState("");
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
   const [deliveryDate, setDeliveryDate] = useState("");
-  const [page, setPage] = useState(10);
+  const [page, setPage] = useState(20);
   const [links, setLinks] = useState([]);
 
   const updateItemsTable = (link, setLoading) => {
@@ -92,6 +92,8 @@ function Orders() {
         gap={1}
         direction={isMobile ? "column" : "row"}
         justifyContent={"space-around"}
+        sx={{m:2}}
+        className="!my-1"
       >
         <Typography className="text-3xl font-bold mb-8">
           اداره الطلبات{" "}
@@ -151,6 +153,7 @@ function Orders() {
         </Stack>
       </Stack>
       <Stack
+      sx={{mt:2}}
         direction={"row"}
         gap={1}
         justifyContent={"space-around"}
@@ -162,10 +165,10 @@ function Orders() {
           justifyContent={"center"}
           alignContent={"center"}
           gap={1}
-          className="shadow-lg text-center border-rounded w-[200px] items-center bg-red-100 p-2 rounded-sm "
+          className="shadow-lg text-center border-rounded w-[200px] items-center bg-[var(--primary)] rounded-md  p-2  "
         >
           <Typography variant="h5">  اجمالي</Typography>
-          <Typography variant="h5">5</Typography>
+          <Typography variant="h5">{orders.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}</Typography>
         </Stack>
         <Stack
           direction={"column"}
@@ -173,10 +176,10 @@ function Orders() {
           justifyContent={"center"}
           alignContent={"center"}
           gap={1}
-          className="shadow-lg text-center items-center w-[200px] bg-red-100 p-2 rounded-sm "
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded "
         >
           <Typography variant="h5">  المدفوع</Typography>
-          <Typography variant="h5">5</Typography>
+          <Typography variant="h5">{orders.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}</Typography>
         </Stack>
         <Stack
           direction={"column"}
@@ -184,10 +187,10 @@ function Orders() {
           justifyContent={"center"}
           alignContent={"center"}
           gap={1}
-          className="shadow-lg text-center items-center w-[200px] bg-red-100 p-2 rounded-sm "
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded "
         >
           <Typography variant="h5">  المتبقي</Typography>
-          <Typography variant="h5">5</Typography>
+          <Typography variant="h5">{(orders.reduce((prev, curr) => prev + curr.totalPrice, 0) - orders.reduce((prev, curr) => prev + curr.amount_paid, 0)).toFixed(3)}</Typography>
         </Stack>
       </Stack>
 

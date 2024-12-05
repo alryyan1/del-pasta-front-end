@@ -8,10 +8,10 @@ function FoodMenuItem({meal}) {
       <TableHead>
         <TableRow>
           <TableCell >الصنف</TableCell>
-          <TableCell >العدد</TableCell>
+          {/* <TableCell >العدد</TableCell> */}
           <TableCell >السعر</TableCell>
-          <TableCell > الاشخاص</TableCell>
-          <TableCell >الوزن </TableCell>
+          {/* <TableCell > الاشخاص</TableCell> */}
+          {/* <TableCell >الوزن </TableCell> */}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -19,10 +19,10 @@ function FoodMenuItem({meal}) {
           return (
             <TableRow key={child.id}>
               <TableCell >{child.name}</TableCell>
-              <TableCell >{child.quantity}</TableCell>
+              {/* <TableCell >{child.quantity}</TableCell> */}
               <TableCell >{child.price}</TableCell>
-              <TableCell >{child.people_count}</TableCell>
-              <TableCell >{child.weight}</TableCell>
+              {/* <TableCell >{child.people_count}</TableCell> */}
+              {/* <TableCell >{child.weight}</TableCell> */}
             </TableRow>
           );
         })}

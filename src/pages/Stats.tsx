@@ -17,7 +17,7 @@ function Stats() {
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-    <TableContainer sx={{ maxHeight: 440 }}>
+    <TableContainer >
     <input
         onChange={(e) => {
           setSearchQuery(e.target.value);
@@ -27,7 +27,7 @@ function Stats() {
       <Table stickyHeader>
         <TableHead>
           <TableRow>
-          <TableCell className="  ">الوجبه</TableCell>
+          <TableCell className="  ">الاسم</TableCell>
             <TableCell className="  ">الصنف</TableCell>
             <TableCell className="  ">الكميه المطلوبه</TableCell>
             {/* <TableCell align="right">الإجراءات</TableCell> */}

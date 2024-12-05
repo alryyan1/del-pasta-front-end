@@ -116,7 +116,7 @@ const ReservationCalendar = () => {
         selectable
         onSelectSlot={handleSelectSlot}
         onSelectEvent={handleSelectEvent}
-        style={{ height: 500, margin: "50px" }}
+        style={{ height: 500,  }}
       />
 
       <Dialog open={open} onClose={handleClose}>

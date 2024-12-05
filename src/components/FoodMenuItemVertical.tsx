@@ -17,14 +17,14 @@ function FoodMenuItemVertical({ meal }) {
               <Typography sx={{flex:1}} className="text-right">السعر</Typography>
               <Typography sx={{flex:1}}> {child.price} ريال</Typography>
             </Stack>
-            <Stack justifyContent={'space-around'} direction={"row"} gap={1}>
+            {/* <Stack justifyContent={'space-around'} direction={"row"} gap={1}>
               <Typography sx={{flex:1}}>العدد</Typography>
               <Typography sx={{flex:1}}>{child.quantity}</Typography>
-            </Stack>
-            <Stack justifyContent={'space-around'} direction={"row"} gap={1}>
+            </Stack> */}
+            {/* <Stack justifyContent={'space-around'} direction={"row"} gap={1}>
               <Typography sx={{flex:1}}>الاشخاص</Typography>
               <Typography sx={{flex:1}}>{child.people_count}</Typography>
-            </Stack>
+            </Stack> */}
           </Stack>
         );
       })}

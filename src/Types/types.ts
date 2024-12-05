@@ -65,6 +65,7 @@ export interface Order {
   totalPrice:number;
   delivery_time:string;
   receiptLocation:string;
+  whatsapp:boolean;
 }
 
 

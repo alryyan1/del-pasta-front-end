@@ -4,14 +4,14 @@ import StatusSelector from "@/components/StatusSelector";
 import axiosClient from "@/helpers/axios-client";
 import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
-import { Button, IconButton, TextField, Tooltip } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useCustomerStore } from "./Customer/useCustomer";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
-import { Message } from "@mui/icons-material";
+import { Message, WhatsApp } from "@mui/icons-material";
 import { toast } from "react-toastify";
 
 interface OrderHeaderProps {
@@ -34,14 +34,27 @@ function OrderHeader({
     fetchData();
   }, []);
   const sendHandler = () => {
+    setloading(true)
     axiosClient
     .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
     .then(({data}) => {
-      console.log(data,'message sent')
-      toast.success(data.message);
+      if (data.error) {
+      toast.error(data.error);
+      return
         
-    })
+      }
+      axiosClient.patch(`orders/${selectedOrder?.id}`,{whatsapp:1}).then(({data})=>{
+        setSelectedOrder(data.order);
+      })
+      console.log(data,'message sent')
+      toast.success(data.message,{
+        style: { width: "100px" }, // Adjust width here
+
+      });
+        
+    }).finally(()=>setloading(false))
   };
+  const [loading,setloading]= useState(false)
   const sendMsg = () => {
     axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {
       
@@ -172,9 +185,9 @@ function OrderHeader({
                 <Message />
               </Tooltip>
             </IconButton>
-            <IconButton onClick={sendHandler}>
+            <IconButton disabled={selectedOrder?.whatsapp} onClick={sendHandler}>
               <Tooltip title=" ارسال الفاتوره ">
-                <File />
+               {loading ? <CircularProgress/> : <WhatsApp color="success" />}
               </Tooltip>
             </IconButton>
             <IconButton color="success" onClick={deliveryHandler}>

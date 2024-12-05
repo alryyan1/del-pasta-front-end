@@ -58,9 +58,9 @@ function MealChildrenTable({
       <Table style={{direction:'ltr'}} size="small">
         <TableHead>
           <TableRow>
-            <TableCell>اسم</TableCell>
-            <TableCell>العدد</TableCell>
-            <TableCell>سعر</TableCell>
+            <TableCell>Name</TableCell>
+            {/* <TableCell>العدد</TableCell> */}
+            <TableCell>Price</TableCell>
             {/* <TableCell>الاشخاص</TableCell> */}
             {/* <TableCell>الوزن</TableCell> */}
             <TableCell>-</TableCell>
@@ -70,13 +70,13 @@ function MealChildrenTable({
           {data.map((meal, index) => {
             console.log(meal, "meal");
             return (
-              <TableRow key={index}>
+              <TableRow key={meal.id}>
                 <TdCell item={meal} colName={"name"} table={"childMeals"}>
                   {meal.name}
                 </TdCell>
-                <TdCell item={meal} colName={"quantity"} table={"childMeals"}>
+                {/* <TdCell item={meal} colName={"quantity"} table={"childMeals"}>
                   {meal.quantity}
-                </TdCell>
+                </TdCell> */}
                 <TdCell
                  update={setSelectedMeal}
                   show
@@ -135,7 +135,7 @@ export function MealChildrenTableMobile({
         </IconButton>
       </Tooltip>
 
-      <Table size="small">
+      <Table style={{direction:'ltr'}} size="small">
         <TableHead>
           <TableRow>
             <TableCell>اسم</TableCell>
@@ -146,7 +146,7 @@ export function MealChildrenTableMobile({
           {data.map((meal, index) => {
             console.log(meal, "meal");
             return (
-              <TableRow key={index}>
+              <TableRow key={meal.id}>
                 <TdCell item={meal} colName={"name"} table={"childMeals"}>
                   {meal.name}
                 </TdCell>

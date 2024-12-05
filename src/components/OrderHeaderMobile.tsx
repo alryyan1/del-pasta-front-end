@@ -7,11 +7,11 @@ import { Autocomplete, LoadingButton } from "@mui/lab";
 import { Button, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
 import { useCustomerStore } from "@/pages/Customer/useCustomer";
-import { Message } from "@mui/icons-material";
+import { Message, WhatsApp } from "@mui/icons-material";
 import { toast } from "react-toastify";
 
 interface OrderHeaderMobileProps {
@@ -35,14 +35,28 @@ function OrderHeaderMobile({
     fetchData();
   }, []);
   const sendHandler = () => {
+    setloading(true)
     axiosClient
     .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
     .then(({data}) => {
-      console.log(data,'message sent')
-      toast.success(data.message);
+      if (data.error) {
+      toast.error(data.error);
+      return
         
-    })
+      }
+      axiosClient.patch(`orders/${selectedOrder?.id}`,{whatsapp:1}).then(({data})=>{
+        setSelectedOrder(data.order);
+      })
+      console.log(data,'message sent')
+      toast.success(data.message,{
+        style: { width: "100px" }, // Adjust width here
+
+      });
+        
+    }).finally(()=>setloading(false))
   };
+  const [loading,setloading]= useState(false)
+
   const sendMsg = () => {
     axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {
       
@@ -76,7 +90,7 @@ function OrderHeaderMobile({
   return (
     <Stack
       gap={2}
-      sx={{mb:1,background:'#d0a1d099'}}
+      sx={{mb:1}}
 
       direction={"column" }
       // sx={{ alignItems: "end" }}
@@ -143,18 +157,19 @@ function OrderHeaderMobile({
             item={selectedOrder}
           />
           {/* <BasicTimePicker/> */}
-        </Stack>
-        
-          <PayOptions
+            <PayOptions
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
             key={selectedOrder.id}
           />
+        </Stack>
+        <Stack justifyContent={'space-around'} direction={"row"} gap={1}>
+         
           <StatusSelector
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
           />
-          <Stack direction={"row"} gap={1}>
+          <Stack justifyContent={'space-around'} direction={"row"} gap={1}>
           <IconButton onClick={sendMsg}>
               <Tooltip title=" ارسال رساله ">
                 <Message />
@@ -162,7 +177,7 @@ function OrderHeaderMobile({
             </IconButton>
             <IconButton onClick={sendHandler}>
               <Tooltip title=" ارسال الفاتوره ">
-                <File />
+                <WhatsApp />
               </Tooltip>
             </IconButton>
             <IconButton color="success" onClick={deliveryHandler}>
@@ -171,6 +186,9 @@ function OrderHeaderMobile({
               </Tooltip>
             </IconButton>
           </Stack>
+        </Stack>
+        
+       
         </>
       )}
     </Stack>

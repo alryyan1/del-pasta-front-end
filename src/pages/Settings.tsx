@@ -1,5 +1,6 @@
 import {
     Box,
+    Button,
     Checkbox,
     Divider,
     FormControlLabel,
@@ -46,6 +47,7 @@ import axiosClient from "@/helpers/axios-client";
         setFile(e.target.files[0]);
       }
     };
+    const [welcomeMsg,setWelcomeMsg] = useState('')
     const image1 = new Image(100,100)
     image1.src = settings?.header_base64;
   
@@ -201,13 +203,19 @@ import axiosClient from "@/helpers/axios-client";
             <Box sx={{p:1}}>
               <Divider>الرساله  الترحيبيه</Divider>
              <TextField  defaultValue={settings?.header_content} sx={{mb:1}}  rows={10}  multiline fullWidth onChange={(e)=>{
-              setTimeout(() => {
-                axiosClient.post("settings", {
-                  colName: "header_content",
-                  data: e.target.value,
-                });
-              }, 300);
+             setWelcomeMsg(e.target.value)
             }}/>
+            <Button fullWidth variant="contained" sx={{mb:1}} onClick={()=>{
+              axiosClient.post("settings", {
+                colName: "header_content",
+                data: welcomeMsg,
+              });
+              axiosClient.post("settings", {
+                colName: "is_footer",
+                data: false,
+              });
+            
+            }}>حفظ</Button>
 
             <Divider/>
             <TextField defaultValue={settings?.footer_content} rows={3}  label='محتوي الفوتر' multiline fullWidth onChange={(e)=>{

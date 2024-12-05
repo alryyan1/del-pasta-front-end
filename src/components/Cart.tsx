@@ -66,7 +66,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       });
   };
   return (
-    <div style={{ height: "100%" }} className="cart-items-div flex justify-center px-4">
+    <div style={{ height: "100%" }} className="cart-items-div flex justify-center ">
       <Stack
         className="shadow-lg overflow-auto"
         direction={"column"}

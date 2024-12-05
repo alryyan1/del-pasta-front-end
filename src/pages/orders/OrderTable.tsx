@@ -52,7 +52,7 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                 <TableCell> اجمالي</TableCell>
                 <TableCell width={'5%'}> المدفوع</TableCell>
                 {/* <TableCell> المتبقي</TableCell> */}
-                <TableCell>تاريخ الإنشاء</TableCell>
+                <TableCell>تاريخ الطلب</TableCell>
                 <TableCell>تاريخ التسليم</TableCell>
                 <TableCell>مكان التوصيل </TableCell>
                 <TableCell>ملاحظات </TableCell>
@@ -69,23 +69,24 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                       content={<OrderMealsTable  data={order.meal_orders} />}
                     />
                   </TableCell>
-                  <TableCell>{order?.customer?.name}</TableCell>
+                  <TableCell sx={{textWrap:'nowrap'}}>{order?.customer?.name}</TableCell>
                   {/* <TableCell>{order?.customer?.state}</TableCell> */}
                   <TableCell>{order?.customer?.area}</TableCell>
                   <MyTableCellStatusSelector order={order} setSelectedOrder={null} />
                   {/* <TableCell>{order.payment_type}</TableCell> */}
                   <TableCell>{order.totalPrice.toFixed(3)}</TableCell>
                   <TdCell
+                   isNum
                     sx={{ width: "50px" }}
                     table={"orders"}
                     item={order}
                     colName={"amount_paid"}
                   >
-                    {order.amount_paid}
+                    {order.amount_paid.toFixed(3)}
                   </TdCell>
                   {/* <TableCell>{ (order.totalPrice - order.amount_paid).toFixed(3)}</TableCell> */}
-                  <TableCell>
-                    {dayjs(new Date(order.created_at)).format("YYYY-MM-DD ")}
+                  <TableCell sx={{textWrap:'nowrap'}}>
+                    {dayjs(new Date(order.created_at)).format("YYYY-MM-DD HH:mm A")}
                   </TableCell>
                   <TableCell>
                     <MyDateField2

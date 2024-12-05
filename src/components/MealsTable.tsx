@@ -81,7 +81,7 @@ const MealTable: React.FC = () => {
   },[selectedMeal])
    meals  = meals.filter((m)=>{
     if (search !=null) {
-     return m.name.includes(search)
+     return m.name.toLowerCase().includes(search.toLowerCase())
     }else{
       return true
     }

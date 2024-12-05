@@ -22,7 +22,9 @@ axiosClient.interceptors.response.use(
     
     console.log(res.data.status, "res");
     if (res.data.show) {
-      toast.success("تم العمليه بنجاح");
+      toast.success("",{
+        style: { width: "100px" }, // Adjust width here
+      });
     }
     return res;
   },

@@ -1,7 +1,8 @@
 
 import axiosClient from "@/helpers/axios-client";
-import { Card, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Button, Card, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Stack } from "@mui/system";
+import { Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 function Stats() {
@@ -30,6 +31,9 @@ function Stats() {
           <TableCell className="  ">الاسم</TableCell>
             <TableCell className="  ">الصنف</TableCell>
             <TableCell className="  ">الكميه المطلوبه</TableCell>
+            <TableCell className="  "> الكميه المتوفره</TableCell>
+            <TableCell className="  "> الباقي </TableCell>
+            <TableCell className="  "> اضافه كميه </TableCell>
             {/* <TableCell align="right">الإجراءات</TableCell> */}
           </TableRow>
         </TableHead>
@@ -39,6 +43,9 @@ function Stats() {
               <TableCell className=" text-sm ">{info.mealName}</TableCell>
               <TableCell className=" text-sm ">{info.childName}</TableCell>
               <TableCell className=" text-sm ">{info.totalQuantity}</TableCell>
+              <TableCell className=" text-sm ">0</TableCell>
+              <TableCell className=" text-sm ">0</TableCell>
+              <TableCell className=" text-sm "><Button><Plus/></Button></TableCell>
             </TableRow>
           ))}
         </TableBody>

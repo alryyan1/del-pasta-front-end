@@ -81,6 +81,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               item.quantity > 1 ? "animate__animated animate__rubberBand" : "";
             return (
               <CartItem
+              updateRequestedQuantity={updateQuantity}
                 setSelectedOrder={setSelectedOrder}
                 updateQuantity={updateMealOrderQuantity}
                 isMultible={isMultible}

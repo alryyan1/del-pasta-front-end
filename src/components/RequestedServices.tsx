@@ -1,6 +1,6 @@
 import { Eye, Minus, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import {  Mealorder } from "../Types/types";
+import {  Mealorder, Requestedchildmeal } from "../Types/types";
 
 import {
   Slide,
@@ -12,12 +12,12 @@ import {
 } from "@mui/material";
 interface RequestedServicesProbs {
  
-    updateQuantity:(() => void) | null;
+    updateRequestedQuantity:(increment:boolean,requested:Requestedchildmeal) => void ;
     item:Mealorder;
     show:boolean;
     details?:boolean
 }
-function RequestedServices({updateQuantity,item,show,details=true}:RequestedServicesProbs) {
+function RequestedServices({updateRequestedQuantity,item,show,details=true}:RequestedServicesProbs) {
   return (
     <Slide unmountOnExit  in={show} >
           <div className="border-red-100 bg-blue-300 requested-meal p-2 rounded-md shadow-sm">
@@ -38,11 +38,11 @@ function RequestedServices({updateQuantity,item,show,details=true}:RequestedServ
                   <TableCell>{requested.child_meal.name}</TableCell>
                  {details && <TableCell>{requested.child_meal.price}</TableCell>}
 
-                  {/* <TableCell>{requested.child_meal.quantity}</TableCell> */}
-                  {/* {details &&     <TableCell className="text-center"> */}
-                    {/* <Stack direction={"column"} justifyContent={'center'}>
+                  <TableCell>{requested.child_meal.quantity}</TableCell>
+                  {details &&     <TableCell className="text-center">
+                    <Stack direction={"column"} justifyContent={'center'}>
                       <button
-                        onClick={() => updateQuantity(false, requested)}
+                        onClick={() => updateRequestedQuantity(false, requested)}
                         className="p-1 text-center bg-gray-100 rounded"
                       >
                         <Minus size={16} />
@@ -51,16 +51,16 @@ function RequestedServices({updateQuantity,item,show,details=true}:RequestedServ
                         {requested.count}
                       </span>
                       <button
-                        onClick={() => updateQuantity(true, requested)}
+                        onClick={() => updateRequestedQuantity(true, requested)}
                         className="p-1 text-center bg-gray-100 rounded"
                       >
                         <Plus size={16} />
                       </button>
-                    </Stack> */}
-                  {/* </TableCell>} */}
-                  {/* {details &&     <TableCell>
+                    </Stack>
+                  </TableCell>}
+                  {details &&     <TableCell>
                     {(requested.child_meal.price * requested.count).toFixed(3)}   
-                  </TableCell>} */}
+                  </TableCell>}
                 </TableRow>
               ))}
             </TableBody>

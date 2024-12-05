@@ -174,7 +174,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       
       theme={demoTheme}
       branding={{
-        title: "Laundry App",
+        title: "Kitchen App",
         logo :<img src={logo}/>
         
       }}

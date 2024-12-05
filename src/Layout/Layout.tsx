@@ -24,6 +24,7 @@ import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
 import { Beef, Grid2x2PlusIcon, HandPlatter, LayoutPanelTop, List, PersonStanding, Scale, Users } from "lucide-react";
 import logo from './../assets/images/h2o-logo.png'
+import del from './../assets/logo.png'
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import SidebarFooter from "@/components/footer";
 import NavActions from "@/components/NavActions";
@@ -175,7 +176,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       theme={demoTheme}
       branding={{
         title: "Kitchen App",
-        logo :<img src={logo}/>
+        logo :<img src={del}/>
         
       }}
     

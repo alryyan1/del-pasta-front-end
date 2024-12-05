@@ -34,8 +34,8 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
           <TableCell>اسم</TableCell>
           <TableCell>الكميه</TableCell>
           <TableCell>سعر</TableCell>
-          <TableCell>الاشخاص</TableCell>
-          <TableCell>الوزن</TableCell>
+          {/* <TableCell>الاشخاص</TableCell> */}
+          {/* <TableCell>الوزن</TableCell> */}
           {/* <TableCell>-</TableCell> */}
         </TableRow>
       </TableHead>
@@ -50,8 +50,8 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
               <TableCell>{child.name}</TableCell>
               <TableCell>{child.quantity}</TableCell>
               <TableCell>{child.price}</TableCell>
-              <TableCell>{child.people_count}</TableCell>
-              <TableCell>{child.weight}</TableCell>
+              {/* <TableCell>{child.people_count}</TableCell> */}
+              {/* <TableCell>{child.weight}</TableCell> */}
              
               {/* <TableCell>
                 <div className="flex items-center gap-2">

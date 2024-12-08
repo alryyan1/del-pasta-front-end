@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import MealItem from '@/pages/MealItem';
 import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
+import { useTranslation } from 'react-i18next';
 
 interface MealCategoryPanelProps {
     setSelectedOrder: () => void;
@@ -14,6 +15,8 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(
         null
       );
+
+      const {t} = useTranslation('orderCategory')
       const { data, setData ,add,deleteItem} = useAuthContext();
 
       useEffect(() => {
@@ -67,7 +70,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
           ))
         ) : (
           <p className="text-gray-600 text-lg text-center mt-10">
-            يرجى اختيار فئة لعرض الوجبات.
+            {t('select_category')}
           </p>
         )}
       </div>

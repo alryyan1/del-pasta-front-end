@@ -15,7 +15,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { router } from "@/router";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
@@ -276,7 +276,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     
       window={demoWindow}
     >
-      <I18nextProvider i18n={i18n}>
+      <React.Suspense fallback={<Box sx={{height:'100vh',display:'flex',justifyContent:'center',alignItems:'center'}}>  <CircularProgress/>   </Box>}>
+          <I18nextProvider i18n={i18n}>
          <CacheProvider value={cacheRtl}>
         <AuthProvider>
           {/* sx={{height:'90vh'}}  */}
@@ -292,6 +293,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
         </AuthProvider>
       </CacheProvider>
       </I18nextProvider>
+      </React.Suspense>
+    
      
     </AppProvider>
     // preview-end

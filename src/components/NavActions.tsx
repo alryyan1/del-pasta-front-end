@@ -7,6 +7,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import axiosClient from "@/helpers/axios-client";
 import { useAuthContext } from "@/contexts/stateContext";
 import { useNavigate } from "react-router-dom";
+import LanguageSwitcher from "./LanguageSwither";
 
 function NavActions() {
     const [loading, setLoading] = React.useState(false);
@@ -35,6 +36,7 @@ function NavActions() {
       <IconButton onClick={logoutHandler} title="تسجيل خروج">
         <LogoutIcon />
       </IconButton>
+      <LanguageSwitcher/>
     </Stack>
   );
 }

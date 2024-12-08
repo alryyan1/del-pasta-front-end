@@ -65,13 +65,13 @@ function Customers() {
               >
                 Add Customer
               </Button>
-              <Button
+              {/* <Button
                 variant="outlined"
                 startIcon={<FileText size={18} />}
                 onClick={() => generateCustomerReport(customers)}
               >
                 Generate Report
-              </Button>
+              </Button> */}
             </Stack>
           </Box>
 

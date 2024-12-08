@@ -12,37 +12,39 @@ import {
   } from "@mui/material";
   import React, { useEffect, useState } from "react";
 import axiosClient from "@/helpers/axios-client";
+import { useTranslation } from "react-i18next";
   function encodeImageFileAsURL(file,colName) {
     var reader = new FileReader();
     reader.onloadend = function () {
-      console.log("RESULT", reader.result);
+      // console.log("RESULT", reader.result);
       saveToDb(colName, reader.result);
     };
     reader.readAsDataURL(file);
   }
   const saveToDb = (colName, data) => {
     axiosClient.post("settings", { colName, data }).then(({ data }) => {
-      console.log(data);
+      // console.log(data);
     });
   };
   function Settings() {
     const [file, setFile] = useState(null);
+    const {t} = useTranslation()
     const [src, setSrc] = useState(null);
     const [settings, setSettings] = useState(null);
     useEffect(()=>{
       axiosClient.get("settings").then(({ data }) => {
-        console.log(data,'data see')
+        // console.log(data,'data see')
         setSettings(data);
       });
     },[])
     
-    console.log(settings,'settings are set')
+    // console.log(settings,'settings are set')
     const handleFileChange = (e,colName) => {
       encodeImageFileAsURL(e.target.files[0],colName);
       const url = URL.createObjectURL(e.target.files[0]);
-      console.log(url, "path");
+      // console.log(url, "path");
       setSrc(url);
-      console.log("upload", e.target.files[0]);
+      // console.log("upload", e.target.files[0]);
       if (e.target.files) {
         setFile(e.target.files[0]);
       }
@@ -53,10 +55,11 @@ import axiosClient from "@/helpers/axios-client";
   
     const image2 = new Image(100,100)
     image2.src = settings?.footer_base64;
-    console.log(image1)
+    // console.log(image1)
     return (
       <Grid gap={4} container>
-        <Grid item xs={4}>
+        {t('welcomeToReact')}
+        <Grid item xs={12}  lg={4}>
           <Typography textAlign={'center'} variant="h3"> Header </Typography>
           <input onChange={(e)=>{
             handleFileChange(e,'header_base64')
@@ -88,13 +91,13 @@ import axiosClient from "@/helpers/axios-client";
              <img width={100} src={image2.src} alt="" />
   
         </Grid>
-        <Grid xs={3}>
+        <Grid item xs={12}  lg={3}>
           <Box key={settings?.id} sx={{p:1}}>
             <FormGroup>
               <FormControlLabel
                 control={
                   <Checkbox
-                  defaultChecked={settings?.is_header}
+                  defaultChecked={settings?.is_header == 1}
                     onChange={(e) => {
                       axiosClient.post("settings", {
                         colName: "is_header",
@@ -115,7 +118,7 @@ import axiosClient from "@/helpers/axios-client";
               <FormControlLabel
                 control={
                   <Checkbox
-                  defaultChecked={settings?.is_footer}
+                  defaultChecked={settings?.is_footer == 1}
                     onChange={(e) => {
                       axiosClient.post("settings", {
                         colName: "is_footer",
@@ -133,7 +136,7 @@ import axiosClient from "@/helpers/axios-client";
               <FormControlLabel
                 control={
                   <Checkbox
-                  defaultChecked={settings?.is_logo}
+                  defaultChecked={settings?.is_logo == 1}
   
                     onChange={(e) => {
                       axiosClient.post("settings", {
@@ -199,7 +202,7 @@ import axiosClient from "@/helpers/axios-client";
             }}/>
           </Box>
         </Grid>
-        <Grid xs={3}>
+        <Grid item xs={12}  lg={3}>
             <Box sx={{p:1}}>
               <Divider>الرساله  الترحيبيه</Divider>
              <TextField  defaultValue={settings?.header_content} sx={{mb:1}}  rows={10}  multiline fullWidth onChange={(e)=>{
@@ -225,6 +228,7 @@ import axiosClient from "@/helpers/axios-client";
               });
             }}/>
             <Divider/>
+
             </Box>
         </Grid>
       </Grid>

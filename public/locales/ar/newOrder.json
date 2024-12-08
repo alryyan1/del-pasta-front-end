@@ -1,0 +1,17 @@
+{
+    "settings": "الإعدادات",
+    "order_settings": "اعدادات الطلب",
+    "cart": "عربة التسوق",
+    "empty_cart": "عربتك فارغة",
+    "meal_categories": "فئات الوجبات",
+    "new_order": "طلب جديد",
+    "confirm_order": "تأكيد الطلب",
+    "customer": "الزبون",
+    "edit_customer": "تعديل الزبون",
+    "add_customer": "إضافة زبون",
+    "save": "حفظ",
+    "close": "إغلاق",
+    "order_confirmed": "تم تأكيد الطلب",
+    "order_header": "رأس الطلب"
+  }
+  

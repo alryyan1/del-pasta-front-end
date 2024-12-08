@@ -1,0 +1,17 @@
+{
+    "settings": "Settings",
+    "order_settings": "Order Settings",
+    "cart": "Cart",
+    "empty_cart": "Your cart is empty",
+    "meal_categories": "Meal Categories",
+    "new_order": "New Order",
+    "confirm_order": "Confirm Order",
+    "customer": "Customer",
+    "edit_customer": "Edit Customer",
+    "add_customer": "Add Customer",
+    "save": "Save",
+    "close": "Close",
+    "order_confirmed": "Order confirmed",
+    "order_header": "Order Header"
+  }
+  

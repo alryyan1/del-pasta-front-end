@@ -27,6 +27,10 @@ import logo from './../assets/images/h2o-logo.png'
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import SidebarFooter from "@/components/footer";
 import NavActions from "@/components/NavActions";
+import './../i18n'
+import { I18nextProvider, useTranslation } from "react-i18next";
+import i18n from "./../i18n";
+
 const demoTheme = createTheme({
   // direction: "rtl",
   typography: {
@@ -72,49 +76,46 @@ interface DemoProps {
 export default function DashboardLayoutBasic(props: DemoProps) {
   const { window } = props;
 
+  const {t}= useTranslation('layout')
 
- 
   const NAVIGATION: Navigation = [
     {
       kind: "header",
-      title: "Main items",
+      title: t("Main items"),  // Use translation key for "Main items"
     },
     {
       segment: "dashboard",
-      title: "الرئيسيه",
+      title: t("Dashboard"),  // Use translation key for "Dashboard"
       icon: <DashboardIcon />,
     },
     {
       segment: "makeOrder",
-      title: "طلب جديد",
+      title: t("New Order"),  // Use translation key for "New Order"
       icon: <AddShoppingCartIcon />,
-    }
-    ,
-
+    },
     {
       segment: "orders",
-      title: "الطلبات",
+      title: t("Orders"),  // Use translation key for "Orders"
       icon: <List />,
     },
-    
     {
       segment: "reservations2",
-      title: "الحجوزات",
+      title: t("Reservations"),  // Use translation key for "Reservations"
       icon: <BookmarkAddedIcon />,
     },
     {
       segment: "stats",
-      title: "كميات الطلبات",
+      title: t("Order Quantities"),  // Use translation key for "Order Quantities"
       icon: <Scale />,
     },
     {
       segment: "expenses",
-      title: "المصروفات",
+      title: t("Expenses"),  // Use translation key for "Expenses"
       icon: <AttachMoneyIcon />,
     },
     {
       segment: "menu",
-      title: "قائمه المعرض",
+      title: t("Menu"),  // Use translation key for "Menu"
       icon: <RestaurantMenuIcon />,
     },
     {
@@ -122,46 +123,140 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     },
     {
       kind: "header",
-      title: "Analytics",
+      title: t("Analytics"),  // Use translation key for "Analytics"
     },
-   
-    
-
     {
       segment: "config",
-      title: "الاعدادات",
+      title: t("Settings"),  // Use translation key for "Settings"
       icon: <SettingsIcon />,
       children: [
         {
           segment: "meals",
-          title: " الخدمات",
+          title: t("Services"),  // Use translation key for "Services"
           icon: <Grid2x2PlusIcon />,
         },
         {
           segment: "MealCategories",
-          title: "الاقسام",
+          title: t("Categories"),  // Use translation key for "Categories"
           icon: <LayoutPanelTop />,
         },
         {
           segment: "customers",
-          title: "الزبائن",
+          title: t("Customers"),  // Use translation key for "Customers"
+          icon: <Users />,
+        },
+        {
+          segment: "users",
+          title: t("Users"),  // Use translation key for "Users"
           icon: <Users />,
         },
         {
           segment: "services",
-          title: "خدمات الفرعيه",
+          title: t("Sub Services"),  // Use translation key for "Sub Services"
           icon: <HandPlatter />,
         },
         {
           segment: "settings",
-          title: "اخري",
+          title: t("Other"),  // Use translation key for "Other"
           icon: <Users />,
         },
-        
       ],
     },
- 
   ];
+  
+  // const NAVIGATION: Navigation = [
+  //   {
+  //     kind: "header",
+  //     title: "Main items",
+  //   },
+  //   {
+  //     segment: "dashboard",
+  //     title: t('Dashboard'),
+  //     icon: <DashboardIcon />,
+  //   },
+  //   {
+  //     segment: "makeOrder",
+  //     title: "طلب جديد",
+  //     icon: <AddShoppingCartIcon />,
+  //   }
+  //   ,
+
+  //   {
+  //     segment: "orders",
+  //     title: "الطلبات",
+  //     icon: <List />,
+  //   },
+    
+  //   {
+  //     segment: "reservations2",
+  //     title: "الحجوزات",
+  //     icon: <BookmarkAddedIcon />,
+  //   },
+  //   {
+  //     segment: "stats",
+  //     title: "كميات الطلبات",
+  //     icon: <Scale />,
+  //   },
+  //   {
+  //     segment: "expenses",
+  //     title: "المصروفات",
+  //     icon: <AttachMoneyIcon />,
+  //   },
+  //   {
+  //     segment: "menu",
+  //     title: "قائمه المعرض",
+  //     icon: <RestaurantMenuIcon />,
+  //   },
+  //   {
+  //     kind: "divider",
+  //   },
+  //   {
+  //     kind: "header",
+  //     title: "Analytics",
+  //   },
+   
+    
+
+  //   {
+  //     segment: "config",
+  //     title: "الاعدادات",
+  //     icon: <SettingsIcon />,
+  //     children: [
+  //       {
+  //         segment: "meals",
+  //         title: " الخدمات",
+  //         icon: <Grid2x2PlusIcon />,
+  //       },
+  //       {
+  //         segment: "MealCategories",
+  //         title: "الاقسام",
+  //         icon: <LayoutPanelTop />,
+  //       },
+  //       {
+  //         segment: "customers",
+  //         title: "الزبائن",
+  //         icon: <Users />,
+  //       },
+  //       {
+  //         segment: "users",
+  //         title: "المستخدمين",
+  //         icon: <Users />,
+  //       },
+  //       {
+  //         segment: "services",
+  //         title: "خدمات الفرعيه",
+  //         icon: <HandPlatter />,
+  //       },
+  //       {
+  //         segment: "settings",
+  //         title: "اخري",
+  //         icon: <Users />,
+  //       },
+        
+  //     ],
+  //   },
+ 
+  // ];
   // Remove this const when copying and pasting into your project.
   const demoWindow = window !== undefined ? window() : undefined;
 
@@ -181,7 +276,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     
       window={demoWindow}
     >
-      <CacheProvider value={cacheRtl}>
+      <I18nextProvider i18n={i18n}>
+         <CacheProvider value={cacheRtl}>
         <AuthProvider>
           {/* sx={{height:'90vh'}}  */}
           <DashboardLayout slots={{
@@ -195,6 +291,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
           </DashboardLayout>
         </AuthProvider>
       </CacheProvider>
+      </I18nextProvider>
+     
     </AppProvider>
     // preview-end
   );

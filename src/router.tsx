@@ -21,6 +21,7 @@ import ProtectedRoute from "./pages/Protected";
 import Settings from "./pages/Settings";
 import Stats from "./pages/Stats";
 import Services from "./pages/Services";
+import Users from "./pages/Users";
 
 const login: RouteObject = {
   path: "login",
@@ -59,9 +60,13 @@ const customers: RouteObject = {
   path: "customers",
   element: <Customers />,
 };
+const users: RouteObject = {
+  path: "users",
+  element: <Users />,
+};
 const config: RouteObject = {
   path: "/config",
-  children: [MealCategoriesConfig, mealConfig,customers,settings,services],
+  children: [MealCategoriesConfig, mealConfig,customers,settings,services,users],
 };
 const orders: RouteObject = {
   path: "/orders",
@@ -104,7 +109,7 @@ const authoroized: RouteObject = {
     reservation,
     menu,
     reservation2,
-    stats
+    stats,
   ],
 };
 const forbidden :RouteObject = {

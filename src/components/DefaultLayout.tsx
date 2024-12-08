@@ -4,6 +4,7 @@ import {useAuthContext} from '../contexts/stateContext'
 import { useEffect } from "react";
 import axiosClient from "@/helpers/axios-client";
 import Header from "./header";
+import i18n from "@/i18n";
 function DefaultLayout() {
   const {user,token} =  useAuthContext();
   // debugger;

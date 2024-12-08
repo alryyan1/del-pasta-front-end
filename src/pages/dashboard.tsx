@@ -8,6 +8,7 @@ import { Order } from '../Types/types';
 import { useAuthContext } from '@/contexts/stateContext';
 import { FormControl, InputLabel, Menu, MenuItem, Select } from '@mui/material';
 import dayjs from 'dayjs';
+import i18n from '@/i18n';
 
 interface Info {
   totalRevenue: number;
@@ -42,6 +43,21 @@ export default function Dashboard() {
 
 
   },[selectedMonth])
+  // useEffect(()=>{
+  //   alert('s')
+  //   i18n.on('loaded', (loaded) => {
+  //     alert('loaded')
+  //     console.log('Translations loaded:', loaded);
+  //   });
+    
+  //   i18n.on('failedLoading', (lng, ns, msg) => {
+  //     console.error(`Failed to load ${ns} for ${lng}: ${msg}`);
+  //   });
+    
+  //   i18n.on('initialized', (options) => {
+  //     console.log('i18next initialized with options:', options);
+  //   });
+  // },[])
   useEffect(()=>{
     axiosClient.get<Order[]>("orders?today=1").then(({ data }) => {
       setOrders(data);

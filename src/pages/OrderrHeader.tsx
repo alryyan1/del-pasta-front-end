@@ -13,14 +13,16 @@ import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
 import { Message, WhatsApp } from "@mui/icons-material";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
 interface OrderHeaderProps {
   selectedOrder: Order | null;
   setSelectedOrder: (order: Order) => void;
   newOrderHandler: () => void;
   setIsFormOpen: (isOpen: boolean) => void;
-  showOrderSettings : boolean;
+  showOrderSettings: boolean;
 }
+
 function OrderHeader({
   selectedOrder,
   setSelectedOrder,
@@ -28,44 +30,48 @@ function OrderHeader({
   setIsFormOpen,
   showOrderSettings,
 }: OrderHeaderProps) {
+  const { t } = useTranslation('orderheader'); // Initialize useTranslation hook
   const { customers, addCustomer, updateCustomer, fetchData } =
     useCustomerStore();
+
   useEffect(() => {
     fetchData();
   }, []);
-  const sendHandler = () => {
-    setloading(true)
-    axiosClient
-    .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
-    .then(({data}) => {
-      if (data.error) {
-      toast.error(data.error);
-      return
-        
-      }
-      axiosClient.patch(`orders/${selectedOrder?.id}`,{whatsapp:1}).then(({data})=>{
-        setSelectedOrder(data.order);
-      })
-      console.log(data,'message sent')
-      toast.success(data.message,{
-        style: { width: "100px" }, // Adjust width here
 
-      });
-        
-    }).finally(()=>setloading(false))
+  const sendHandler = () => {
+    setloading(true);
+    axiosClient
+      .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
+      .then(({ data }) => {
+        if (data.error) {
+          toast.error(data.error);
+          return;
+        }
+        axiosClient
+          .patch(`orders/${selectedOrder?.id}`, { whatsapp: 1 })
+          .then(({ data }) => {
+            setSelectedOrder(data.order);
+          });
+        console.log(data, "message sent");
+        toast.success(data.message, {
+          style: { width: "100px" },
+        });
+      })
+      .finally(() => setloading(false));
   };
-  const [loading,setloading]= useState(false)
+
+  const [loading, setloading] = useState(false);
   const sendMsg = () => {
-    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {
-      
-    });
+    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {});
   };
   const deliveryHandler = () => {
-    axiosClient.patch(`orders/${selectedOrder?.id}`,{
-      is_delivery:!selectedOrder?.is_delivery
-    }).then(({ data }) => {
-      setSelectedOrder(data.order);
-    });
+    axiosClient
+      .patch(`orders/${selectedOrder?.id}`, {
+        is_delivery: !selectedOrder?.is_delivery,
+      })
+      .then(({ data }) => {
+        setSelectedOrder(data.order);
+      });
   };
   const printHandler = () => {
     const form = new URLSearchParams();
@@ -74,32 +80,20 @@ function OrderHeader({
       .then(({ data }) => {
         form.append("data", data);
         form.append("node_direct", "0");
-        // console.log(data, "daa");
 
         printJS({
           printable: data.slice(data.indexOf("JVB")),
           base64: true,
           type: "pdf",
         });
-
-        // if (userSettings?.node_dialog) {
-        //   fetch("http://127.0.0.1:4000/", {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/x-www-form-urlencoded",
-        //     },
-
-        //     body: form,
-        //   }).then(() => {});
-        // }
       });
   };
+
   return (
     <Stack
       justifyContent={"space-around"}
       gap={2}
       direction={"row"}
-      // sx={{ alignItems: "end" }}
       alignItems={"center"}
       className="shadow-lg items-center rounded-sm order-header"
     >
@@ -145,26 +139,26 @@ function OrderHeader({
             }}
             renderInput={(params) => {
               return (
-                <TextField variant="standard" label={"الزبون"} {...params} />
+                <TextField variant="standard" label={t("Customer")} {...params} />
               );
             }}
           ></Autocomplete>
         </Stack>
       )}
+
       {selectedOrder && (
         <>
-        <Stack direction={'row'} gap={1} alignItems={'center'} justifyContent={'center'}>
-        <MyDateField2
-            label="تاريخ التسليم"
-            path="orders"
-            colName="delivery_date"
-            disabled={false}
-            val={selectedOrder?.delivery_date ?? new Date()}
-            item={selectedOrder}
-          />
-          {/* <BasicTimePicker/> */}
-        </Stack>
-        
+          <Stack direction={"row"} gap={1} alignItems={"center"} justifyContent={"center"}>
+            <MyDateField2
+              label={t("Delivery Date")}
+              path="orders"
+              colName="delivery_date"
+              disabled={false}
+              val={selectedOrder?.delivery_date ?? new Date()}
+              item={selectedOrder}
+            />
+          </Stack>
+
           <PayOptions
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
@@ -176,23 +170,23 @@ function OrderHeader({
           />
           <Stack direction={"row"} gap={1}>
             <IconButton onClick={printHandler}>
-              <Tooltip title=" طباعه الفاتورة">
+              <Tooltip title={t("Print Invoice")}>
                 <Printer />
               </Tooltip>
             </IconButton>
             <IconButton onClick={sendMsg}>
-              <Tooltip title=" ارسال رساله ">
+              <Tooltip title={t("Send Message")}>
                 <Message />
               </Tooltip>
             </IconButton>
             <IconButton disabled={selectedOrder?.whatsapp} onClick={sendHandler}>
-              <Tooltip title=" ارسال الفاتوره ">
-               {loading ? <CircularProgress/> : <WhatsApp color="success" />}
+              <Tooltip title={t("Send Invoice")}>
+                {loading ? <CircularProgress /> : <WhatsApp color="success" />}
               </Tooltip>
             </IconButton>
             <IconButton color="success" onClick={deliveryHandler}>
-              <Tooltip title="  توصيل ">
-               {selectedOrder.is_delivery ?  <Car  /> : <HomeIcon/>}
+              <Tooltip title={t("Delivery")}>
+                {selectedOrder.is_delivery ? <Car /> : <HomeIcon />}
               </Tooltip>
             </IconButton>
           </Stack>

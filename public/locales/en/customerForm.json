@@ -1,0 +1,15 @@
+{
+    "customerForm": {
+      "edit": "Edit Customer",
+      "add": "Add Customer",
+      "name": "Name",
+      "phone": "Phone",
+      "area": "Area",
+      "state": "State",
+      "name_required": "Name is required",
+      "cancel": "Cancel",
+      "add_customer": "Add Customer",
+      "update_customer": "Update Customer"
+    }
+  }
+  

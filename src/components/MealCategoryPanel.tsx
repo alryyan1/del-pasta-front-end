@@ -15,8 +15,8 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(
         null
       );
+    const {t} =   useTranslation('mealCategoryPanel')
 
-      const {t} = useTranslation('orderCategory')
       const { data, setData ,add,deleteItem} = useAuthContext();
 
       useEffect(() => {
@@ -33,7 +33,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
     {/* Sidebar */}
     <div className="">
       <h2 className="text-xl font-semibold mb-6 text-gray-800">
-        اقسام الخدمات 
+        {t('category')}  
       </h2>
       <ul className="space-y-4">
         {data.map((category: Category) => (
@@ -52,7 +52,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
               }`}
               style={{ borderRadius: "10px" }}
             >
-              {category.name}
+              {t(category.name)}
             </Button>
           </li>
         ))}

@@ -1,0 +1,18 @@
+{
+    "manageOrders": "اداره الطلبات",
+    "searchOrders": "بحث عن الطلبات...",
+    "total": "اجمالي",
+    "paid": "المدفوع",
+    "remaining": "المتبقي",
+    "statuses": {
+      "pending": "قيد الانتظار",
+      "confirmed": "تم التأكيد",
+      "completed": "مكتمل",
+      "inPreparation": "في التحضير",
+      "delivered": "تم التوصيل",
+      "cancelled": "ملغى"
+    },
+    "report": "التقرير",
+    "filter": "تصفية"
+  }
+  

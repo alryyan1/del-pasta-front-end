@@ -1,0 +1,15 @@
+{
+    "customerForm": {
+      "edit": "تعديل الزبون",
+      "add": "اضافة زبون",
+      "name": "الاسم",
+      "phone": "الهاتف",
+      "area": "المنطقة",
+      "state": "الولاية",
+      "name_required": "الاسم مطلوب",
+      "cancel": "إلغاء",
+      "add_customer": "إضافة الزبون",
+      "update_customer": "تعديل الزبون"
+    }
+  }
+  

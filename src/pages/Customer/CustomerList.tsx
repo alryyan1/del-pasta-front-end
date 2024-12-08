@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Paper,
   Table,
@@ -9,9 +9,10 @@ import {
   TableRow,
   IconButton,
   TablePagination,
-} from '@mui/material';
-import { Edit, Trash2 } from 'lucide-react';
-import { Customer } from '@/Types/types';
+} from "@mui/material";
+import { Edit, Trash2 } from "lucide-react";
+import { Customer } from "@/Types/types";
+import { useTranslation } from "react-i18next";
 
 interface CustomerListProps {
   customers: Customer[];
@@ -24,6 +25,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const { t } = useTranslation('customers'); // i18n hook for translations
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -39,16 +41,16 @@ export const CustomerList: React.FC<CustomerListProps> = ({
   };
 
   return (
-    <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+    <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell>الاسم</TableCell>
-              <TableCell>الهاتف</TableCell>
-              <TableCell>المنطقه</TableCell>
-              <TableCell>الولايه</TableCell>
-              <TableCell align="right">-</TableCell>
+              <TableCell>{t("name")}</TableCell>
+              <TableCell>{t("phone")}</TableCell>
+              <TableCell>{t("area")}</TableCell>
+              <TableCell>{t("state")}</TableCell>
+              <TableCell align="right">{t("actions")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -56,9 +58,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((customer) => (
                 <TableRow key={customer.id}>
-                  <TableCell>
-                    {customer.name} 
-                  </TableCell>
+                  <TableCell>{customer.name}</TableCell>
                   <TableCell>{customer.phone}</TableCell>
                   <TableCell>{customer.area}</TableCell>
                   <TableCell>{customer.state}</TableCell>

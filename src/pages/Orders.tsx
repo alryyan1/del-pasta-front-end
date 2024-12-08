@@ -7,7 +7,7 @@ import {
   Chip,
   Tooltip,
 } from "@mui/material";
-import { AxiosDataShape, Customer, Order } from "@/Types/types";
+import { useTranslation } from "react-i18next"; // Import i18n hook
 import { OrderTable } from "./orders/OrderTable";
 import axiosClient from "@/helpers/axios-client";
 import { Box, Stack, useMediaQuery } from "@mui/system";
@@ -15,23 +15,19 @@ import { Filter, Search } from "lucide-react";
 import dayjs from "dayjs";
 import { webUrl } from "@/helpers/constants";
 import MyLoadingButton from "@/components/MyLoadingButton";
-import {
-  ArrowBack,
-  ArrowForward,
-  DeleteOutline,
-  DeleteOutlineOutlined,
-  ShoppingCart,
-} from "@mui/icons-material";
+import { ArrowBack, ArrowForward } from "@mui/icons-material";
+
 type Status = [
   "Pending",
   "Confirmed",
   "Completed",
   "In Preparation",
   "Delivered",
-  "Cancelled",
+  "Cancelled"
 ];
 
 function Orders() {
+  const { t } = useTranslation('orders'); // Initialize t function for translations
   const statuses: Status = [
     "Pending",
     "Confirmed",
@@ -48,36 +44,26 @@ function Orders() {
   const [links, setLinks] = useState([]);
 
   const updateItemsTable = (link, setLoading) => {
-    console.log(search);
     setLoading(true);
     axiosClient(`${link.url}&word=${search}`)
       .then(({ data }) => {
-        console.log(data, "pagination data");
         setOrders(data.data);
         setLinks(data.links);
       })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .catch((error) => console.log(error))
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    // alert('ss')
     const timer = setTimeout(() => {
-      const q = search != "" ? `?name=${search}` : "";
-      const del = deliveryDate != "" ? `?delivery_date=${deliveryDate}` : "";
+      const q = search !== "" ? `?name=${search}` : "";
+      const del = deliveryDate !== "" ? `?delivery_date=${deliveryDate}` : "";
       axiosClient
         .post(`orders/pagination/${page}${q}${del}`, {
           status: selectedStatus,
         })
         .then(({ data: { data, links } }) => {
-          console.log(data, "data from pagination");
-          console.log(links);
           setOrders(data);
-          // console.log(links)
           setLinks(links);
         });
     }, 300);
@@ -85,23 +71,24 @@ function Orders() {
   }, [page, search, deliveryDate, selectedStatus]);
 
   const isMobile = useMediaQuery("(max-width:600px)");
+
   return (
-    <div className=" ">
+    <div>
       <Stack
-        alignItems={"center"}
+        alignItems="center"
         gap={1}
         direction={isMobile ? "column" : "row"}
-        justifyContent={"space-around"}
-        sx={{m:2}}
+        justifyContent="space-around"
+        sx={{ m: 2 }}
         className="!my-1"
       >
         <Typography className="text-3xl font-bold mb-8">
-          اداره الطلبات{" "}
+          {t("manageOrders")}
         </Typography>
         <TextField
           size="small"
           variant="outlined"
-          placeholder="Search orders..."
+          placeholder={t("searchOrders")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           InputProps={{
@@ -109,16 +96,10 @@ function Orders() {
           }}
         />
         <input
-          onChange={(e) => {
-            setDeliveryDate(e.target.value);
-          }}
+          onChange={(e) => setDeliveryDate(e.target.value)}
           type="date"
         />
-        <select
-          onChange={(val) => {
-            setPage(val.target.value);
-          }}
-        >
+        <select onChange={(val) => setPage(val.target.value)}>
           <option value="5">5</option>
           <option selected value="10">
             10
@@ -129,134 +110,109 @@ function Orders() {
           <option value="100">100</option>
         </select>
         <Button variant="contained" href={`${webUrl}orders`}>
-          التقرير
+          {t("report")}
         </Button>
-        <Stack textAlign={"center"} alignItems={"center"} direction={"column"}>
+        <Stack textAlign="center" alignItems="center" direction="column">
           <Box>
-            <Tooltip title="Filter">
+            <Tooltip title={t("filter")}>
               <Filter />
             </Tooltip>
           </Box>
-          <Stack gap={1} direction={"row"}>
-            {statuses.map((s) => {
-              return (
-                <Chip
-                  color={s == selectedStatus ? "primary" : "default"}
-                  variant={s == selectedStatus ? "filled" : "outlined"}
-                  key={s}
-                  onClick={() => setSelectedStatus(s)}
-                  label={s}
-                ></Chip>
-              );
-            })}
+          <Stack gap={1} direction="row">
+            {statuses.map((s) => (
+              <Chip
+                color={s === selectedStatus ? "primary" : "default"}
+                variant={s === selectedStatus ? "filled" : "outlined"}
+                key={s}
+                onClick={() => setSelectedStatus(s)}
+                label={t(`${s}`)} // Translate statuses
+              />
+            ))}
           </Stack>
         </Stack>
       </Stack>
       <Stack
-      sx={{mt:2}}
-        direction={"row"}
+        sx={{ mt: 2 }}
+        direction="row"
         gap={1}
-        justifyContent={"space-around"}
-        alignItems={"center"}
+        justifyContent="space-around"
+        alignItems="center"
       >
         <Stack
-          direction={"column"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          alignContent={"center"}
-          gap={1}
-          className="shadow-lg text-center border-rounded w-[200px] items-center bg-[var(--primary)] rounded-md  p-2  "
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          className="shadow-lg text-center border-rounded w-[200px] items-center bg-[var(--primary)] rounded-md p-2"
         >
-          <Typography variant="h5">  اجمالي</Typography>
-          <Typography variant="h5">{orders.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}</Typography>
+          <Typography variant="h5">{t("total")}</Typography>
+          <Typography variant="h5">
+            {orders.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}
+          </Typography>
         </Stack>
         <Stack
-          direction={"column"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          alignContent={"center"}
-          gap={1}
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded "
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded"
         >
-          <Typography variant="h5">  المدفوع</Typography>
-          <Typography variant="h5">{orders.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}</Typography>
+          <Typography variant="h5">{t("paid")}</Typography>
+          <Typography variant="h5">
+            {orders.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}
+          </Typography>
         </Stack>
         <Stack
-          direction={"column"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          alignContent={"center"}
-          gap={1}
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded "
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded"
         >
-          <Typography variant="h5">  المتبقي</Typography>
-          <Typography variant="h5">{(orders.reduce((prev, curr) => prev + curr.totalPrice, 0) - orders.reduce((prev, curr) => prev + curr.amount_paid, 0)).toFixed(3)}</Typography>
+          <Typography variant="h5">{t("remaining")}</Typography>
+          <Typography variant="h5">
+            {(
+              orders.reduce((prev, curr) => prev + curr.totalPrice, 0) -
+              orders.reduce((prev, curr) => prev + curr.amount_paid, 0)
+            ).toFixed(3)}
+          </Typography>
         </Stack>
       </Stack>
-
-      <OrderTable
-        orders={orders}
-        // Pass translated column headers to OrderTable component
-        columnHeaders={{
-          orderNumber: "رقم الطلب",
-          status: "الحالة",
-          paymentStatus: "حالة الدفع",
-          amountPaid: "المبلغ المدفوع",
-          createdAt: "تاريخ الإنشاء",
-          actions: "الإجراءات",
-        }}
-        // Add translations for pagination and other texts
-        translations={{
-          rowsPerPage: "عدد الصفوف لكل صفحة",
-          of: "من",
-          actions: "الإجراءات",
-        }}
-      />
-
+      <OrderTable orders={orders} />
       {links.length > 0 && (
         <Grid sx={{ gap: "4px", mt: 1 }} style={{ direction: "ltr" }} container>
           {links.map((link, i) => {
-            if (i == 0) {
+            if (i === 0) {
               return (
                 <Grid item xs={1} key={i}>
                   <MyLoadingButton
-                    onClick={(setLoading) => {
-                      updateItemsTable(link, setLoading);
-                    }}
+                    onClick={(setLoading) => updateItemsTable(link, setLoading)}
                     variant="contained"
-                    key={i}
                   >
                     <ArrowBack />
                   </MyLoadingButton>
                 </Grid>
               );
-            } else if (links.length - 1 == i) {
+            } else if (i === links.length - 1) {
               return (
                 <Grid item xs={1} key={i}>
                   <MyLoadingButton
-                    onClick={(setLoading) => {
-                      updateItemsTable(link, setLoading);
-                    }}
+                    onClick={(setLoading) => updateItemsTable(link, setLoading)}
                     variant="contained"
-                    key={i}
                   >
                     <ArrowForward />
                   </MyLoadingButton>
                 </Grid>
               );
-            } else
+            } else {
               return (
                 <Grid item xs={1} key={i}>
                   <MyLoadingButton
                     active={link.active}
-                    onClick={(setLoading) => {
-                      updateItemsTable(link, setLoading);
-                    }}
+                    onClick={(setLoading) => updateItemsTable(link, setLoading)}
                   >
                     {link.label}
                   </MyLoadingButton>
                 </Grid>
               );
+            }
           })}
         </Grid>
       )}

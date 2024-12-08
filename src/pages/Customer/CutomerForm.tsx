@@ -1,5 +1,5 @@
 import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   Dialog,
   DialogTitle,
@@ -9,6 +9,7 @@ import {
   Button,
   Stack,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next'; // Importing i18n translation hook
 import { Customer } from '@/Types/types';
 
 interface CustomerFormProps {
@@ -24,14 +25,15 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
   onSubmit,
   initialData,
 }) => {
-  console.log(initialData,'initial data')
+  const { t } = useTranslation('customerForm'); // Initializing translation function
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<Customer>({
-    defaultValues: initialData });
+    defaultValues: initialData,
+  });
 
   const onSubmitHandler = (data: Customer) => {
     onSubmit(data);
@@ -42,64 +44,54 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        {initialData ? ' تعديل' : 'اضافه  '}
+        {initialData ? t('customerForm.edit') : t('customerForm.add')}
       </DialogTitle>
-      <form  onSubmit={handleSubmit(onSubmitHandler)}>
+      <form onSubmit={handleSubmit(onSubmitHandler)}>
         <DialogContent>
           <Stack spacing={2}>
             <TextField
-              
-              size='small'
-              {...register('name', { required: 'First name is required' })}
-              label="الاسم"
+              size="small"
+              {...register('name', {
+                required: t('customerForm.name_required') as string,
+              })}
+              label={t('customerForm.name')}
               defaultValue={initialData?.name}
               error={!!errors.name}
               helperText={errors.name?.message}
               fullWidth
             />
-         
-       
-            <TextField
-              defaultValue={initialData?.phone}
 
-              size='small'
+            <TextField
+              size="small"
               {...register('phone')}
-              label="الهاتف"
+              label={t('customerForm.phone')}
+              defaultValue={initialData?.phone}
               fullWidth
             />
-            {/* <TextField
-              defaultValue={initialData?.address}
 
-              size='small'
-              {...register('address')}
-              label="العنوان"
-              fullWidth
-              multiline
-            /> */}
-              <TextField
-              defaultValue={initialData?.address}
-
-              size='small'
+            <TextField
+              size="small"
               {...register('area')}
-              label="المنطقه"
+              label={t('customerForm.area')}
+              defaultValue={initialData?.area}
               fullWidth
               multiline
-            />  <TextField
-            defaultValue={initialData?.address}
+            />
 
-            size='small'
-            {...register('state')}
-            label="الولايه"
-            fullWidth
-            multiline
-          />
-         
+            <TextField
+              size="small"
+              {...register('state')}
+              label={t('customerForm.state')}
+              defaultValue={initialData?.state}
+              fullWidth
+              multiline
+            />
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>الغاء</Button>
+          <Button onClick={onClose}>{t('customerForm.cancel')}</Button>
           <Button type="submit" variant="contained" color="primary">
-            {initialData ? 'تعديل' : 'اضافه'} الزبون
+            {initialData ? t('customerForm.update_customer') : t('customerForm.add_customer')}
           </Button>
         </DialogActions>
       </form>

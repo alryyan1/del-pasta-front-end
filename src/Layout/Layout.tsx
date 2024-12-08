@@ -76,6 +76,14 @@ interface DemoProps {
 export default function DashboardLayoutBasic(props: DemoProps) {
   const { window } = props;
 
+  React.useEffect(()=>{
+    //get lang from localstorage
+   const lang =    localStorage.getItem('lang')
+   if (lang != null) {
+    
+     i18n.changeLanguage(lang)
+   }
+},[])
   const {t}= useTranslation('layout')
 
   const NAVIGATION: Navigation = [

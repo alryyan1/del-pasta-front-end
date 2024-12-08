@@ -1,0 +1,12 @@
+{
+    "login": {
+      "title": "تسجيل الدخول",
+      "username": "اسم المستخدم",
+      "username_required": "اسم المستخدم مطلوب",
+      "password": "كلمة المرور",
+      "password_required": "يجب ادخال كلمة مرور",
+      "submit": "تسجيل",
+      "loading": "جاري تسجيل الدخول"
+    }
+  }
+  

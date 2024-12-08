@@ -22,6 +22,8 @@ import Settings from "./pages/Settings";
 import Stats from "./pages/Stats";
 import Services from "./pages/Services";
 import Users from "./pages/Users";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n";
 
 const login: RouteObject = {
   path: "login",
@@ -119,7 +121,8 @@ const forbidden :RouteObject = {
 const guest: RouteObject = {
   path: "/",
   errorElement: <Error />,
-  element: <AuthProvider><GuestLayout /></AuthProvider>,
+  element: <I18nextProvider i18n={i18n}><AuthProvider><GuestLayout /></AuthProvider></I18nextProvider> 
+  ,
   children: [login, signup],
 };
 

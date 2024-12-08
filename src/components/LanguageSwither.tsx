@@ -10,6 +10,7 @@ const LanguageSwitcher = () => {
     const currentLang = i18n.language;
     const newLang = currentLang === 'en' ? 'ar' : 'en'; // Toggle between 'en' and 'ar'
     i18n.changeLanguage(newLang); // Change language using i18next
+    localStorage.setItem('lang',newLang)
   };
 
   return (

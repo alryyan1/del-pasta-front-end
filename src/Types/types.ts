@@ -66,6 +66,13 @@ export interface Order {
   delivery_time:string;
   receiptLocation:string;
   whatsapp:boolean;
+  deducts:Deduct[]
+}
+
+export interface Deduct {
+  id: number;
+  child_meal_id:number;
+  quantity:number;
 }
 
 
@@ -114,6 +121,7 @@ export interface Requestedchildmeal {
   price: number;
   child_meal: Childmeal;
   count: number;
+  available:number
 }
 
 export interface Meal {

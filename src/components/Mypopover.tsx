@@ -23,7 +23,7 @@ export default function BasicPopover({title,content
 
   return (
     <div  style={{flexGrow:1,display:'flex',justifyContent:'space-between'}}>
-      <Button className='ellipsis' aria-describedby={id}  onClick={handleClick}>
+      <Button color='secondary' className='ellipsis text-black' aria-describedby={id}  onClick={handleClick}>
         {title}
       </Button>
       <Popover

@@ -37,7 +37,7 @@ main {
   border: 1px solid lightblue;
 }
 header{
-  background-color: #0097e6 !important
+  background-color: #d6a2e8  !important
 }
 nav {
   /* background-color: #e1bee7!important; */
@@ -47,8 +47,8 @@ nav {
   /* width: 240px!important; */
 }
 :root{
-  --primary: rgb(144 202 249 / 34%);
-  --secondary: #ff9800;
+  --primary: #d7a2e891;
+  --secondary: #947b9c;
 }
 body {
   overflow: hidden;
@@ -159,7 +159,7 @@ body {
 }
 
 .order-header{
-  background-color: lightblue;
+  background-color: #e91e6312;
     padding: 5px;
     border-radius: 10px;
     border: 1px dashed
@@ -215,4 +215,10 @@ body {
   color: white;
   /* background-color: red; */
 
+}
+.order-table th {
+  background-color: rgb(240, 239, 239);
+}
+.order-table td,th  {
+  border: 1px solid lightgray;
 }

@@ -25,12 +25,14 @@ interface CartItemProbs {
   updateQuantity: (increment: boolean, item: Mealorder) => void;
   isMultible: string;
   setSelectedOrder: (item: Mealorder) => void;
+  updateRequestedQuantity : (increment: boolean, item: Requestedchildmeal) => void;
 }
 function CartItem({
   isMultible,
   updateQuantity,
   item,
   setSelectedOrder,
+  updateRequestedQuantity
 }: CartItemProbs) {
 
   const [show,setShow] = useState(false)
@@ -86,17 +88,17 @@ function CartItem({
           }}>
             <Eye/>
           </IconButton>
-
+{/* 
           <ColorPicker value={item.color} onChange={(e:ColorPickerChangeEvent)=>{
             setColor(e.value)
-          }} />
+          }} /> */}
           <Incremenor updateQuantity={updateQuantity} requested={item} />
 
         </div>
       </Box>
       {item.requested_child_meals.length > 0 && (
 
-        <RequestedServices item={item}  show={show} updateQuantity={updateQuantity}/>
+        <RequestedServices item={item}  show={show} updateRequestedQuantity={updateRequestedQuantity}/>
       )}
     </div>
     </Badge>

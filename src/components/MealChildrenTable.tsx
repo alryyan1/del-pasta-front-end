@@ -21,11 +21,7 @@ interface MealTableDataProps {
   setSelectedMeal: (d) => void;
   selectedMeal: Meal;
 }
-interface PopOverDataPropbs {
-  data: Mealorder[];
-  setSelectedMeal: (d) => void;
-  selectedMeal: Meal;
-}
+
 function MealChildrenTable({
   data,
   setSelectedMeal,
@@ -169,49 +165,6 @@ export function MealChildrenTableMobile({
     </>
   );
 }
-export function OrderMealsTable({ data }: PopOverDataPropbs) {
-  return (
-    <Table size="small">
-      <TableHead>
-        <TableRow>
-          <TableCell>الخدمات</TableCell>
-          <TableCell>العدد</TableCell>
-          <TableCell>اللون</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {data.map((meal, index) => {
-          console.log(meal, "meal");
-          return (
-            <TableRow key={index}>
-               <TableCell>
-                <BasicPopover
-                  title={meal.meal.name}
-                  content={
-                    <span className="text-gray-700">
-                      {
-                        <RequestedServices
-                        details={false}
-                          item={meal}
-                          show={true}
-                          updateQuantity={() => {}}
-                        />
-                      }
-                    </span>
-                  }
-                />
-              </TableCell>
-              <TableCell>{meal.quantity}</TableCell>
-             
-              <TableCell>
-                <ColorPicker value={meal.color}></ColorPicker>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
-  );
-}
+
 
 export default MealChildrenTable;

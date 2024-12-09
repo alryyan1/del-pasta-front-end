@@ -84,7 +84,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
               label={t('customerForm.state')}
               defaultValue={initialData?.state}
               fullWidth
-              multiline
+              
             />
           </Stack>
         </DialogContent>

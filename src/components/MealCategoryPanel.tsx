@@ -47,7 +47,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
               }
               className={`w-full text-lg font-medium rounded-lg transition-all duration-300 ${
                 selectedCategory?.id === category.id
-                  ? "bg-blue-400 text-white"
+                  ? "bg-[var(--primary)] text-black"
                   : "border-gray-300 text-gray-800 hover:bg-gray-200"
               }`}
               style={{ borderRadius: "10px" }}

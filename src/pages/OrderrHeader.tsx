@@ -114,7 +114,7 @@ function OrderHeader({
 
           <Autocomplete
             value={selectedOrder?.customer}
-            sx={{ width: "200px", mb: 1 }}
+            sx={{ width: "250px", mb: 1 }}
             options={customers}
             isOptionEqualToValue={(option, val) => option.id === val.id}
             getOptionLabel={(option) => option.name}

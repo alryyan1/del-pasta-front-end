@@ -6,6 +6,7 @@ import {
   Grid,
   Chip,
   Tooltip,
+  IconButton,
 } from "@mui/material";
 import { useTranslation } from "react-i18next"; // Import i18n hook
 import { OrderTable } from "./orders/OrderTable";
@@ -115,7 +116,10 @@ function Orders() {
         <Stack textAlign="center" alignItems="center" direction="column">
           <Box>
             <Tooltip title={t("filter")}>
-              <Filter />
+              <IconButton>
+                
+              <Filter onClick={()=>setSelectedStatus(null)} />
+              </IconButton>
             </Tooltip>
           </Box>
           <Stack gap={1} direction="row">
@@ -142,7 +146,7 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center border-rounded w-[200px] items-center bg-[var(--primary)] rounded-md p-2"
+          className="shadow-lg text-center border-rounded-full w-[200px] items-center bg-[var(--primary)] rounded-full p-2"
         >
           <Typography variant="h5">{t("total")}</Typography>
           <Typography variant="h5">
@@ -153,7 +157,7 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded"
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
         >
           <Typography variant="h5">{t("paid")}</Typography>
           <Typography variant="h5">
@@ -164,7 +168,7 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded"
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
         >
           <Typography variant="h5">{t("remaining")}</Typography>
           <Typography variant="h5">
@@ -174,8 +178,34 @@ function Orders() {
             ).toFixed(3)}
           </Typography>
         </Stack>
+        <Stack
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
+        >
+          <Typography variant="h5">  طلبات مسلمه</Typography>
+          <Typography variant="h5">
+            {(
+              orders.filter((o)=>o.status =='delivered').length
+            )}
+          </Typography>
+        </Stack>
+        <Stack
+          direction="column"
+          alignItems="center"
+          justifyContent="center"
+          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
+        >
+          <Typography variant="h5"> غير مسلم</Typography>
+          <Typography variant="h5">
+            {(
+              orders.filter((o)=>o.status !='delivered').length
+            )}
+          </Typography>
+        </Stack>
       </Stack>
-      <OrderTable orders={orders} />
+      <OrderTable setOrders={setOrders} orders={orders} />
       {links.length > 0 && (
         <Grid sx={{ gap: "4px", mt: 1 }} style={{ direction: "ltr" }} container>
           {links.map((link, i) => {

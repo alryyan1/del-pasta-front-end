@@ -24,6 +24,7 @@ import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
 import { Beef, Grid2x2PlusIcon, HandPlatter, LayoutPanelTop, List, PersonStanding, Scale, Users } from "lucide-react";
 import logo from './../assets/images/h2o-logo.png'
+import del from './../assets/logo.png'
 import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
 import SidebarFooter from "@/components/footer";
 import NavActions from "@/components/NavActions";
@@ -33,6 +34,11 @@ import i18n from "./../i18n";
 
 const demoTheme = createTheme({
   // direction: "rtl",
+  palette:{
+    primary:{
+      main: "#d7a2e891",
+    }
+  },
   typography: {
     fontFamily: [
       "Cairo", // Add your default font here
@@ -277,8 +283,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       
       theme={demoTheme}
       branding={{
-        title: "Laundry App",
-        logo :<img src={logo}/>
+        title: "Kitchen App",
+        logo :<img src={del}/>
         
       }}
     

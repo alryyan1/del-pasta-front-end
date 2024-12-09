@@ -20,15 +20,39 @@ import MyDateField2 from "@/components/MYDate";
 import { OrderMealsTable } from "@/components/MealChildrenTable";
 import MyTableCellStatusSelector from "@/components/MyTableCellStatusSelector";
 import { useTranslation } from "react-i18next";
+import { OrderDetails } from './types';
+import { OrderDetailsPopover } from "@/components/OrderDetails";
+import { LoadingButton } from "@mui/lab";
+import axiosClient from "@/helpers/axios-client";
+import DeductDialog from "@/components/DeductDialog";
 
 interface OrderTableProps {
   orders: Order[];
+  setOrders: React.Dispatch<React.SetStateAction<Order[]>>;
 }
 
-export const OrderTable = ({ orders }: OrderTableProps) => {
+export const OrderTable = ({ orders,setOrders }: OrderTableProps) => {
   const isMobile = useMediaQuery("(max-width:600px)"); // adjust based on screen size
   const { t } = useTranslation('orderTable');
-
+  const [loading ,setLoading]=useState(false)
+  const [open, setOpen] = useState(false);
+  const [selectedOrder , setSelectedOrder]=useState(null)
+  const handleClose = ()=>{
+    setOpen(false)
+  }
+  const deliveryHandler = (order:Order)=>{
+    setSelectedOrder(order)
+    setOpen(true)
+    setLoading(true)
+    axiosClient.patch(`orders/${order.id}`,{
+      status: order.status == 'delivered' ?'cancelled' :'delivered'
+    }).then(({data})=>{
+      console.log('order delivered',data)
+      setOrders((prev)=>{
+        return prev.map(o=>o.id===order.id? data.order : o)
+      })
+    }).finally(()=>setLoading(false))
+  }
   return (
     <>
       <Paper sx={{ width: "100%", mt: 1 }}>
@@ -38,7 +62,7 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
             width: isMobile ? "500px" : "auto",
           }}
         >
-          <Table stickyHeader>
+          <Table className="border border-collapse order-table" stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell>{t("orderTable.orderNumber")}</TableCell>
@@ -49,8 +73,9 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                 <TableCell width={"5%"}>{t("orderTable.paid")}</TableCell>
                 <TableCell>{t("orderTable.orderDate")}</TableCell>
                 <TableCell>{t("orderTable.deliveryDate")}</TableCell>
-                <TableCell>{t("orderTable.deliveryLocation")}</TableCell>
-                <TableCell>{t("orderTable.notes")}</TableCell>
+                <TableCell>التسليم</TableCell>
+                {/* <TableCell>{t("orderTable.deliveryLocation")}</TableCell> */}
+                {/* <TableCell>{t("orderTable.notes")}</TableCell> */}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -59,7 +84,7 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                   <TableCell>
                     <BasicPopover
                       title={order.id}
-                      content={<OrderMealsTable data={order.meal_orders} />}
+                      content={<OrderDetailsPopover order={order} />}
                     />
                   </TableCell>
                   <TableCell sx={{ textWrap: "nowrap" }}>
@@ -94,13 +119,17 @@ export const OrderTable = ({ orders }: OrderTableProps) => {
                       label={t("orderTable.deliveryDate")}
                     />
                   </TableCell>
-                  <TableCell>{order.delivery_address}</TableCell>
-                  <TableCell>{order.notes}</TableCell>
+                  <TableCell>
+                    <LoadingButton loading={loading} onClick={()=>deliveryHandler(order)} size="small" variant="contained" color={order.status == 'delivered' ?'error' :'inherit'}>{order.status == 'delivered' ?'الغاء ' :'تسليم'}</LoadingButton>
+                  </TableCell>
+                  {/* <TableCell>{order.delivery_address}</TableCell> */}
+                  {/* <TableCell>{order.notes}</TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+      {selectedOrder &&  <DeductDialog setSelectedOrder={setSelectedOrder}  selectedOrder={selectedOrder} open={open} handleClose={handleClose}/>}
       </Paper>
     </>
   );

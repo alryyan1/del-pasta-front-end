@@ -32,7 +32,7 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
         <TableRow>
           <TableCell>-</TableCell>
           <TableCell>اسم</TableCell>
-          {/* <TableCell>الكميه</TableCell> */}
+          <TableCell>الكميه</TableCell>
           <TableCell>سعر</TableCell>
           {/* <TableCell>الاشخاص</TableCell> */}
           {/* <TableCell>الوزن</TableCell> */}

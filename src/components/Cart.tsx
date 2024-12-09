@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Mealorder, Order, Requestedchildmeal } from "@/Types/types";
 import axiosClient from "@/helpers/axios-client";
 import { LoadingButton } from "@mui/lab";
@@ -7,12 +7,16 @@ import { Box, Stack } from "@mui/system";
 import CartItem from "./CartItem";
 import { ShoppingCart } from "lucide-react";
 import { Divider, TextField, Typography } from "@mui/material";
+import { Notes } from "@mui/icons-material";
 interface CartProps {
   selectedOrder: Order;
   setSelectedOrder: (order) => void;
 }
 
 function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
+  const [colName, setColName] = useState('');
+  const [val, setVal] = useState('');
+
   const updateQuantity = (increment: boolean, item: Requestedchildmeal) => {
     axiosClient
       .patch(`RequestedChild/${item.id}`, {
@@ -55,10 +59,17 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
         }, 300);
       });
   };
-  const orderItemUpdateHandler = (e, orderMeal, colName = "delivery_fee") => {
+
+  useEffect(()=>{
+    const timer = setTimeout(() => {
+      orderItemUpdateHandler(val,selectedOrder,colName)
+    }, 400);
+    return () => clearTimeout(timer);
+  },[val])
+  const orderItemUpdateHandler = (val, orderMeal, colName = "delivery_fee") => {
     axiosClient
       .patch(`orders/${orderMeal.id}`, {
-        [colName]: e.target.value,
+        [colName]: val,
       })
       .then(({ data }) => {
         console.log(data, "data");
@@ -81,6 +92,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               item.quantity > 1 ? "animate__animated animate__rubberBand" : "";
             return (
               <CartItem
+              updateRequestedQuantity={updateQuantity}
                 setSelectedOrder={setSelectedOrder}
                 updateQuantity={updateMealOrderQuantity}
                 isMultible={isMultible}
@@ -99,7 +111,8 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               label="ملاحظات"
               key={selectedOrder.id}
               onChange={(e) => {
-                orderItemUpdateHandler(e, selectedOrder, "notes");
+                setColName('notes')
+                setVal(e.target.value);
               }}
               defaultValue={selectedOrder.notes}
             ></TextField>{" "}
@@ -112,7 +125,9 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               label="عنوان التوصيل"
               key={selectedOrder.id}
               onChange={(e) => {
-                orderItemUpdateHandler(e, selectedOrder, "delivery_address");
+                setColName('delivery_address')
+                setVal(e.target.value)
+                // orderItemUpdateHandler(e, selectedOrder, "delivery_address");
               }}
               defaultValue={selectedOrder.delivery_address}
             ></TextField>{" "}

@@ -9,8 +9,8 @@ const statusOptions = [
   { label: "Confirmed", value: "confirmed" },
   { label: "In Preparation", value: "in preparation" },
   { label: "Completed", value: "Completed" },
-  { label: "Delivered", value: "delivered" },
-  { label: "Cancelled", value: "cancelled" },
+  // { label: "Delivered", value: "delivered" },
+  // { label: "Cancelled", value: "cancelled" },
 ];
 
 interface StatusSelectorProps {

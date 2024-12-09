@@ -36,7 +36,7 @@ const demoTheme = createTheme({
   // direction: "rtl",
   palette:{
     primary:{
-      main: "#d7a2e891",
+      main: "#9c27b0",
     }
   },
   typography: {

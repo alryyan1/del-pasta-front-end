@@ -40,7 +40,7 @@ const DeductDialog = ({
   const deductHandler = ()=>{
     // TODO: add this order to deducted_orders
     axiosClient.post(`deducts/${selectedOrder.id}`,{
-        add:selectedOrder.deducts.length > 0 
+        add:selectedOrder.deducts.length == 0 
     }).then(({data})=>{
         setSelectedOrder(data.order)
     })
@@ -70,7 +70,7 @@ const DeductDialog = ({
                     <TableRow key={r.id}>
                       <TableCell sx={{textAlign:'center'}}>{r.child_meal.name}</TableCell>
                       <TableCell sx={{textAlign:'center'}}>{r.quantity * r.count}</TableCell>
-                      <TableCell sx={{textAlign:'center'}}>{r.available}</TableCell>
+                      <TableCell sx={{textAlign:'center'}}>{r.available - r.deducted}</TableCell>
                       <TableCell sx={{textAlign:'center'}}>{r.available - (r.quantity * r.count)}</TableCell>
                     </TableRow>
                   </TableBody>

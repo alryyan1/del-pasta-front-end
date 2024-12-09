@@ -1,0 +1,15 @@
+{
+    "orderTable": {
+      "orderNumber": "Order Number",
+      "customer": "Customer",
+      "area": "Area",
+      "status": "Status",
+      "total": "Total",
+      "paid": "Paid",
+      "orderDate": "Order Date",
+      "deliveryDate": "Delivery Date",
+      "deliveryLocation": "Delivery Location",
+      "notes": "Notes"
+    }
+  }
+  

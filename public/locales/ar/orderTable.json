@@ -1,0 +1,15 @@
+{
+    "orderTable": {
+      "orderNumber": "رقم الطلب",
+      "customer": "الزبون",
+      "area": "المنطقه",
+      "status": "الحالة",
+      "total": "اجمالي",
+      "paid": "المدفوع",
+      "orderDate": "تاريخ الطلب",
+      "deliveryDate": "تاريخ التسليم",
+      "deliveryLocation": "مكان التوصيل",
+      "notes": "ملاحظات"
+    }
+  }
+  

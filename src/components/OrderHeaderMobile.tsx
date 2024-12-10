@@ -6,8 +6,8 @@ import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
 import { Button, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, Trash, UserPlus } from "lucide-react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
 import { useCustomerStore } from "@/pages/Customer/useCustomer";
@@ -20,6 +20,9 @@ interface OrderHeaderMobileProps {
   newOrderHandler: () => void;
   setIsFormOpen: (isOpen: boolean) => void;
   showOrderSettings : boolean;
+  showNewOrderBtn: boolean;
+  setOrders: Dispatch<SetStateAction<Order[]>>
+
 }
 
 function OrderHeaderMobile({
@@ -28,12 +31,16 @@ function OrderHeaderMobile({
   newOrderHandler,
   setIsFormOpen,
   showOrderSettings,
+  setOrders,
+  showNewOrderBtn = true,
 }: OrderHeaderMobileProps) {
   const { customers, addCustomer, updateCustomer, fetchData } =
     useCustomerStore();
+
   useEffect(() => {
     fetchData();
   }, []);
+
   const sendHandler = () => {
     setloading(true)
     axiosClient
@@ -87,21 +94,35 @@ function OrderHeaderMobile({
       
       });
   };
+  const deleteHandler = ()=>{
+    let r =  confirm("Are you sure you want to delete")
+    if(!r)return
+    axiosClient.delete(`orders/${selectedOrder?.id}`).then(({ data }) => {
+      if (data.status) {
+        setSelectedOrder(null);
+        setOrders((prev)=>{
+        return prev.filter((order)=>order.id!==selectedOrder?.id)
+      });
+      toast.success('Order Deleted successfully');
+      }
+      
+    });
+  }
   return (
     <Stack
-      gap={2}
-      sx={{mb:1}}
+      gap={1}
+      sx={{mb:1,p:2,justifyContent: "center",alignItems: "center"}}
 
       direction={"column" }
       // sx={{ alignItems: "end" }}
       alignItems={'start'}
       className="shadow-lg items-center mobile-header rounded-sm order-header"
     >
-      <LoadingButton variant="outlined" onClick={newOrderHandler}>
+      {showNewOrderBtn && <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />
-      </LoadingButton>
+      </LoadingButton>}
 
-      {selectedOrder && (
+      
         <Stack direction={"row"} alignItems={"center"}>
           <Button
             size="small"
@@ -144,10 +165,13 @@ function OrderHeaderMobile({
             }}
           ></Autocomplete>
         </Stack>
-      )}
-      {selectedOrder && (
-        <>
-        <Stack direction={'row'} gap={1} alignItems={'center'} justifyContent={'center'}>
+      
+       <PayOptions
+            selectedOrder={selectedOrder}
+            setSelectedOrder={setSelectedOrder}
+            key={selectedOrder.id}
+          />
+       
         <MyDateField2
             label="تاريخ التسليم"
             path="orders"
@@ -156,14 +180,7 @@ function OrderHeaderMobile({
             val={selectedOrder?.delivery_date ?? new Date()}
             item={selectedOrder}
           />
-          {/* <BasicTimePicker/> */}
-            <PayOptions
-            selectedOrder={selectedOrder}
-            setSelectedOrder={setSelectedOrder}
-            key={selectedOrder.id}
-          />
-        </Stack>
-        <Stack justifyContent={'space-around'} direction={"row"} gap={1}>
+           
          
           <StatusSelector
             selectedOrder={selectedOrder}
@@ -185,12 +202,21 @@ function OrderHeaderMobile({
                {selectedOrder.is_delivery ?  <Car  /> : <HomeIcon/>}
               </Tooltip>
             </IconButton>
+            <IconButton onClick={printHandler}>
+              <Tooltip title="طباعه">
+                <Printer />
+              </Tooltip>
+            </IconButton>
+            <IconButton onClick={deleteHandler}>
+              <Tooltip title="حذف الطلب">
+                <Trash />
+              </Tooltip>
+            </IconButton>
           </Stack>
-        </Stack>
         
        
-        </>
-      )}
+       
+      
     </Stack>
   );
 }

@@ -112,11 +112,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       title: t("Orders"),  // Use translation key for "Orders"
       icon: <List />,
     },
-    {
-      segment: "reservations2",
-      title: t("Reservations"),  // Use translation key for "Reservations"
-      icon: <BookmarkAddedIcon />,
-    },
+    
     {
       segment: "stats",
       title: t("Order Quantities"),  // Use translation key for "Order Quantities"
@@ -131,6 +127,11 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       segment: "menu",
       title: t("Menu"),  // Use translation key for "Menu"
       icon: <RestaurantMenuIcon />,
+    },
+    {
+      segment: "reservations2",
+      title: t("Reservations"),  // Use translation key for "Reservations"
+      icon: <BookmarkAddedIcon />,
     },
     {
       kind: "divider",

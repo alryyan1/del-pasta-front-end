@@ -4,7 +4,7 @@ import StatusSelector from "@/components/StatusSelector";
 import axiosClient from "@/helpers/axios-client";
 import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
-import { Button, CircularProgress, IconButton, TextField, Tooltip } from "@mui/material";
+import { Button, Chip, CircularProgress, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
 import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -20,7 +20,6 @@ interface OrderHeaderProps {
   setSelectedOrder: (order: Order) => void;
   newOrderHandler: () => void;
   setIsFormOpen: (isOpen: boolean) => void;
-  showOrderSettings: boolean;
 }
 
 function OrderHeader({
@@ -28,7 +27,6 @@ function OrderHeader({
   setSelectedOrder,
   newOrderHandler,
   setIsFormOpen,
-  showOrderSettings,
 }: OrderHeaderProps) {
   const { t } = useTranslation('orderheader'); // Initialize useTranslation hook
   const { customers, addCustomer, updateCustomer, fetchData } =
@@ -97,6 +95,7 @@ function OrderHeader({
       alignItems={"center"}
       className="shadow-lg items-center rounded-sm order-header"
     >
+    <Chip variant="contained" label={selectedOrder?.id}></Chip>
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />
       </LoadingButton>

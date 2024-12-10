@@ -63,7 +63,7 @@ function Stats() {
         <TableBody>
         {data.map((info, index) => {
             let remaining = info.totalDeposit - info.totalQuantity;
-           return (<TableRow  key={index} className={` hover:bg-slate-200 ${remaining < 0 ? 'bg-red-300':'bg-green-300'}`}>
+           return (<TableRow  key={index} className={` hover:bg-slate-200 ${remaining < 0 ? 'bg-red-100':'bg-green-300'}`}>
               <TableCell className=" text-sm ">{info.mealName}</TableCell>
               <TableCell className=" text-sm ">{info.childName}</TableCell>
               <TableCell className=" text-sm ">{info.totalQuantity}</TableCell>

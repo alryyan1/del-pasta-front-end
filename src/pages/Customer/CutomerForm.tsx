@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   Dialog,
@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next'; // Importing i18n translation hook
 import { Customer } from '@/Types/types';
+import { useCustomerStore } from './useCustomer';
 
 interface CustomerFormProps {
   open: boolean;
@@ -22,25 +23,35 @@ interface CustomerFormProps {
 export const CustomerForm: React.FC<CustomerFormProps> = ({
   open,
   onClose,
-  onSubmit,
+
   initialData,
 }) => {
   const { t } = useTranslation('customerForm'); // Initializing translation function
+  const { customers, addCustomer, updateCustomer } = useCustomerStore();
+  const [selectedCustomer, setSelectedCustomer] = useState<
+    Customer | undefined
+  >();
   const {
     register,
-    handleSubmit,
     reset,
+    handleSubmit,
     formState: { errors },
   } = useForm<Customer>({
     defaultValues: initialData,
   });
 
   const onSubmitHandler = (data: Customer) => {
-    onSubmit(data);
+   addCustomer(data)
     reset();
     onClose();
   };
-
+  // const handleSubmit = (customer: Customer) => {
+  //   if (selectedCustomer) {
+  //     updateCustomer(customer);
+  //   } else {
+  //     addCustomer(customer);
+  //   }
+  // };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>

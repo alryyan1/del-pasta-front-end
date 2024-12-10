@@ -31,7 +31,10 @@ const NewOrder = () => {
     Customer | undefined
   >();
   const { t } = useTranslation('newOrder'); // Using i18next hook for translations
-  
+  useEffect(() => {
+    document.title = "طلب جديد";
+  }, []);
+
   useEffect(() => {
     const handleResize = () => {
       setWidth(window.innerWidth);
@@ -92,13 +95,7 @@ const NewOrder = () => {
     });
   }, []);
 
-  const handleSubmit = (customer: Customer) => {
-    if (selectedCustomer) {
-      updateCustomer(customer);
-    } else {
-      addCustomer(customer);
-    }
-  };
+ 
 
   return (
     <>
@@ -205,7 +202,6 @@ const NewOrder = () => {
           key={selectedCustomer?.id}
           open={isFormOpen}
           onClose={handleClose}
-          onSubmit={handleSubmit}
         />
       </div>
     </>

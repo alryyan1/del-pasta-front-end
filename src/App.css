@@ -178,12 +178,12 @@ body {
     grid-template-columns: minmax(285px, 1fr) 80px;
   }
 
-  .mobile-header {
+  /* .mobile-header {
     display: grid!important;
     grid-template-columns: 1fr 1fr;
     justify-content: center;
     align-items: center;
-  }
+  } */
 }
 
 .dashborad-stats {
@@ -221,4 +221,7 @@ body {
 }
 .order-table td,th  {
   border: 1px solid lightgray;
+  
+    width: fit-content;
+  
 }

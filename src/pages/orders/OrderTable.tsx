@@ -8,6 +8,8 @@ import {
   TableRow,
   Paper,
   useMediaQuery,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 import { Order } from "@/Types/types";
 import { StatusChip } from "./StatusShip";
@@ -25,6 +27,9 @@ import { OrderDetailsPopover } from "@/components/OrderDetails";
 import { LoadingButton } from "@mui/lab";
 import axiosClient from "@/helpers/axios-client";
 import DeductDialog from "@/components/DeductDialog";
+import { Settings } from "lucide-react";
+import SettingsDialog from "@/components/SettingsDialog";
+import { CustomerForm } from "../Customer/CutomerForm";
 
 interface OrderTableProps {
   orders: Order[];
@@ -36,9 +41,16 @@ export const OrderTable = ({ orders,setOrders }: OrderTableProps) => {
   const { t } = useTranslation('orderTable');
   const [loading ,setLoading]=useState(false)
   const [open, setOpen] = useState(false);
-  const [selectedOrder , setSelectedOrder]=useState(null)
+  const [openSettings, setOpenSettings] = useState(false);
+  const [selectedOrder , setSelectedOrder]=useState<Order|null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false);
+
   const handleClose = ()=>{
     setOpen(false)
+    setIsFormOpen(false)
+  }
+  const handleCloseSettingsDialog = ()=>{
+    setOpenSettings(false)
   }
   const deliveryHandler = (order:Order)=>{
     setSelectedOrder(order)
@@ -62,7 +74,7 @@ export const OrderTable = ({ orders,setOrders }: OrderTableProps) => {
             width: isMobile ? "500px" : "auto",
           }}
         >
-          <Table className="border border-collapse order-table" stickyHeader>
+          <Table className=" border border-collapse order-table" stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell>{t("orderTable.orderNumber")}</TableCell>
@@ -71,9 +83,11 @@ export const OrderTable = ({ orders,setOrders }: OrderTableProps) => {
                 <TableCell>{t("orderTable.status")}</TableCell>
                 <TableCell>{t("orderTable.total")}</TableCell>
                 <TableCell width={"5%"}>{t("orderTable.paid")}</TableCell>
+                <TableCell width={"5%"}>المتبقي</TableCell>
                 <TableCell>{t("orderTable.orderDate")}</TableCell>
                 <TableCell>{t("orderTable.deliveryDate")}</TableCell>
                 <TableCell>التسليم</TableCell>
+                <TableCell>خيارات</TableCell>
                 {/* <TableCell>{t("orderTable.deliveryLocation")}</TableCell> */}
                 {/* <TableCell>{t("orderTable.notes")}</TableCell> */}
               </TableRow>
@@ -105,6 +119,8 @@ export const OrderTable = ({ orders,setOrders }: OrderTableProps) => {
                   >
                     {order.amount_paid.toFixed(3)}
                   </TdCell>
+                  <TableCell>{(order.totalPrice - order.amount_paid).toFixed(3)}</TableCell>
+
                   <TableCell sx={{ textWrap: "nowrap" }}>
                     {dayjs(new Date(order.created_at)).format(
                       "YYYY-MM-DD HH:mm A"
@@ -122,6 +138,10 @@ export const OrderTable = ({ orders,setOrders }: OrderTableProps) => {
                   <TableCell>
                     <LoadingButton loading={loading} onClick={()=>deliveryHandler(order)} size="small" variant="contained" color={order.status == 'delivered' ?'error' :'inherit'}>{order.status == 'delivered' ?'الغاء ' :'تسليم'}</LoadingButton>
                   </TableCell>
+                  <TableCell><Tooltip title='اعدادات الطلب' content="اعدادات الطلب"><IconButton onClick={()=>{
+                    setSelectedOrder(order)
+                    setOpenSettings(true)
+                  }} ><Settings/></IconButton></Tooltip></TableCell>
                   {/* <TableCell>{order.delivery_address}</TableCell> */}
                   {/* <TableCell>{order.notes}</TableCell> */}
                 </TableRow>
@@ -130,6 +150,11 @@ export const OrderTable = ({ orders,setOrders }: OrderTableProps) => {
           </Table>
         </TableContainer>
       {selectedOrder &&  <DeductDialog setSelectedOrder={setSelectedOrder}  selectedOrder={selectedOrder} open={open} handleClose={handleClose}/>}
+      {selectedOrder &&  <SettingsDialog setOrders={setOrders} setIsFormOpen={setIsFormOpen} setSelectedOrder={setSelectedOrder}  selectedOrder={selectedOrder} open={openSettings} handleClose={handleCloseSettingsDialog}/>}
+      {selectedOrder && <CustomerForm
+          open={isFormOpen}
+          onClose={handleClose}
+        />}
       </Paper>
     </>
   );

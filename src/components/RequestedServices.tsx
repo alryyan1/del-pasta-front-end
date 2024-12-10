@@ -22,15 +22,14 @@ function RequestedServices({updateRequestedQuantity,item,show,details=true}:Requ
     <Slide unmountOnExit  in={show} >
           <div className="border-red-100 bg-blue-300 requested-meal p-2 rounded-md shadow-sm">
           <Table>
-            {/* <TableRow> */}
-            {/* <TableCell>اسم الوجبه</TableCell> */}
-            {/* <TableCell>الصنف</TableCell> */}
-            {/* <TableCell>السعر</TableCell> */}
+            <TableRow>
+            <TableCell>الصنف </TableCell>
+            <TableCell>السعر</TableCell>
 
-            {/* <TableCell>الكميه</TableCell> */}
-            {/* <TableCell>العدد</TableCell> */}
-            {/* <TableCell>الاجمالي</TableCell> */}
-            {/* </TableRow> */}
+            <TableCell>الكميه</TableCell>
+            <TableCell>العدد</TableCell>
+            <TableCell>الاجمالي</TableCell>
+            </TableRow>
             <TableBody>
               {item.requested_child_meals.map((requested) => (
                 <TableRow key={requested.id}>
@@ -40,10 +39,10 @@ function RequestedServices({updateRequestedQuantity,item,show,details=true}:Requ
 
                   <TableCell>{requested.child_meal.quantity}</TableCell>
                   {details &&     <TableCell className="text-center">
-                    <Stack direction={"column"} justifyContent={'center'}>
+                    <Stack alignItems={'center'} direction={"column"} justifyContent={'center'}>
                       <button
                         onClick={() => updateRequestedQuantity(false, requested)}
-                        className="p-1 text-center bg-gray-100 rounded"
+                        className="p-1 w-[25px] text-center bg-gray-100 rounded"
                       >
                         <Minus size={16} />
                       </button>
@@ -52,7 +51,7 @@ function RequestedServices({updateRequestedQuantity,item,show,details=true}:Requ
                       </span>
                       <button
                         onClick={() => updateRequestedQuantity(true, requested)}
-                        className="p-1 text-center bg-gray-100 rounded"
+                        className="p-1 w-[25px] text-center bg-gray-100 rounded"
                       >
                         <Plus size={16} />
                       </button>

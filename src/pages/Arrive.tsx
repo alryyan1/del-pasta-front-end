@@ -13,7 +13,7 @@ function Arrive() {
 
    const {id} =  useParams()
    const [loading,setLoading] = useState(false)
-   const [order,setOrder] = useState<Order>(null)
+   const [order,setOrder] = useState<Order|null>(null)
    const {register,handleSubmit} =  useForm()
    useEffect(()=>{
       axiosClient.get(`orders/${id}`).then(({data})=>{
@@ -41,7 +41,7 @@ function Arrive() {
         height: "80vh",
       }}
     >
-     {order.outside ?<CheckCircleOutline fontSize="large" color="success"/> :   <form onSubmit={handleSubmit(submitHandler)}>
+     {order?.outside ?<CheckCircleOutline fontSize="large" color="success"/> :   <form onSubmit={handleSubmit(submitHandler)}>
         <Stack gap={1} sx={{ maxWidth: "400px" }} direction={"column"}>
           <Typography textAlign={"center"} variant="h4">
             Arrival-  الوصول

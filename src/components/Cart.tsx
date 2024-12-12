@@ -8,14 +8,17 @@ import CartItem from "./CartItem";
 import { ShoppingCart } from "lucide-react";
 import { Divider, TextField, Typography } from "@mui/material";
 import { Notes } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
+
 interface CartProps {
   selectedOrder: Order;
   setSelectedOrder: (order) => void;
 }
 
 function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
-  const [colName, setColName] = useState('');
-  const [val, setVal] = useState('');
+  const { t } = useTranslation('cart'); // Using the i18n translation hook
+  const [colName, setColName] = useState("");
+  const [val, setVal] = useState("");
 
   const updateQuantity = (increment: boolean, item: Requestedchildmeal) => {
     axiosClient
@@ -26,6 +29,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
         setSelectedOrder(data.order);
       });
   };
+
   const updateMealOrderQuantity = (increment: boolean, item: Mealorder) => {
     axiosClient
       .patch(`orderMeals/${item.id}`, {
@@ -35,15 +39,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
         setSelectedOrder(data.order);
       });
   };
-  const itemTotal = selectedOrder.meal_orders.reduce(
-    (sum, item) => sum + item.meal.price * item.quantity,
-    0
-  );
-  const restaurantCharges = itemTotal * 0.02;
-  const deliveryFee = 10;
-  const discount = itemTotal * 0.6;
-  const finalTotal = itemTotal + restaurantCharges + deliveryFee - discount;
-  console.log(selectedOrder, "selected order");
+
   const orderUpdateHandler = () => {
     axiosClient
       .patch(`orders/${selectedOrder.id}`, {
@@ -60,24 +56,25 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       });
   };
 
-  useEffect(()=>{
-    const timer = setTimeout(() => {
-      orderItemUpdateHandler(val,selectedOrder,colName)
-    }, 400);
-    return () => clearTimeout(timer);
-  },[val])
   const orderItemUpdateHandler = (val, orderMeal, colName = "delivery_fee") => {
     axiosClient
       .patch(`orders/${orderMeal.id}`, {
         [colName]: val,
       })
       .then(({ data }) => {
-        console.log(data, "data");
         setSelectedOrder(data.order);
       });
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      orderItemUpdateHandler(val, selectedOrder, colName);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [val]);
+
   return (
-    <div style={{ height: "100%" }} className="cart-items-div flex justify-center ">
+    <div style={{ height: "100%" }} className="cart-items-div flex justify-center">
       <Stack
         className="shadow-lg overflow-auto"
         direction={"column"}
@@ -86,13 +83,13 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
           p: 2,
         }}
       >
-        <div className="space-y-4 mb-6 grid ">
+        <div className="space-y-4 mb-6 grid">
           {selectedOrder.meal_orders.map((item) => {
             const isMultible =
               item.quantity > 1 ? "animate__animated animate__rubberBand" : "";
             return (
               <CartItem
-              updateRequestedQuantity={updateQuantity}
+                updateRequestedQuantity={updateQuantity}
                 setSelectedOrder={setSelectedOrder}
                 updateQuantity={updateMealOrderQuantity}
                 isMultible={isMultible}
@@ -108,47 +105,46 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               autoComplete="off"
               variant="standard"
               fullWidth
-              label="ملاحظات"
+              label={t("notes")}
               key={selectedOrder.id}
               onChange={(e) => {
-                setColName('notes')
+                setColName("notes");
                 setVal(e.target.value);
               }}
               defaultValue={selectedOrder.notes}
-            ></TextField>{" "}
+            ></TextField>
           </Box>
           <Box>
             <TextField
               autoComplete="off"
               variant="standard"
               fullWidth
-              label="عنوان التوصيل"
+              label={t("delivery_address")}
               key={selectedOrder.id}
               onChange={(e) => {
-                setColName('delivery_address')
-                setVal(e.target.value)
-                // orderItemUpdateHandler(e, selectedOrder, "delivery_address");
+                setColName("delivery_address");
+                setVal(e.target.value);
               }}
               defaultValue={selectedOrder.delivery_address}
-            ></TextField>{" "}
+            ></TextField>
           </Box>
           <div className="space-y-2 text-sm mb-6 mt-4">
             <Typography variant="h4" className="flex justify-between text-lg">
-              <span className="text-gray-600">اجمالي الملبغ</span>
+              <span className="text-gray-600">{t("total_amount")}</span>
               <span className="text-gray-900">
                 {selectedOrder.totalPrice.toFixed(3)}
               </span>
             </Typography>
             <Divider />
             <Typography variant="h4" className="flex justify-between text-lg">
-              <span className="text-gray-600">المدفوع </span>
+              <span className="text-gray-600">{t("paid")}</span>
               <span className="text-gray-900">
                 {selectedOrder.amount_paid.toFixed(3)}
               </span>
             </Typography>
 
             <div className="flex justify-between">
-              <span className="text-gray-600">رسوم التوصيل</span>
+              <span className="text-gray-600">{t("delivery_fee")}</span>
               <span className="text-gray-900">
                 <TextField
                   type="number"
@@ -156,11 +152,11 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
                   variant="standard"
                   sx={{ width: "50px", direction: "ltr" }}
                   onChange={(e) => {
-                    orderItemUpdateHandler(e, selectedOrder);
+                    orderItemUpdateHandler(e.target.value, selectedOrder);
                   }}
                   defaultValue={selectedOrder.delivery_fee}
                 ></TextField>
-                <span>OMR</span>
+                <span>{t("currency_OMR")}</span>
               </span>
             </div>
           </div>
@@ -171,7 +167,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
             variant="contained"
             sx={{}}
           >
-            تاكيد
+            {t("confirm_order")}
           </LoadingButton>
         </div>
       </Stack>

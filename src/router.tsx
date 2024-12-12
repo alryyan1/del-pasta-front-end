@@ -24,6 +24,7 @@ import Services from "./pages/Services";
 import Users from "./pages/Users";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
+import Arrive from "./pages/Arrive";
 
 const login: RouteObject = {
   path: "login",
@@ -44,6 +45,11 @@ const makeOrder: RouteObject = {
 const landingPage: RouteObject = {
   path: "/dashboard",
   element: <ProtectedRoute><Dashboard /></ProtectedRoute>,
+};
+const arrive: RouteObject = {
+
+  path: "/arrive/:id",
+  element: <Arrive />,
 };
 //confgiuration
 const MealCategoriesConfig: RouteObject = {
@@ -72,7 +78,7 @@ const config: RouteObject = {
 };
 const orders: RouteObject = {
   path: "/orders",
-  element: <Orders />,
+  element: <ProtectedRoute><Orders /></ProtectedRoute> ,
 };
 
 const stats: RouteObject = {
@@ -112,6 +118,7 @@ const authoroized: RouteObject = {
     menu,
     reservation2,
     stats,
+
   ],
 };
 const forbidden :RouteObject = {
@@ -126,5 +133,5 @@ const guest: RouteObject = {
   children: [login, signup],
 };
 
-export const router = createHashRouter([authoroized, guest,forbidden]);
+export const router = createHashRouter([authoroized, guest,forbidden,arrive]);
 

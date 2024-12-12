@@ -21,9 +21,10 @@ export const cacheRtl = createCache({
 // export const host = 'intaj-starstechnology.com'
 
 // export const url = "https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api/"
-export const schema = "http";
+export const schema = "https";
 // export const host = "intaj-starstechnology.com";
-export const host = "127.0.0.1";
+// export const host = "127.0.0.1";
+export const host = "rain-laundry.com";
 // export const host = 'server1'مركز النعيم
 
 

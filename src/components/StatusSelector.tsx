@@ -35,7 +35,7 @@ const StatusSelector = ({
 
   return (
     <Autocomplete
-      sx={{ width: "150px" }}
+      sx={{ width: "170px" }}
       value={status}
       size="small"
       onChange={handleChange}

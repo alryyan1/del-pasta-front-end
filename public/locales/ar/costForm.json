@@ -1,0 +1,11 @@
+{
+    "add_expense": "اضافه مصروف",
+    "expense_description": "وصف المصروف",
+    "expense_description_required": "يجب ادخال وصف المصروف",
+    "add_category": "اضافه قسم",
+    "expense_category": "قسم المصروف",
+    "amount": "المبلغ",
+    "expense_amount_required": "يجب ادخال المبلغ",
+    "save": "حفظ"
+  }
+  

@@ -37,7 +37,7 @@ main {
   border: 1px solid lightblue;
 }
 header{
-  background-color: #d6a2e8  !important
+  background-color: #0097e6  !important
 }
 nav {
   /* background-color: #e1bee7!important; */
@@ -47,7 +47,7 @@ nav {
   /* width: 240px!important; */
 }
 :root{
-  --primary: #d7a2e891;
+  --primary: lightblue;
   --secondary: #947b9c;
 }
 body {
@@ -159,7 +159,7 @@ body {
 }
 
 .order-header{
-  background-color: #e91e6312;
+  background-color: #add8e6;
     padding: 5px;
     border-radius: 10px;
     border: 1px dashed
@@ -224,4 +224,8 @@ body {
   
     width: fit-content;
   
+}
+
+.muirtl-1goaqxd{
+  max-width :auto !important;
 }

@@ -1,0 +1,20 @@
+{
+    "welcomeToReact": "مرحبًا بك في React",
+    "header": "الترويسة",
+    "footer": "التذييل",
+    "fileDetailsName": "تفاصيل الملف - الاسم",
+    "headerLabel": "الترويسه",
+    "footerLabel": "الفوتر",
+    "logoLabel": "اللوقو",
+    "institutionName": "اسم المؤسسة",
+    "currencyLabel": "العملة",
+    "employeePhone": "هاتف الموظف",
+    "vatin": "رقم الفاتورة",
+    "cr": "رقم السجل التجاري",
+    "emailLabel": "البريد الإلكتروني",
+    "addressLabel": "العنوان",
+    "welcomeMessage": "الرسالة الترحيبية",
+    "footerContent": "محتوى الفوتر",
+    "save": "حفظ"
+  }
+  

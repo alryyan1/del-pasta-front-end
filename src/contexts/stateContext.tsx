@@ -44,17 +44,17 @@ export const AuthProvider = ({ children }) => {
   const [data, setData] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("ACCESS_TOKEN"));
   const navigate =  useNavigate()
-  useEffect(() => {
-    axiosClient.get("/user").then(({ data }) => {
-      setUser(data);
-    }).catch((err)=>{
-    console.log('error')
-    setUser(null);
-    setToken(null)
-    navigate('/login');
+  // useEffect(() => {
+  //   axiosClient.get("/user").then(({ data }) => {
+  //     setUser(data);
+  //   }).catch((err)=>{
+  //   console.log('error')
+  //   setUser(null);
+  //   setToken(null)
+  //   navigate('/login');
 
-  });
-  }, [])
+  // });
+  // }, [])
   const add = (actionItem,setState)=>{
 
        if (setState) {

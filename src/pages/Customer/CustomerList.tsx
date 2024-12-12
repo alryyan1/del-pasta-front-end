@@ -32,7 +32,9 @@ export const CustomerList: React.FC<CustomerListProps> = ({
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
-
+  const [selectedCustomer, setSelectedCustomer] = useState<
+    Customer | undefined
+  >();
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {

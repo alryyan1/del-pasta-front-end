@@ -23,12 +23,12 @@ function RequestedServices({updateRequestedQuantity,item,show,details=true}:Requ
           <div className="border-red-100 bg-blue-300 requested-meal p-2 rounded-md shadow-sm">
           <Table>
             <TableRow>
-            <TableCell>الصنف </TableCell>
+            <TableCell>الخدمه </TableCell>
             <TableCell>السعر</TableCell>
 
-            <TableCell>الكميه</TableCell>
-            <TableCell>العدد</TableCell>
-            <TableCell>الاجمالي</TableCell>
+            {/* <TableCell>الكميه</TableCell> */}
+            {/* <TableCell>العدد</TableCell> */}
+            {/* <TableCell>الاجمالي</TableCell> */}
             </TableRow>
             <TableBody>
               {item.requested_child_meals.map((requested) => (
@@ -37,8 +37,8 @@ function RequestedServices({updateRequestedQuantity,item,show,details=true}:Requ
                   <TableCell>{requested.child_meal.name}</TableCell>
                  {details && <TableCell>{requested.child_meal.price}</TableCell>}
 
-                  <TableCell>{requested.child_meal.quantity}</TableCell>
-                  {details &&     <TableCell className="text-center">
+                  {/* <TableCell>{requested.child_meal.quantity}</TableCell> */}
+                  {/* {details &&     <TableCell className="text-center">
                     <Stack alignItems={'center'} direction={"column"} justifyContent={'center'}>
                       <button
                         onClick={() => updateRequestedQuantity(false, requested)}
@@ -56,10 +56,10 @@ function RequestedServices({updateRequestedQuantity,item,show,details=true}:Requ
                         <Plus size={16} />
                       </button>
                     </Stack>
-                  </TableCell>}
-                  {details &&     <TableCell>
+                  </TableCell>} */}
+                  {/* {details &&     <TableCell>
                     {(requested.child_meal.price * requested.count).toFixed(3)}   
-                  </TableCell>}
+                  </TableCell>} */}
                 </TableRow>
               ))}
             </TableBody>

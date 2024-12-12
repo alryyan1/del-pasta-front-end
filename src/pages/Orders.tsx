@@ -17,6 +17,8 @@ import dayjs from "dayjs";
 import { webUrl } from "@/helpers/constants";
 import MyLoadingButton from "@/components/MyLoadingButton";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import { useOutletContext } from "react-router-dom";
+import { Order } from "@/Types/types";
 
 type Status = [
   "Pending",
@@ -43,7 +45,7 @@ function Orders() {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [page, setPage] = useState(20);
   const [links, setLinks] = useState([]);
-
+  
   const updateItemsTable = (link, setLoading) => {
     setLoading(true);
     axiosClient(`${link.url}&word=${search}`)
@@ -184,7 +186,7 @@ function Orders() {
           justifyContent="center"
           className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
         >
-          <Typography variant="h5">  طلبات مسلمه</Typography>
+          <Typography variant="h5">  {t('handed')} </Typography>
           <Typography variant="h5">
             {(
               orders.filter((o)=>o.status =='delivered').length
@@ -197,7 +199,7 @@ function Orders() {
           justifyContent="center"
           className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
         >
-          <Typography variant="h5"> غير مسلم</Typography>
+          <Typography variant="h5"> {t('notHanded')} </Typography>
           <Typography variant="h5">
             {(
               orders.filter((o)=>o.status !='delivered').length

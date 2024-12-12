@@ -1,0 +1,12 @@
+{
+    "search": "Search",
+    "child_name": "Child Name",
+    "meal_name": "Meal Name",
+    "requested_quantity": "Requested Quantity",
+    "available_quantity": "Available Quantity",
+    "deducted_quantity": "Deducted Quantity",
+    "net_quantity": "Net Quantity",
+    "remaining_quantity": "Remaining Quantity",
+    "add_quantity": "Add Quantity"
+  }
+  

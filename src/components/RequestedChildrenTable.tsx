@@ -32,7 +32,7 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
         <TableRow>
           <TableCell>-</TableCell>
           <TableCell>اسم</TableCell>
-          <TableCell>الكميه</TableCell>
+          {/* <TableCell>الكميه</TableCell> */}
           <TableCell>سعر</TableCell>
           {/* <TableCell>الاشخاص</TableCell> */}
           {/* <TableCell>الوزن</TableCell> */}
@@ -48,7 +48,7 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
               <MyCheckbox child={child} addRequestedChildMealHandler={addRequestedChildMealHandler} checked={mealOrder.requested_child_meals.find((req)=>req.child_meal_id == child.id)!=undefined}/>
               </TableCell>
               <TableCell>{child.name}</TableCell>
-              <TableCell>{child.quantity}</TableCell>
+              {/* <TableCell>{child.quantity}</TableCell> */}
               <TableCell>{child.price}</TableCell>
               {/* <TableCell>{child.people_count}</TableCell> */}
               {/* <TableCell>{child.weight}</TableCell> */}

@@ -10,6 +10,9 @@
       "deliveryDate": "تاريخ التسليم",
       "deliveryLocation": "مكان التوصيل",
       "notes": "ملاحظات"
-    }
+    },
+    "remaining":"متبقي",
+    "settings":"الاعدادات",
+    "handed":"تسليم"
   }
   

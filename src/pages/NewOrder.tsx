@@ -20,6 +20,7 @@ import "./../App.css";
 import OrderHeaderMobile from "@/components/OrderHeaderMobile";
 import { useTranslation } from "react-i18next";
 import Language from "./language";
+import { useOutlet, useOutletContext } from "react-router-dom";
 
 const NewOrder = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -52,7 +53,7 @@ const NewOrder = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const {selectedOrder, setSelectedOrder} =useOutletContext()
   const { customers, addCustomer, updateCustomer } = useCustomerStore();
   const { data, setData, add, deleteItem } = useAuthContext();
   const [orders, setOrders] = useState<Order[]>([]);

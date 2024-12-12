@@ -1,0 +1,18 @@
+{
+    "form": {
+      "add_meal_category": "Add Meal Category",
+      "category_name": "Category Name",
+      "enter_category_name": "Enter category name",
+      "category_image": "Category Image",
+      "image_preview": "Image Preview",
+      "add_category": "Add Category"
+    },
+    "validation": {
+      "complete_all_fields": "Please complete all fields."
+    },
+    "log": {
+      "category_name": "Category Name:",
+      "image_uploaded": "Image uploaded:"
+    }
+  }
+  

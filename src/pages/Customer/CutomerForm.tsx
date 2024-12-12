@@ -18,19 +18,18 @@ interface CustomerFormProps {
   onClose: () => void;
   onSubmit: (data: Customer) => void;
   initialData?: Customer;
+  selectedCustomer: Customer;
 }
 
 export const CustomerForm: React.FC<CustomerFormProps> = ({
   open,
   onClose,
-
+  selectedCustomer,
   initialData,
 }) => {
   const { t } = useTranslation('customerForm'); // Initializing translation function
   const { customers, addCustomer, updateCustomer } = useCustomerStore();
-  const [selectedCustomer, setSelectedCustomer] = useState<
-    Customer | undefined
-  >();
+
   const {
     register,
     reset,
@@ -41,17 +40,17 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
   });
 
   const onSubmitHandler = (data: Customer) => {
-   addCustomer(data)
+    submitHandler(data)
     reset();
     onClose();
   };
-  // const handleSubmit = (customer: Customer) => {
-  //   if (selectedCustomer) {
-  //     updateCustomer(customer);
-  //   } else {
-  //     addCustomer(customer);
-  //   }
-  // };
+  const submitHandler = (customer: Customer) => {
+    if (selectedCustomer) {
+      updateCustomer(customer);
+    } else {
+      addCustomer(customer);
+    }
+  };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>

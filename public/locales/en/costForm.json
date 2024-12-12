@@ -1,0 +1,11 @@
+{
+    "add_expense": "Add Expense",
+    "expense_description": "Expense Description",
+    "expense_description_required": "Expense description is required",
+    "add_category": "Add Category",
+    "expense_category": "Expense Category",
+    "amount": "Amount",
+    "expense_amount_required": "Amount is required",
+    "save": "Save"
+  }
+  

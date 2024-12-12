@@ -1,53 +1,51 @@
 import React, { useEffect, useState } from "react";
-import Header from "../header";
-import Card from "../Card";
-import axiosClient from "@/helpers/axios-client";
+import { useTranslation } from "react-i18next";
 import { useCategoryStore } from "@/stores/CategoryStore";
-import MenuItem from "@/pages/Reservation/MenuItem";
 
 const MealCategoryForm = () => {
+  const { t } = useTranslation('addCategory'); // Hook for translation
   const [categoryName, setCategoryName] = useState("");
   const [categoryImage, setCategoryImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  const { fetchCategories, categories,add } = useCategoryStore((state) => state);
+  const { fetchCategories, categories, add } = useCategoryStore((state) => state);
+
+  // Fetch categories on component mount
   useEffect(() => {
     fetchCategories();
   }, []);
-  console.log(previewImage, "prevew img", "name ", categoryName);
+
+  console.log(previewImage, "Preview Image", "Name", categoryName);
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate form data
+    // Validation
     if (!categoryName || !categoryImage) {
-      alert("الرجاء إدخال جميع البيانات");
+      alert(t("validation.complete_all_fields")); // Use translation for the alert
       return;
     }
 
-    // Simulate form data submission
     const formData = new FormData();
     formData.append("categoryName", categoryName);
     formData.append("categoryImage", categoryImage);
 
-    console.log("اسم التصنيف:", categoryName);
-    console.log("تم رفع الصورة:", categoryImage);
+    console.log(t("log.category_name"), categoryName);
+    console.log(t("log.image_uploaded"), categoryImage);
 
-      add(categoryName,previewImage)
+    add(categoryName, previewImage);
 
-    // Clear form after submission
     setCategoryName("");
     setCategoryImage(null);
     setPreviewImage(null);
   };
 
-  // Handle file input change and preview
+  // Handle image selection and create preview
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setCategoryImage(file);
 
-      // Generate preview of the selected image
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
@@ -57,23 +55,23 @@ const MealCategoryForm = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 ]">
+    <div className="grid grid-cols-2 gap-4">
+      {/* Form Section */}
       <div
         dir="rtl"
         className="max-w-md mx-auto mt-10 p-4 bg-white shadow-md rounded-lg"
       >
-        <h2 style={{ textAlign: "right" }} className="text-2xl font-bold mb-4">
-          إضافة صنف وجبة
+        <h2 className="text-2xl font-bold mb-4 text-right">
+          {t("form.add_meal_category")}
         </h2>
         <form onSubmit={handleSubmit}>
           {/* Category Name Input */}
           <div className="mb-4">
             <label
               htmlFor="categoryName"
-              style={{ textAlign: "right", display: "block" }}
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 text-right"
             >
-              اسم التصنيف
+              {t("form.category_name")}
             </label>
             <input
               type="text"
@@ -81,7 +79,7 @@ const MealCategoryForm = () => {
               value={categoryName}
               onChange={(e) => setCategoryName(e.target.value)}
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
-              placeholder="أدخل اسم التصنيف"
+              placeholder={t("form.enter_category_name")}
               required
             />
           </div>
@@ -90,10 +88,9 @@ const MealCategoryForm = () => {
           <div className="mb-4">
             <label
               htmlFor="categoryImage"
-              style={{ textAlign: "right", display: "block" }}
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 text-right"
             >
-              صورة الصنف
+              {t("form.category_image")}
             </label>
             <input
               type="file"
@@ -108,15 +105,12 @@ const MealCategoryForm = () => {
           {/* Image Preview */}
           {previewImage && (
             <div className="mb-4">
-              <p
-                style={{ textAlign: "right" }}
-                className="text-sm text-gray-700"
-              >
-                معاينة الصورة:
+              <p className="text-sm text-gray-700 text-right">
+                {t("form.image_preview")}
               </p>
               <img
                 src={previewImage}
-                alt="معاينة الصورة"
+                alt={t("form.image_preview")}
                 className="w-full h-48 object-cover rounded-md mt-2"
               />
             </div>
@@ -127,38 +121,30 @@ const MealCategoryForm = () => {
             type="submit"
             className="w-full bg-primary text-white p-2 rounded-md shadow hover:bg-primary-dark"
           >
-            إضافة الصنف
+            {t("form.add_category")}
           </button>
         </form>
       </div>
+
+      {/* Categories List */}
       <div>
-        {/* 3 columns grid */}
         <div className="grid grid-cols-3 gap-1">
-          {categories.map((cat) => {
-            return (
-              <div>
-                <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]">
-                  <img
-                    src={cat.image}
-                    alt={cat.name}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg flex items-center justify-center font-semibold text-gray-900">
-                          {cat.name}
-                        </h3>
-                      
-                      </div>
-                      <span className="text-lg font-semibold text-gray-900">
-                      </span>
-                    </div>
-                  </div>
+          {categories.map((cat) => (
+            <div key={cat.name}>
+              <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]">
+                <img
+                  src={cat.image}
+                  alt={cat.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="text-lg flex items-center justify-center font-semibold text-gray-900">
+                    {cat.name}
+                  </h3>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
     </div>

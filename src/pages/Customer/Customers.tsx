@@ -96,6 +96,7 @@ function Customers() {
         <CustomerForm key={selectedCustomer?.id}
           open={isFormOpen}
           onClose={handleClose}
+          selectedCustomer={selectedCustomer}
           onSubmit={handleSubmit}
           initialData={selectedCustomer}
         />

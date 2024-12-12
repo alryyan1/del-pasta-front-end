@@ -40,6 +40,13 @@ axiosClient.interceptors.response.use(
     if (response.status == 401) {
       console.log("removing access token");
       localStorage.removeItem("ACCESS_TOKEN");
+      toast.error(response?.data?.message ?? "هنالك خطا", {
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
       // alert('Access token removed successfully')
     }
     if (response.status == 404) {

@@ -1,0 +1,18 @@
+{
+    "form": {
+      "add_meal_category": "إضافة صنف وجبة",
+      "category_name": "اسم التصنيف",
+      "enter_category_name": "أدخل اسم التصنيف",
+      "category_image": "صورة الصنف",
+      "image_preview": "معاينة الصورة",
+      "add_category": "إضافة الصنف"
+    },
+    "validation": {
+      "complete_all_fields": "الرجاء إدخال جميع البيانات."
+    },
+    "log": {
+      "category_name": "اسم التصنيف:",
+      "image_uploaded": "تم رفع الصورة:"
+    }
+  }
+  

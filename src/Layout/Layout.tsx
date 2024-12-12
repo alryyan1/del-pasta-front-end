@@ -31,13 +31,25 @@ import NavActions from "@/components/NavActions";
 import './../i18n'
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./../i18n";
+import ArriavalDialog from "@/components/ArriavalDialog";
+import alarm from './../assets/alarm.wav'
 
 const demoTheme = createTheme({
   // direction: "rtl",
   palette:{
     primary:{
-      main: "#9c27b0",
+      // main: "#9c27b0", purple
+      main: "#1976d2",
     }
+  },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 900,
+      lg: 1900,
+      xl: 2000,
+    },
   },
   typography: {
     fontFamily: [
@@ -178,103 +190,37 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       ],
     },
   ];
-  
-  // const NAVIGATION: Navigation = [
-  //   {
-  //     kind: "header",
-  //     title: "Main items",
-  //   },
-  //   {
-  //     segment: "dashboard",
-  //     title: t('Dashboard'),
-  //     icon: <DashboardIcon />,
-  //   },
-  //   {
-  //     segment: "makeOrder",
-  //     title: "طلب جديد",
-  //     icon: <AddShoppingCartIcon />,
-  //   }
-  //   ,
-
-  //   {
-  //     segment: "orders",
-  //     title: "الطلبات",
-  //     icon: <List />,
-  //   },
-    
-  //   {
-  //     segment: "reservations2",
-  //     title: "الحجوزات",
-  //     icon: <BookmarkAddedIcon />,
-  //   },
-  //   {
-  //     segment: "stats",
-  //     title: "كميات الطلبات",
-  //     icon: <Scale />,
-  //   },
-  //   {
-  //     segment: "expenses",
-  //     title: "المصروفات",
-  //     icon: <AttachMoneyIcon />,
-  //   },
-  //   {
-  //     segment: "menu",
-  //     title: "قائمه المعرض",
-  //     icon: <RestaurantMenuIcon />,
-  //   },
-  //   {
-  //     kind: "divider",
-  //   },
-  //   {
-  //     kind: "header",
-  //     title: "Analytics",
-  //   },
-   
-    
-
-  //   {
-  //     segment: "config",
-  //     title: "الاعدادات",
-  //     icon: <SettingsIcon />,
-  //     children: [
-  //       {
-  //         segment: "meals",
-  //         title: " الخدمات",
-  //         icon: <Grid2x2PlusIcon />,
-  //       },
-  //       {
-  //         segment: "MealCategories",
-  //         title: "الاقسام",
-  //         icon: <LayoutPanelTop />,
-  //       },
-  //       {
-  //         segment: "customers",
-  //         title: "الزبائن",
-  //         icon: <Users />,
-  //       },
-  //       {
-  //         segment: "users",
-  //         title: "المستخدمين",
-  //         icon: <Users />,
-  //       },
-  //       {
-  //         segment: "services",
-  //         title: "خدمات الفرعيه",
-  //         icon: <HandPlatter />,
-  //       },
-  //       {
-  //         segment: "settings",
-  //         title: "اخري",
-  //         icon: <Users />,
-  //       },
-        
-  //     ],
-  //   },
- 
-  // ];
-  // Remove this const when copying and pasting into your project.
+  const [orders,setOrders] = React.useState([])
+  const [open,setOpen] = React.useState(false)
+  const [selectedOrder,setSelectedOrder] = React.useState(null)
   const demoWindow = window !== undefined ? window() : undefined;
+  const [audio] = React.useState(new Audio(alarm));
 
+  const playAlarm = () => {
+    audio.play();
+    
+  };
+  const pauseAlarm = ()=>{
+    audio.pause();
+  }
+  React.useEffect(()=>{
+    const timer = setInterval(() => {
+        axiosClient.get('arrival').then(({data})=>{
+          console.log(data)
+          setOrders(data)
+          if (data.length > 0) {
+            setOpen(true)
+            playAlarm()
+          }
+        })
+    }, 15000);
+    return ()=>{
+      clearInterval(timer);
+    }
+  },[])
+  const handleClose = ()=>{
+    setOpen(false)
+  }
   return (
     // preview-start
     <AppProvider 
@@ -284,8 +230,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       
       theme={demoTheme}
       branding={{
-        title: "Kitchen App",
-        logo :<img src={del}/>
+        title: "Laundry App",
+        logo :<img src={logo}/>
         
       }}
     
@@ -301,14 +247,18 @@ export default function DashboardLayoutBasic(props: DemoProps) {
             toolbarActions:NavActions
             
           }} >
-            <PageContainer className="root-container" sx={{ margin: 0,p:1 }}>
-              <Outlet />
+            <PageContainer  className="root-container" sx={{ margin: 0,p:1 }}>
+              <Outlet context={{
+                selectedOrder,
+                setSelectedOrder,
+              }} />
             </PageContainer>{" "}
           </DashboardLayout>
         </AuthProvider>
       </CacheProvider>
       </I18nextProvider>
       </React.Suspense>
+      <ArriavalDialog pauseAlarm={pauseAlarm}  setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder} handleClose={handleClose} open={open} orders={orders}/>
     
      
     </AppProvider>

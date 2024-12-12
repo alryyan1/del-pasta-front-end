@@ -13,6 +13,8 @@
       "cancelled": "Cancelled"
     },
     "report": "Report",
-    "filter": "Filter"
+    "filter": "Filter",
+    "handed":"Delivered",
+    "notHanded":"Not Delivered"
   }
   

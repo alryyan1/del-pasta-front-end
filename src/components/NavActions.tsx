@@ -26,7 +26,11 @@ function NavActions() {
                 navigate("/login");
             }, 300);
           })
-          .finally(() => setLoading(false));
+          .finally(() => setLoading(false)).catch(()=>{
+            setTimeout(() => {
+              navigate("/login");
+          }, 300);
+          });
       };
   return (
     <Stack direction={"row"} gap={1}>

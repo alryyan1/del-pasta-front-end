@@ -67,6 +67,8 @@ export interface Order {
   receiptLocation:string;
   whatsapp:boolean;
   deducts:Deduct[]
+  outside:number;
+  car_palette:string
 }
 
 export interface Deduct {

@@ -27,8 +27,8 @@ export function OrderDetailsPopover({ order }: PopOverDataPropbs) {
           <TableRow>
             <TableCell>الخدمات</TableCell>
             <TableCell>العدد</TableCell>
-            <TableCell>الملاحظات</TableCell>
-            <TableCell>مكان التوصيل</TableCell>
+            {/* <TableCell>الملاحظات</TableCell> */}
+            {/* <TableCell>مكان التوصيل</TableCell> */}
             {/* <TableCell>اللون</TableCell> */}
           </TableRow>
         </TableHead>
@@ -58,13 +58,14 @@ export function OrderDetailsPopover({ order }: PopOverDataPropbs) {
                
                 {/* <TableCell>
                   <ColorPicker value={meal.color}></ColorPicker>
-                </TableCell> */}                   <TableCell sx={{textWrap:'nowrap'}}>
+                </TableCell> */}       
+                            {/* <TableCell sx={{textWrap:'nowrap'}}>
                     {order.notes}
-                </TableCell>
-                 <TableCell sx={{textWrap:'nowrap'}}>
+                </TableCell> */}
+                 {/* <TableCell sx={{textWrap:'nowrap'}}>
                     {order.delivery_address}
                 </TableCell>
-            
+             */}
               </TableRow>
             );
           })}

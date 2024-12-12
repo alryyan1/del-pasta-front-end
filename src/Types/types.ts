@@ -69,6 +69,7 @@ export interface Order {
   deducts:Deduct[]
   outside:number;
   car_palette:string
+  outside_confirmed:boolean
 }
 
 export interface Deduct {

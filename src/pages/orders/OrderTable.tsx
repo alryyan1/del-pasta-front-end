@@ -107,7 +107,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
                   return true 
                 }
               }).map((order) => (
-                <TableRow className={selectedOrder?.id == order.id ? "animate__animated animate__pulse repeat-infinite " : ''} key={order.id} hover>
+                <TableRow key={order.id} hover>
                   <TableCell>
                     <BasicPopover
                       title={order.id}

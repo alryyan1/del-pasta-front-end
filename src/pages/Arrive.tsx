@@ -16,7 +16,7 @@ function Arrive() {
    const [order,setOrder] = useState<Order|null>(null)
    const {register,handleSubmit} =  useForm()
    useEffect(()=>{
-      axiosClient.get(`orders/${id}`).then(({data})=>{
+      axiosClient.get(`orderById/${id}`).then(({data})=>{
         setOrder(data)
       })
    },[loading])
@@ -25,7 +25,8 @@ function Arrive() {
         console.log(data)
         axiosClient.patch(`arrival/${id}`, {
             car_palette : data.car_palette,
-            outside:true 
+            outside:true ,
+            outside_confirmed:1 ,
         }).then(({ data }) => {}).then(()=>{
          setLoading(false)
         });
@@ -41,7 +42,7 @@ function Arrive() {
         height: "80vh",
       }}
     >
-     {order?.outside ?<CheckCircleOutline fontSize="large" color="success"/> :   <form onSubmit={handleSubmit(submitHandler)}>
+     {order?.outside_confirmed ?<CheckCircleOutline fontSize="large" color="success"/> :   <form onSubmit={handleSubmit(submitHandler)}>
         <Stack gap={1} sx={{ maxWidth: "400px" }} direction={"column"}>
           <Typography textAlign={"center"} variant="h4">
             Arrival-  الوصول

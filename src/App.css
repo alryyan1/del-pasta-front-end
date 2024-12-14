@@ -215,12 +215,17 @@ body {
   color: white;
   /* background-color: red; */
 
+
+}
+.order-table{
+  overflow: auto!important;
 }
 .order-table th {
   background-color: rgb(240, 239, 239);
 }
 .order-table td,th  {
   border: 1px solid lightgray;
+  /* padding: 2px!important; */
   
     width: fit-content;
   
@@ -228,4 +233,11 @@ body {
 
 .muirtl-1goaqxd{
   max-width :auto !important;
+}
+
+.truncated-text {
+  white-space: nowrap !important; /* Prevent text from wrapping to a new line */
+  overflow: hidden !important;    /* Hide the overflowed text */
+  text-overflow: ellipsis !important; /* Add ellipsis ("...") at the end of the text */
+  width: 150px !important; /* Set the width of the container */
 }

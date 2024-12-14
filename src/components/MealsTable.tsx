@@ -9,6 +9,8 @@ import {
   Typography,
   Button,
   TextField,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
@@ -18,7 +20,11 @@ import placeHolder from './../assets/images/ph.jpg';
 import TdCell from '@/helpers/TdCell';
 import { useMealsStore } from '@/stores/MealsStore';
 import { useTranslation } from 'react-i18next';
-
+import { webUrl } from '@/helpers/constants';
+import { Plus, Upload } from 'lucide-react';
+import { Stack } from '@mui/system';
+import ImageGallery from '../pages/gallary';
+import AddItemDialog from './AddItemDialog';
 const MealTable: React.FC = () => {
   const { t } = useTranslation('meals'); // i18n hook for translations
   const [search, setSearch] = useState<string | null>(null);
@@ -26,10 +32,17 @@ const MealTable: React.FC = () => {
   const [src, setSrc] = useState<string | null>(null);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [open, setOpen] = useState(false);
+  const [openAddItemDialog, setOpenAddItemDialog] = useState(false);
+  const [showGallary, setShowGallary] = useState(false);
   const { addMeal, fetchMeals, deleteMeal, meals } = useMealsStore();
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const handleCloseItemDialog =  ()=>{
+    setOpenAddItemDialog(false);
+    // setSelectedMeal(null);
+
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, meal: Meal) => {
     if (e.target.files) {
@@ -49,7 +62,7 @@ const MealTable: React.FC = () => {
   };
 
   const saveToDb = (data: string, meal: Meal) => {
-    axiosClient.patch(`meals/${meal.id}`, { image: data }).then(() => fetchMeals());
+    axiosClient.post(`saveImage/${meal.id}`, { image: data }).then(() => fetchMeals());
   };
 
   useEffect(() => {
@@ -60,13 +73,18 @@ const MealTable: React.FC = () => {
     return search ? m.name.toLowerCase().includes(search.toLowerCase()) : true;
   });
 
-  return (
-    <TableContainer sx={{ mt: 1 }} dir="rtl">
+
+  return (<>
+    {showGallary ? <ImageGallery fetchMeals={fetchMeals} setShowImageGallary={setShowGallary} selectedMeal={selectedMeal}/> :<TableContainer sx={{ mt: 1 }} dir="rtl">
       <TextField
         onChange={(e) => setSearch(e.target.value)}
         size="small"
         placeholder={t('searchPlaceholder')}
       />
+       <Tooltip title='Add  New'><IconButton onClick={()=>{
+        setOpenAddItemDialog(true)
+       }} color='primary'><Plus/></IconButton></Tooltip> 
+
       <Typography variant="h5" textAlign="center">
         {t('basicServices')}
       </Typography>
@@ -98,16 +116,23 @@ const MealTable: React.FC = () => {
               <TableCell>{meal?.category?.name}</TableCell>
               <TableCell>
                 <img
-                  src={meal?.image ?? placeHolder}
+                  src={`${webUrl}/images/${meal.image_url}`}
                   alt={meal.name}
                   style={{ width: '100px' }}
                 />
               </TableCell>
               <TableCell>
-                <input
+                <Stack direction={'row'}>
+      <input
                   type="file"
                   onChange={(e) => handleFileChange(e, meal)}
                 />
+                <Tooltip title='choose from gallary'><IconButton onClick={()=>{
+                  setSelectedMeal(meal)
+                  setShowGallary(true)
+                }}><Upload/></IconButton></Tooltip>
+                </Stack>
+          
               </TableCell>
               <TableCell>
                 <Button
@@ -134,6 +159,7 @@ const MealTable: React.FC = () => {
           ))}
         </TableBody>
       </Table>
+      <AddItemDialog open={openAddItemDialog}  handleClose={handleCloseItemDialog}/>
       <MealChildrenDialog
         setSelectedMeal={setSelectedMeal}
         selectedMeal={selectedMeal}
@@ -141,7 +167,9 @@ const MealTable: React.FC = () => {
         handleClickOpen={handleClickOpen}
         handleClose={handleClose}
       />
-    </TableContainer>
+    </TableContainer>}
+  </>
+  
   );
 };
 

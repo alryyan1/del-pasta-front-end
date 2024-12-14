@@ -25,6 +25,7 @@ import Users from "./pages/Users";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import Arrive from "./pages/Arrive";
+import ImageGallery from "./pages/gallary";
 
 const login: RouteObject = {
   path: "login",
@@ -103,6 +104,10 @@ const menu: RouteObject = {
   path: "/menu",
   element: <FoodMenu />,
 };
+const gallary: RouteObject = {
+  path: "/gallary",
+  element: <ImageGallery />,
+};
 const authoroized: RouteObject = {
   path: "/",
   errorElement: <Error />,
@@ -118,6 +123,7 @@ const authoroized: RouteObject = {
     menu,
     reservation2,
     stats,
+    gallary
 
   ],
 };

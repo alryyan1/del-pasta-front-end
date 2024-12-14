@@ -73,7 +73,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
   };
   return (
     <>
-      <Paper sx={{ width: "100%", mt: 1 }}>
+      <Paper >
         <TableContainer
           sx={{
             overflowX: "auto",
@@ -83,13 +83,13 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
           <Table className=" border border-collapse order-table" stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell>{t("orderTable.orderNumber")}</TableCell>
+                <TableCell sx={{width:'30px'}}>{t("orderTable.orderNumber")}</TableCell>
                 <TableCell>{t("orderTable.customer")}</TableCell>
-                <TableCell>{t("orderTable.area")}</TableCell>
+                {/* <TableCell>{t("orderTable.area")}</TableCell> */}
                 <TableCell>{t("orderTable.status")}</TableCell>
                 <TableCell>{t("orderTable.total")}</TableCell>
                 <TableCell width={"5%"}>{t("orderTable.paid")}</TableCell>
-                <TableCell width={"5%"}>{t('remaining')}</TableCell>
+                {/* <TableCell width={"5%"}>{t('remaining')}</TableCell> */}
                 <TableCell>{t("orderTable.orderDate")}</TableCell>
                 <TableCell>{t("orderTable.deliveryDate")}</TableCell>
                 <TableCell>{t("handed")}</TableCell>
@@ -100,16 +100,18 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
             </TableHead>
             <TableBody>
               {orders.filter((o)=>{
-                if (selectedOrder) {
+                // if (selectedOrder) {
                   
-                  return  o.id == selectedOrder?.id
-                }else{
-                  return true 
-                }
+                //   return  o.id == selectedOrder?.id
+                // }else{
+                //   return true 
+                // }
+                return true
               }).map((order) => (
-                <TableRow key={order.id} hover>
-                  <TableCell>
+                <TableRow key={order.updated_at} hover>
+                  <TableCell sx={{width:'30px'}}>
                     <BasicPopover
+                    truncate={false}
                       title={order.id}
                       content={<OrderDetailsPopover order={order} />}
                     />
@@ -117,7 +119,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
                   <TableCell sx={{ textWrap: "nowrap" }}>
                     {order?.customer?.name}
                   </TableCell>
-                  <TableCell>{order?.customer?.area}</TableCell>
+                  {/* <TableCell>{order?.customer?.area}</TableCell> */}
                   <MyTableCellStatusSelector
                     order={order}
                     setSelectedOrder={null}
@@ -132,9 +134,9 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
                   >
                     {order.amount_paid.toFixed(3)}
                   </TdCell>
-                  <TableCell>
+                  {/* <TableCell>
                     {(order.totalPrice - order.amount_paid).toFixed(3)}
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell sx={{ textWrap: "nowrap" }}>
                     {dayjs(new Date(order.created_at)).format(

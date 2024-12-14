@@ -1,6 +1,6 @@
 {
     "orderTable": {
-      "orderNumber": "Order Number",
+      "orderNumber": "No",
       "customer": "Customer",
       "area": "Area",
       "status": "Status",

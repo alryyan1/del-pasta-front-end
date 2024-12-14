@@ -79,21 +79,11 @@ function App() {
                         direction: "rtl",
                         padding: "10px",
                       }}
-                      error={!!errors.username}
-                      {...register("username", {
-                        required: {
-                          value: true,
-                          message: t("login.username_required"),
-                        },
-                      })}
+                      {...register("username")}
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
-                    {errors.username && (
-                      <Typography variant="caption" color="error">
-                        {errors.username.message}
-                      </Typography>
-                    )}
+                 
                   </div>
 
                   <div className="flex flex-col space-y-1.5 text-right">
@@ -106,22 +96,12 @@ function App() {
                         direction: "rtl",
                         padding: "10px",
                       }}
-                      error={!!errors.password}
-                      {...register("password", {
-                        required: {
-                          value: true,
-                          message: t("login.password_required"),
-                        },
-                      })}
+                      {...register("password")}
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    {errors.password && (
-                      <Typography variant="caption" color="error">
-                        {errors.password.message}
-                      </Typography>
-                    )}
+                
                   </div>
                 </div>
 

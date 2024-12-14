@@ -22,25 +22,34 @@ import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
-import { Beef, Grid2x2PlusIcon, HandPlatter, LayoutPanelTop, List, PersonStanding, Scale, Users } from "lucide-react";
-import logo from './../assets/images/h2o-logo.png'
-import del from './../assets/logo.png'
-import BookmarkAddedIcon from '@mui/icons-material/BookmarkAdded';
+import {
+  Beef,
+  Grid2x2PlusIcon,
+  HandPlatter,
+  LayoutPanelTop,
+  List,
+  PersonStanding,
+  Scale,
+  Users,
+} from "lucide-react";
+import logo from "./../assets/images/h2o-logo.png";
+import del from "./../assets/logo.png";
+import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import SidebarFooter from "@/components/footer";
 import NavActions from "@/components/NavActions";
-import './../i18n'
+import "./../i18n";
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./../i18n";
 import ArriavalDialog from "@/components/ArriavalDialog";
-import alarm from './../assets/alarm.wav'
+import alarm from "./../assets/alarm.wav";
 
 const demoTheme = createTheme({
   // direction: "rtl",
-  palette:{
-    primary:{
+  palette: {
+    primary: {
       // main: "#9c27b0", purple
       main: "#1976d2",
-    }
+    },
   },
   breakpoints: {
     values: {
@@ -80,7 +89,6 @@ const demoTheme = createTheme({
     colorSchemeSelector: "data-toolpad-color-scheme",
   },
   colorSchemes: { light: true, dark: true },
- 
 });
 
 interface DemoProps {
@@ -94,55 +102,54 @@ interface DemoProps {
 export default function DashboardLayoutBasic(props: DemoProps) {
   const { window } = props;
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     //get lang from localstorage
-   const lang =    localStorage.getItem('lang')
-   if (lang != null) {
-    
-     i18n.changeLanguage(lang)
-   }
-},[])
-  const {t}= useTranslation('layout')
+    const lang = localStorage.getItem("lang");
+    if (lang != null) {
+      i18n.changeLanguage(lang);
+    }
+  }, []);
+  const { t } = useTranslation("layout");
 
   const NAVIGATION: Navigation = [
     {
       kind: "header",
-      title: t("Main items"),  // Use translation key for "Main items"
+      title: t("Main items"), // Use translation key for "Main items"
     },
     {
       segment: "dashboard",
-      title: t("Dashboard"),  // Use translation key for "Dashboard"
+      title: t("Dashboard"), // Use translation key for "Dashboard"
       icon: <DashboardIcon />,
     },
     {
       segment: "makeOrder",
-      title: t("New Order"),  // Use translation key for "New Order"
+      title: t("New Order"), // Use translation key for "New Order"
       icon: <AddShoppingCartIcon />,
     },
     {
       segment: "orders",
-      title: t("Orders"),  // Use translation key for "Orders"
+      title: t("Orders"), // Use translation key for "Orders"
       icon: <List />,
     },
-    
+
     {
       segment: "stats",
-      title: t("Order Quantities"),  // Use translation key for "Order Quantities"
+      title: t("Order Quantities"), // Use translation key for "Order Quantities"
       icon: <Scale />,
     },
     {
       segment: "expenses",
-      title: t("Expenses"),  // Use translation key for "Expenses"
+      title: t("Expenses"), // Use translation key for "Expenses"
       icon: <AttachMoneyIcon />,
     },
     {
       segment: "menu",
-      title: t("Menu"),  // Use translation key for "Menu"
+      title: t("Menu"), // Use translation key for "Menu"
       icon: <RestaurantMenuIcon />,
     },
     {
       segment: "reservations2",
-      title: t("Reservations"),  // Use translation key for "Reservations"
+      title: t("Reservations"), // Use translation key for "Reservations"
       icon: <BookmarkAddedIcon />,
     },
     {
@@ -150,117 +157,137 @@ export default function DashboardLayoutBasic(props: DemoProps) {
     },
     {
       kind: "header",
-      title: t("Analytics"),  // Use translation key for "Analytics"
+      title: t("Analytics"), // Use translation key for "Analytics"
     },
     {
       segment: "config",
-      title: t("Settings"),  // Use translation key for "Settings"
+      title: t("Settings"), // Use translation key for "Settings"
       icon: <SettingsIcon />,
       children: [
         {
           segment: "meals",
-          title: t("Services"),  // Use translation key for "Services"
+          title: t("Services"), // Use translation key for "Services"
           icon: <Grid2x2PlusIcon />,
         },
         {
           segment: "MealCategories",
-          title: t("Categories"),  // Use translation key for "Categories"
+          title: t("Categories"), // Use translation key for "Categories"
           icon: <LayoutPanelTop />,
         },
         {
           segment: "customers",
-          title: t("Customers"),  // Use translation key for "Customers"
+          title: t("Customers"), // Use translation key for "Customers"
           icon: <Users />,
         },
         {
           segment: "users",
-          title: t("Users"),  // Use translation key for "Users"
+          title: t("Users"), // Use translation key for "Users"
           icon: <Users />,
         },
         {
           segment: "services",
-          title: t("Sub Services"),  // Use translation key for "Sub Services"
+          title: t("Sub Services"), // Use translation key for "Sub Services"
           icon: <HandPlatter />,
         },
         {
           segment: "settings",
-          title: t("Other"),  // Use translation key for "Other"
+          title: t("Other"), // Use translation key for "Other"
           icon: <Users />,
         },
       ],
     },
   ];
-  const [orders,setOrders] = React.useState([])
-  const [open,setOpen] = React.useState(false)
-  const [selectedOrder,setSelectedOrder] = React.useState(null)
+  const [orders, setOrders] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
+  const [selectedOrder, setSelectedOrder] = React.useState(null);
   const demoWindow = window !== undefined ? window() : undefined;
   const [audio] = React.useState(new Audio(alarm));
 
   const playAlarm = () => {
     audio.play();
-    
   };
-  const pauseAlarm = ()=>{
+  const pauseAlarm = () => {
     audio.pause();
-  }
-  React.useEffect(()=>{
+  };
+  React.useEffect(() => {
     const timer = setInterval(() => {
-        axiosClient.get('arrival').then(({data})=>{
-          console.log(data)
-          setOrders(data)
-          if (data.length > 0) {
-            setOpen(true)
-            playAlarm()
-          }
-        })
+      axiosClient.get("arrival").then(({ data }) => {
+        console.log(data);
+        setOrders(data);
+        if (data.length > 0) {
+          setOpen(true);
+          playAlarm();
+        }
+      });
     }, 15000);
-    return ()=>{
+    return () => {
       clearInterval(timer);
-    }
-  },[])
-  const handleClose = ()=>{
-    setOpen(false)
-  }
+    };
+  }, []);
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
     // preview-start
-    <AppProvider 
-    
+    <AppProvider
       navigation={NAVIGATION}
       router={router}
-      
       theme={demoTheme}
       branding={{
         title: "Laundry App",
-        logo :<img src={logo}/>
-        
+        logo: <img src={logo} />,
       }}
-    
       window={demoWindow}
     >
-      <React.Suspense fallback={<Box sx={{height:'100vh',display:'flex',justifyContent:'center',alignItems:'center'}}>  <CircularProgress/>   </Box>}>
-          <I18nextProvider i18n={i18n}>
-         <CacheProvider value={cacheRtl}>
-        <AuthProvider>
-          {/* sx={{height:'90vh'}}  */}
-          <DashboardLayout slots={{
-            sidebarFooter:SidebarFooter,
-            toolbarActions:NavActions
-            
-          }} >
-            <PageContainer  className="root-container" sx={{ margin: 0,p:1 }}>
-              <Outlet context={{
-                selectedOrder,
-                setSelectedOrder,
-              }} />
-            </PageContainer>{" "}
-          </DashboardLayout>
-        </AuthProvider>
-      </CacheProvider>
-      </I18nextProvider>
+      <React.Suspense
+        fallback={
+          <Box
+            sx={{
+              height: "100vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {" "}
+            <CircularProgress />{" "}
+          </Box>
+        }
+      >
+        <I18nextProvider i18n={i18n}>
+          <CacheProvider value={cacheRtl}>
+            <AuthProvider>
+              {/* sx={{height:'90vh'}}  */}
+              <DashboardLayout
+                slots={{
+                  sidebarFooter: SidebarFooter,
+                  toolbarActions: NavActions,
+                }}
+              >
+                <PageContainer
+                  className="root-container"
+                  sx={{ margin: 0, p: 1 }}
+                >
+                  <Outlet
+                    context={{
+                      selectedOrder,
+                      setSelectedOrder,
+                    }}
+                  />
+                </PageContainer>{" "}
+              </DashboardLayout>
+            </AuthProvider>
+          </CacheProvider>
+        </I18nextProvider>
       </React.Suspense>
-      <ArriavalDialog pauseAlarm={pauseAlarm}  setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder} handleClose={handleClose} open={open} orders={orders}/>
-    
-     
+      <ArriavalDialog
+        pauseAlarm={pauseAlarm}
+        setSelectedOrder={setSelectedOrder}
+        selectedOrder={selectedOrder}
+        handleClose={handleClose}
+        open={open}
+        orders={orders}
+      />
     </AppProvider>
     // preview-end
   );

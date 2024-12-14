@@ -13,10 +13,11 @@ import { useTranslation } from "react-i18next";
 interface CartProps {
   selectedOrder: Order;
   setSelectedOrder: (order) => void;
+  printHandler: () => void;
 }
 
-function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
-  const { t } = useTranslation('cart'); // Using the i18n translation hook
+function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
+  const { t } = useTranslation("cart"); // Using the i18n translation hook
   const [colName, setColName] = useState("");
   const [val, setVal] = useState("");
 
@@ -33,7 +34,9 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
   const updateMealOrderQuantity = (increment: boolean, item: Mealorder) => {
     axiosClient
       .patch(`orderMeals/${item.id}`, {
-        quantity: increment ? item.quantity + 1 : Math.max(0, item.quantity - 1),
+        quantity: increment
+          ? item.quantity + 1
+          : Math.max(0, item.quantity - 1),
       })
       .then(({ data }) => {
         setSelectedOrder(data.order);
@@ -48,11 +51,12 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       .then(({ data }) => {
         if (data.status) {
           axiosClient.post(`orderConfirmed/${selectedOrder.id}`);
+          printHandler();
         }
         setSelectedOrder(data.order);
-        setTimeout(() => {
-          setSelectedOrder(null);
-        }, 300);
+        // setTimeout(() => {
+        //   setSelectedOrder(null);
+        // }, 300);
       });
   };
 
@@ -74,7 +78,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
   }, [val]);
 
   return (
-    <div style={{ height: "100%" }} className="cart-items-div flex justify-center">
+    <div className="cart-items-div flex justify-center  h-[calc(100vh-200px)] overflow-auto">
       <Stack
         className="shadow-lg overflow-auto"
         direction={"column"}
@@ -85,8 +89,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
       >
         <div className="space-y-4 mb-6 grid">
           {selectedOrder.meal_orders.map((item) => {
-            const isMultible =
-              item.quantity > 1 ? "animate__animated animate__rubberBand" : "";
+            const isMultible = item.quantity > 1 ? "" : "";
             return (
               <CartItem
                 updateRequestedQuantity={updateQuantity}
@@ -100,7 +103,7 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
         </div>
 
         <div>
-          <Box>
+          {/* <Box>
             <TextField
               autoComplete="off"
               variant="standard"
@@ -113,8 +116,8 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               }}
               defaultValue={selectedOrder.notes}
             ></TextField>
-          </Box>
-          <Box>
+          </Box> */}
+          {/* <Box>
             <TextField
               autoComplete="off"
               variant="standard"
@@ -127,26 +130,31 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
               }}
               defaultValue={selectedOrder.delivery_address}
             ></TextField>
-          </Box>
+          </Box> */}
           <div className="space-y-2 text-sm mb-6 mt-4">
-            <Typography variant="h4" className="flex justify-between text-lg">
-              <span className="text-gray-600">{t("total_amount")}</span>
-              <span className="text-gray-900">
-                {selectedOrder.totalPrice.toFixed(3)}
-              </span>
-            </Typography>
-            <Divider />
-            <Typography variant="h4" className="flex justify-between text-lg">
-              <span className="text-gray-600">{t("paid")}</span>
-              <span className="text-gray-900">
-                {selectedOrder.amount_paid.toFixed(3)}
-              </span>
-            </Typography>
+            <Stack direction={"row"} gap={2} justifyContent={'space-around'}>
+              <Stack direction={"column"} gap={1}>
+                <span className="text-gray-600">{t("total_amount")}</span>
+                <span className="text-gray-900">
+                  {selectedOrder.totalPrice.toFixed(3)}
+                </span>
+              </Stack>
 
-            <div className="flex justify-between">
+
+
+              <Stack direction={'column'}>
+                <span className="text-gray-600">{t("paid")}</span>
+                <span className="text-gray-900">
+                  {selectedOrder.amount_paid.toFixed(3)}
+                </span>
+              </Stack >
+              <Stack direction={'column'}>
               <span className="text-gray-600">{t("delivery_fee")}</span>
               <span className="text-gray-900">
                 <TextField
+                 onFocus={(event) => {
+                  event.target.select();
+                }}
                   type="number"
                   key={selectedOrder.id}
                   variant="standard"
@@ -158,17 +166,21 @@ function Cart({ selectedOrder, setSelectedOrder }: CartProps) {
                 ></TextField>
                 <span>{t("currency_OMR")}</span>
               </span>
-            </div>
-          </div>
+              </Stack >
+            </Stack>
 
-          <LoadingButton
-            disabled={selectedOrder.order_confirmed}
-            onClick={orderUpdateHandler}
-            variant="contained"
-            sx={{}}
-          >
-            {t("confirm_order")}
-          </LoadingButton>
+          
+          </div>
+          <Box className="flex justify-center">
+            <LoadingButton
+              disabled={selectedOrder.order_confirmed}
+              onClick={orderUpdateHandler}
+              variant="contained"
+              sx={{}}
+            >
+              {t("confirm_order")}
+            </LoadingButton>
+          </Box>
         </div>
       </Stack>
     </div>

@@ -2,12 +2,14 @@ import * as React from 'react';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { ButtonBase } from '@mui/material';
 interface BasicPopoverProps {
   title: string;
   content: React.ReactNode;
+  truncate :boolean
 }
 export default function BasicPopover({title,content
-}:BasicPopoverProps) {
+,truncate = true}:BasicPopoverProps) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -23,7 +25,7 @@ export default function BasicPopover({title,content
 
   return (
     <div  style={{flexGrow:1,display:'flex',justifyContent:'space-between'}}>
-      <Button color='secondary' className='ellipsis text-black' aria-describedby={id}  onClick={handleClick}>
+      <Button  className={`  ${truncate ? 'truncated-text' :''} `} aria-describedby={id}  onClick={handleClick}>
         {title}
       </Button>
       <Popover

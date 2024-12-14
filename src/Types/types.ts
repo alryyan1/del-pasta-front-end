@@ -144,6 +144,7 @@ export interface Meal {
   updated_at: null;
   people_count: string;
   child_meals: Childmeal[];
+  image_url:string;
 }
 
 export interface Childmeal {

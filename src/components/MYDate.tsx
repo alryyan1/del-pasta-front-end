@@ -14,7 +14,7 @@ interface MyDateProps {
     colName?: string;
   };
 
-function MyDateField2({ val, item ,disabled, label='تاريخ الانتهاء',path,colName}: MyDateProps) {
+function MyDateField2({ val, item ,disabled, label='تاريخ الطلب',path,colName}: MyDateProps) {
   // console.log(item,'item in date field')
   // console.log(item , val,'date filed ')
   // console.log(dayjs(val), "date filed ", val, "val");

@@ -22,6 +22,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
       useEffect(() => {
         axiosClient.get<Category>(`categories`).then(({ data }) => {
           setData(data);
+          setSelectedCategory(data[0]);
         });
       }, []);
     

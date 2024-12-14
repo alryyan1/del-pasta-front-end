@@ -3,6 +3,7 @@ import { Meal, Order } from '@/Types/types';
 import 'animate.css';
 import { useState } from 'react';
 import ph from './../assets/images/ph.jpg'
+import { webUrl } from '@/helpers/constants';
 interface MealItemProps {
     meal: Meal;
     setOrders : (meal:Meal)=>void ;
@@ -16,7 +17,7 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
   console.log('meal is selected',selected)
   
   const mealOrderHandler = ()=>{
-    setSelectEffect('animate__animated animate__bounce')
+    setSelectEffect('')
       axiosClient.post('orderMeals',{
         order_id:selectedOrder?.id,
         meal_id:meal?.id,
@@ -53,7 +54,7 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
       }}
     >
       {/* <div className=" "> */}
-            <img src={meal?.image ?? ph} alt={meal.name} className="w-20 h-20 object-cover" />
+            <img src={`${webUrl}/images/${meal?.image_url}`} alt={meal.name} className="w-20 h-20 object-cover" />
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {meal.name}
         </h3>

@@ -19,9 +19,11 @@ import { useTranslation } from "react-i18next";
 interface ICategory {
   id: number;
   name: string;
+  open:boolean;
+  handleClose:()=>void
 }
 
-const ProductForm = () => {
+const ProductForm = ({handleClose,open}) => {
   const { t } = useTranslation('services'); // i18n hook for translations
   const [categories, setCategories] = React.useState<ICategory[]>([]);
 
@@ -45,6 +47,7 @@ const ProductForm = () => {
 
   const submitForm: SubmitHandler<Meal> = (data) => {
     addMeal(data);
+    handleClose()
   };
 
   return (

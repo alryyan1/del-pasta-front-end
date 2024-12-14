@@ -57,7 +57,21 @@ const NewOrder = () => {
   const { customers, addCustomer, updateCustomer } = useCustomerStore();
   const { data, setData, add, deleteItem } = useAuthContext();
   const [orders, setOrders] = useState<Order[]>([]);
+  const printHandler = () => {
+    const form = new URLSearchParams();
+    axiosClient
+      .get(`printSale?order_id=${selectedOrder?.id}&base64=1`)
+      .then(({ data }) => {
+        form.append("data", data);
+        form.append("node_direct", "0");
 
+        printJS({
+          printable: data.slice(data.indexOf("JVB")),
+          base64: true,
+          type: "pdf",
+        });
+      });
+  };
   const handleEdit = (customer: Customer) => {
     setSelectedCustomer(customer);
     setIsFormOpen(true);
@@ -177,6 +191,7 @@ const NewOrder = () => {
               <div className="flex justify-center items-center">
                 {selectedOrder?.meal_orders?.length > 0 && (
                   <Cart
+                    printHandler={printHandler}
                     setSelectedOrder={setSelectedOrder}
                     selectedOrder={selectedOrder}
                   />

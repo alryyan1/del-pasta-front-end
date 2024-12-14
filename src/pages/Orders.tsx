@@ -19,6 +19,9 @@ import MyLoadingButton from "@/components/MyLoadingButton";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { useOutletContext } from "react-router-dom";
 import { Order } from "@/Types/types";
+import MyDateField2 from "@/components/MYDate";
+import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type Status = [
   "Pending",
@@ -40,11 +43,12 @@ function Orders() {
     "Cancelled",
   ];
   const [orders, setOrders] = useState<Order[]>([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
-  const [deliveryDate, setDeliveryDate] = useState("");
+  const [createdAt, setCreatedAt] = useState(dayjs());
   const [page, setPage] = useState(20);
   const [links, setLinks] = useState([]);
+  const {selectedOrder, setSelectedOrder} =useOutletContext()
   
   const updateItemsTable = (link, setLoading) => {
     setLoading(true);
@@ -58,12 +62,13 @@ function Orders() {
   };
 
   useEffect(() => {
+    setSelectedOrder(null)
     const timer = setTimeout(() => {
-      const q = search !== "" ? `?name=${search}` : "";
-      const del = deliveryDate !== "" ? `?delivery_date=${deliveryDate}` : "";
       axiosClient
-        .post(`orders/pagination/${page}${q}${del}`, {
+        .post(`orders/pagination/${page}`, {
           status: selectedStatus,
+          date:createdAt?.format('YYYY-MM-DD') ?? null,
+          name:search
         })
         .then(({ data: { data, links } }) => {
           setOrders(data);
@@ -71,7 +76,7 @@ function Orders() {
         });
     }, 300);
     return () => clearTimeout(timer);
-  }, [page, search, deliveryDate, selectedStatus]);
+  }, [page, search, createdAt, selectedStatus]);
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -85,24 +90,50 @@ function Orders() {
         sx={{ m: 2 }}
         className="!my-1"
       >
-        <Typography className="text-3xl font-bold mb-8">
-          {t("manageOrders")}
-        </Typography>
+       
         <TextField
           size="small"
           variant="outlined"
           placeholder={t("searchOrders")}
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setCreatedAt(null)
+            setSearch(e.target.value)
+
+          }}
           InputProps={{
             startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
           }}
         />
-        <input
+        {/* <input
           onChange={(e) => setDeliveryDate(e.target.value)}
           type="date"
-        />
-        <select onChange={(val) => setPage(val.target.value)}>
+        /> */}
+ <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DateField
+       onDoubleClick={()=>{
+        setCreatedAt(dayjs())
+       }}
+      
+      label={'تاريخ'}
+      format='DD-MM-YYYY'
+      sx={{width: '125px'}}
+        size="small"
+        defaultValue={createdAt}
+        value={dayjs(createdAt)}
+        onChange={(val) => {
+          const dayJsObj = dayjs(val);
+
+          setCreatedAt(dayJsObj);
+       
+          // axiosClient.post(`orders/pagination/20`,{date:createdAt.format('YYYY-MM-DD')}).then(({data})=>{
+          //    setOrders(data.data)
+          //    setLinks(data.links)
+          // })
+            
+        }}
+      />
+    </LocalizationProvider>        <select onChange={(val) => setPage(val.target.value)}>
           <option value="5">5</option>
           <option selected value="10">
             10
@@ -138,7 +169,7 @@ function Orders() {
         </Stack>
       </Stack>
       <Stack
-        sx={{ mt: 2 }}
+        sx={{ m: 2 }}
         direction="row"
         gap={1}
         justifyContent="space-around"
@@ -148,10 +179,10 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center border-rounded-full w-[200px] items-center bg-[var(--primary)] rounded-full p-2"
+          className="shadow-lg text-center border-rounded-full w-[150px] items-center bg-[var(--primary)] rounded-full p-1"
         >
-          <Typography variant="h5">{t("total")}</Typography>
-          <Typography variant="h5">
+          <Typography variant="h6">{t("total")}</Typography>
+          <Typography variant="h6">
             {orders.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}
           </Typography>
         </Stack>
@@ -159,10 +190,10 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
+          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
         >
-          <Typography variant="h5">{t("paid")}</Typography>
-          <Typography variant="h5">
+          <Typography variant="h6">{t("paid")}</Typography>
+          <Typography variant="h6">
             {orders.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}
           </Typography>
         </Stack>
@@ -170,10 +201,10 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
+          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
         >
-          <Typography variant="h5">{t("remaining")}</Typography>
-          <Typography variant="h5">
+          <Typography variant="h6">{t("remaining")}</Typography>
+          <Typography variant="h6">
             {(
               orders.reduce((prev, curr) => prev + curr.totalPrice, 0) -
               orders.reduce((prev, curr) => prev + curr.amount_paid, 0)
@@ -184,10 +215,10 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
+          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
         >
-          <Typography variant="h5">  {t('handed')} </Typography>
-          <Typography variant="h5">
+          <Typography variant="h6">  {t('handed')} </Typography>
+          <Typography variant="h6">
             {(
               orders.filter((o)=>o.status =='delivered').length
             )}
@@ -197,10 +228,10 @@ function Orders() {
           direction="column"
           alignItems="center"
           justifyContent="center"
-          className="shadow-lg text-center items-center w-[200px] bg-[var(--primary)] p-2 rounded-full"
+          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
         >
-          <Typography variant="h5"> {t('notHanded')} </Typography>
-          <Typography variant="h5">
+          <Typography variant="h6"> {t('notHanded')} </Typography>
+          <Typography variant="h6">
             {(
               orders.filter((o)=>o.status !='delivered').length
             )}

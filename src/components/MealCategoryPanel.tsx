@@ -1,10 +1,11 @@
-import { Category, Order } from '@/Types/types';
+import { Category, Mealorder, Order } from '@/Types/types';
 import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button';
 import MealItem from '@/pages/MealItem';
 import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
 import { useTranslation } from 'react-i18next';
+import RequestedServiceDialog from './RequestedServiceDialog';
 
 interface MealCategoryPanelProps {
     setSelectedOrder: () => void;
@@ -25,7 +26,8 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
           setSelectedCategory(data[0]);
         });
       }, []);
-    
+      const [showRequestedDialog,setShowRequestedDialog] = useState(false)
+      const [mealOrder,setMealOrder] = useState<Mealorder|null>(null)
   return (
     <div
     style={{ border: "1px " }}
@@ -67,7 +69,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
         
         {selectedCategory ? (
           selectedCategory.meals.map((meal, index) => (
-            <MealItem   selected={selectedOrder?.meal_orders.find((m)=>m.meal.id==meal.id)!=undefined} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder}  meal={meal} setOrders={setOrders} />
+            <MealItem setShowRequestedDialog={setShowRequestedDialog} setMealOrder={setMealOrder}  selected={selectedOrder?.meal_orders.find((m)=>m.meal.id==meal.id)!=undefined} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder}  meal={meal} setOrders={setOrders} />
           ))
         ) : (
           <p className="text-gray-600 text-lg text-center mt-10">
@@ -104,6 +106,9 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
           <p className="text-gray-600">لم تقم بإضافة أي وجبات بعد.</p>
         )}
       </div> */}
+       {mealOrder &&  <RequestedServiceDialog setSelectedOrder={setSelectedOrder} mealOrder={mealOrder} selectedOrder={selectedOrder} open={showRequestedDialog} handleClose={()=>{
+      setShowRequestedDialog(false)
+    }}/>}
     </div>
   </div>
   )

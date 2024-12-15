@@ -31,9 +31,9 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
       <TableHead>
         <TableRow>
           <TableCell>-</TableCell>
-          <TableCell>اسم</TableCell>
+          <TableCell>Service</TableCell>
           {/* <TableCell>الكميه</TableCell> */}
-          <TableCell>سعر</TableCell>
+          <TableCell>Price</TableCell>
           {/* <TableCell>الاشخاص</TableCell> */}
           {/* <TableCell>الوزن</TableCell> */}
           {/* <TableCell>-</TableCell> */}

@@ -148,7 +148,7 @@ const MealTable: React.FC = () => {
                 <button
                   onClick={() => {
                     axiosClient.delete(`meals/${meal.id}`).then(() => {
-                      deleteMeal(meal);
+                      fetchMeals();
                     });
                   }}
                 >

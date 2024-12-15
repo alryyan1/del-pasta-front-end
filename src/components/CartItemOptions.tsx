@@ -18,7 +18,7 @@ function CartItemOptions({setShow,onDelete,item,show,updateQuantity}:CartItemOpt
     {/* <ColorPicker value={item.color} onChange={(e:ColorPickerChangeEvent)=>{
         setColor(e.value)
       }} /> */}
-      <span className="w-16 text-center">{(item.totalPrice * item.quantity).toFixed(3) }</span>
+      <span className="w-16 text-center">{(item.totalPrice + (item.quantity * item.price)).toFixed(3) }</span>
       <IconButton color="error" onClick={() => onDelete(item)} size="small">
         <Trash2 size={18} />
       </IconButton>

@@ -20,7 +20,7 @@ h2,
 h3,
 table,
 td,
-th {
+th,span {
   font-family: "cairo" !important;
 }
 .requested-meal {

@@ -54,7 +54,7 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
       }}
     >
       {/* <div className=" "> */}
-            <img src={`${webUrl}/images/${meal?.image_url}`} alt={meal.name} className="w-20 h-20 object-cover" />
+            <img src={ meal?.image_url === null ? ph : `${webUrl}/images/${meal?.image_url}`} alt={meal.name} className="w-20 h-20 object-cover" />
         <h3 className="text-lg font-semibold text-gray-800 mb-2">
           {meal.name}
         </h3>

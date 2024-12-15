@@ -47,8 +47,8 @@ const demoTheme = createTheme({
   // direction: "rtl",
   palette: {
     primary: {
-      // main: "#9c27b0", purple
-      main: "#1976d2",
+      main: "#9c27b0",// purple
+      // main: "#1976d2",
     },
   },
   breakpoints: {
@@ -234,8 +234,8 @@ export default function DashboardLayoutBasic(props: DemoProps) {
       router={router}
       theme={demoTheme}
       branding={{
-        title: "Laundry App",
-        logo: <img src={logo} />,
+        title: "Del Pasta ",
+        logo: <img src={del} />,
       }}
       window={demoWindow}
     >

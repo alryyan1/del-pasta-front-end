@@ -79,9 +79,9 @@ function CartItem({
         />
 
         <div className="flex items-center  ">
-        <ColorPicker value={item.color} onChange={(e:ColorPickerChangeEvent)=>{
+        {/* <ColorPicker value={item.color} onChange={(e:ColorPickerChangeEvent)=>{
             setColor(e.value)
-          }} />
+          }} /> */}
           <span className="w-16 text-center">{(item.totalPrice * item.quantity).toFixed(3) }</span>
           <IconButton color="error" onClick={() => onDelete(item)} size="small">
             <Trash2 size={18} />

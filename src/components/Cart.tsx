@@ -103,7 +103,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
         </div>
 
         <div>
-          {/* <Box>
+          <Box>
             <TextField
               autoComplete="off"
               variant="standard"
@@ -116,8 +116,8 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
               }}
               defaultValue={selectedOrder.notes}
             ></TextField>
-          </Box> */}
-          {/* <Box>
+          </Box>
+          <Box>
             <TextField
               autoComplete="off"
               variant="standard"
@@ -130,7 +130,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
               }}
               defaultValue={selectedOrder.delivery_address}
             ></TextField>
-          </Box> */}
+          </Box>
           <div className="space-y-2 text-sm mb-6 mt-4">
             <Stack direction={"row"} gap={2} justifyContent={'space-around'}>
               <Stack direction={"column"} gap={1}>

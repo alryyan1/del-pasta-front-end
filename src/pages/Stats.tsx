@@ -64,17 +64,17 @@ function Stats() {
           />
         </Stack>
 
-        <Table size="small" className="order-table" stickyHeader>
+        <Table sx={{fontSize:'24px'}} size="small" className="order-table" stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell>{t("child_name")}</TableCell>
-              <TableCell>{t("meal_name")}</TableCell>
-              <TableCell>{t("requested_quantity")}</TableCell>
-              <TableCell>{t("available_quantity")}</TableCell>
-              <TableCell>{t("deducted_quantity")}</TableCell>
-              <TableCell>{t("net_quantity")}</TableCell>
-              <TableCell>{t("remaining_quantity")}</TableCell>
-              <TableCell>{t("add_quantity")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}} >{t("child_name")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}}>{t("meal_name")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}}>{t("requested_quantity")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}}>{t("available_quantity")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}}>{t("deducted_quantity")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}}>{t("net_quantity")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}}>{t("remaining_quantity")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}}>{t("add_quantity")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -87,14 +87,14 @@ function Stats() {
                     remaining < 0 ? "bg-red-100" : "bg-green-300"
                   }`}
                 >
-                  <TableCell>{info.childName}</TableCell>
-                  <TableCell>{info.mealName}</TableCell>
-                  <TableCell>{info.totalQuantity}</TableCell>
-                  <TableCell>{info.totalDeposit}</TableCell>
-                  <TableCell>{info.totalDeduct}</TableCell>
-                  <TableCell>{info.totalDeposit - info.totalDeduct}</TableCell>
-                  <TableCell>{remaining}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{info.childName}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{info.mealName}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{info.totalQuantity}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{info.totalDeposit}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{info.totalDeduct}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{info.totalDeposit - info.totalDeduct}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{remaining}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>
                     <Button
                       variant="contained"
                       size="small"

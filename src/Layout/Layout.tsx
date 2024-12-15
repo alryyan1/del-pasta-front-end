@@ -91,17 +91,28 @@ const demoTheme = createTheme({
   colorSchemes: { light: true, dark: true },
 });
 
-interface DemoProps {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
-  window?: () => Window;
-}
 
-export default function DashboardLayoutBasic(props: DemoProps) {
-  const { window } = props;
+export default function DashboardLayoutBasic() {
+  const [isIpadPro, setIsIpadPro] = React.useState(false);
 
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia(
+      '(min-width: 768px) and (max-width: 1366px)'
+    );
+
+    const handleResize = (e) => setIsIpadPro(e.matches);
+    if (mediaQuery.matches) {
+      console.log('The screen width is between 768px and 1366px');
+    } else {
+      console.log('The screen width is outside the range');
+    }
+    
+
+    handleResize(mediaQuery); // Initial check
+    mediaQuery.addEventListener('change', handleResize);
+
+    return () => mediaQuery.removeEventListener('change', handleResize);
+  }, []);
   React.useEffect(() => {
     //get lang from localstorage
     const lang = localStorage.getItem("lang");
@@ -200,7 +211,6 @@ export default function DashboardLayoutBasic(props: DemoProps) {
   const [orders, setOrders] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [selectedOrder, setSelectedOrder] = React.useState(null);
-  const demoWindow = window !== undefined ? window() : undefined;
   const [audio] = React.useState(new Audio(alarm));
 
   const playAlarm = () => {
@@ -237,7 +247,6 @@ export default function DashboardLayoutBasic(props: DemoProps) {
         title: "Del Pasta ",
         logo: <img src={del} />,
       }}
-      window={demoWindow}
     >
       <React.Suspense
         fallback={
@@ -272,6 +281,7 @@ export default function DashboardLayoutBasic(props: DemoProps) {
                     context={{
                       selectedOrder,
                       setSelectedOrder,
+                      isIpadPro, setIsIpadPro
                     }}
                   />
                 </PageContainer>{" "}

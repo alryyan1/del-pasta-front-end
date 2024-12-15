@@ -14,6 +14,7 @@ import BasicTimePicker from "@/components/TimePicker";
 import { Message, WhatsApp } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next"; // Import useTranslation
+import { useOutletContext } from "react-router-dom";
 
 interface OrderHeaderProps {
   selectedOrder: Order | null;
@@ -86,6 +87,7 @@ function OrderHeader({
         });
       });
   };
+  const {isIpadPro, setIsIpadPro} = useOutletContext();
 
   return (
     <Stack
@@ -163,11 +165,11 @@ function OrderHeader({
             setSelectedOrder={setSelectedOrder}
             key={selectedOrder.id}
           />
-          <StatusSelector
+                {!isIpadPro && <StatusSelector
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
-          />
-          <Stack direction={"row"} gap={1}>
+          />}
+        {!isIpadPro && <Stack direction={"row"} gap={1}>
             <IconButton onClick={printHandler}>
               <Tooltip title={t("Print Invoice")}>
                 <Printer />
@@ -188,7 +190,7 @@ function OrderHeader({
                 {selectedOrder.is_delivery ? <Car /> : <HomeIcon />}
               </Tooltip>
             </IconButton>
-          </Stack>
+          </Stack>}
         </>
       )}
     </Stack>

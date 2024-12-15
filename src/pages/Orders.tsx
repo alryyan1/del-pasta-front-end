@@ -43,6 +43,18 @@ function Orders() {
     "Cancelled",
   ];
   const [orders, setOrders] = useState<Order[]>([]);
+  const [width, setWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWidth(window.innerWidth);
+
+     
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const [search, setSearch] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
   const [createdAt, setCreatedAt] = useState(dayjs());
@@ -146,7 +158,8 @@ function Orders() {
         <Button variant="contained" href={`${webUrl}orders`}>
           {t("report")}
         </Button>
-        <Stack textAlign="center" alignItems="center" direction="column">
+        <Stack textAlign="center" alignItems="center"        direction={isMobile ? "column" : "row"}
+        >
           <Box>
             <Tooltip title={t("filter")}>
               <IconButton>
@@ -155,7 +168,8 @@ function Orders() {
               </IconButton>
             </Tooltip>
           </Box>
-          <Stack gap={1} direction="row">
+          <Stack gap={1}        direction={isMobile ? "column" : "row"}
+>
             {statuses.map((s) => (
               <Chip
                 color={s === selectedStatus ? "primary" : "default"}
@@ -170,7 +184,8 @@ function Orders() {
       </Stack>
       <Stack
         sx={{ m: 2 }}
-        direction="row"
+               direction={isMobile ? "column" : "row"}
+
         gap={1}
         justifyContent="space-around"
         alignItems="center"

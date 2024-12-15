@@ -67,8 +67,8 @@ function Stats() {
         <Table sx={{fontSize:'24px'}} size="small" className="order-table" stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell sx={{fontSize:'24px'}} >{t("child_name")}</TableCell>
               <TableCell sx={{fontSize:'24px'}}>{t("meal_name")}</TableCell>
+              <TableCell sx={{fontSize:'24px'}} >{t("child_name")}</TableCell>
               <TableCell sx={{fontSize:'24px'}}>{t("requested_quantity")}</TableCell>
               <TableCell sx={{fontSize:'24px'}}>{t("available_quantity")}</TableCell>
               <TableCell sx={{fontSize:'24px'}}>{t("deducted_quantity")}</TableCell>
@@ -84,11 +84,11 @@ function Stats() {
                 <TableRow
                   key={index}
                   className={`hover:bg-slate-200 ${
-                    remaining < 0 ? "bg-red-100" : "bg-green-300"
+                    remaining < 0 ? "" : "bg-green-300"
                   }`}
                 >
-                  <TableCell sx={{fontSize:'24px'}}>{info.childName}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.mealName}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{info.childName}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.totalQuantity}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.totalDeposit}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.totalDeduct}</TableCell>

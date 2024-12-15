@@ -1,22 +1,28 @@
 import axiosClient from '@/helpers/axios-client';
-import { Meal, Order } from '@/Types/types';
+import { Meal, Mealorder, Order } from '@/Types/types';
 import 'animate.css';
 import { useState } from 'react';
 import ph from './../assets/images/ph.jpg'
 import { webUrl } from '@/helpers/constants';
+import RequestedServiceDialog from '@/components/RequestedServiceDialog';
 interface MealItemProps {
     meal: Meal;
     setOrders : (meal:Meal)=>void ;
     selectedOrder : Order|null;
     setSelectedOrder:(order:Order)=>void;
-    selected:boolean
+    selected:boolean;
+    setMealOrder:(meal:Meal)=>void;
+    setShowRequestedDialog:(isOpen:boolean)=>void;
 }
 
-function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) {
+function MealItem({meal,selectedOrder,setSelectedOrder,selected,setMealOrder,setShowRequestedDialog}:MealItemProps) {
   const [selectEffect,setSelectEffect] = useState('')
+  // const [showRequestedDialog,setShowRequestedDialog] = useState(false)
+  // const [mealOrder,setMealOrder] = useState<Mealorder|null>(null)
   console.log('meal is selected',selected)
   
   const mealOrderHandler = ()=>{
+    setShowRequestedDialog(true)
     setSelectEffect('')
       axiosClient.post('orderMeals',{
         order_id:selectedOrder?.id,
@@ -25,6 +31,7 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
         price:meal.price
       }).then(({data})=>{
         setSelectedOrder(data.order)
+        setMealOrder(data.mealOrder)
           console.log(data)
       })
    }
@@ -32,6 +39,7 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
    const selectedColor = selected ? 'selected' : '';
     
   return (
+ <>
     <div
       onClick={mealOrderHandler}
       key={meal.id}
@@ -60,6 +68,8 @@ function MealItem({meal,selectedOrder,setSelectedOrder,selected}:MealItemProps) 
         </h3>
       {/* </div> */}
     </div>
+ 
+ </>
   )
 }
 

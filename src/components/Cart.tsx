@@ -78,11 +78,11 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
   }, [val]);
 
   return (
-    <div className="cart-items-div flex justify-center  h-[calc(100vh-200px)] overflow-auto">
+    <div className="cart-items-div flex justify-center  ">
       <Stack
-        className="shadow-lg overflow-auto"
+        className="shadow-lg overflow-auto h-[calc(100vh-200px)]"
         direction={"column"}
-        justifyContent={"space-between"}
+        // justifyContent={"space-between"}
         sx={{
           p: 2,
         }}

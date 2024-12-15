@@ -25,6 +25,8 @@ import { Plus, Upload } from 'lucide-react';
 import { Stack } from '@mui/system';
 import ImageGallery from '../pages/gallary';
 import AddItemDialog from './AddItemDialog';
+import ph from './../assets/images/ph.jpg'
+
 const MealTable: React.FC = () => {
   const { t } = useTranslation('meals'); // i18n hook for translations
   const [search, setSearch] = useState<string | null>(null);
@@ -116,7 +118,7 @@ const MealTable: React.FC = () => {
               <TableCell>{meal?.category?.name}</TableCell>
               <TableCell>
                 <img
-                  src={`${webUrl}/images/${meal.image_url}`}
+                  src={meal.image_url  == null ? ph: `${webUrl}/images/${meal.image_url}`}
                   alt={meal.name}
                   style={{ width: '100px' }}
                 />
@@ -148,7 +150,7 @@ const MealTable: React.FC = () => {
                 <button
                   onClick={() => {
                     axiosClient.delete(`meals/${meal.id}`).then(() => {
-                      deleteMeal(meal);
+                      fetchMeals();
                     });
                   }}
                 >

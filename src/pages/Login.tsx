@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Alert, Box, Stack, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Alert, Box, Stack, TextField, Typography } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next"; // i18n hook for translations
 import {
@@ -27,12 +27,16 @@ function App() {
     handleSubmit,
     formState: { errors },
     register,
+    setValue
   } = useForm();
-
-  const submitHandler = (data) => {
+ 
+  const submitHandler = () => {
     setLoading(true);
     axiosClient
-      .post("login", data)
+      .post("login", {
+        username,
+        password
+      })
       .then(({ data }) => {
         if (data.status) {
           setUser(data.user);
@@ -66,20 +70,14 @@ function App() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form noValidate dir="rtl" onSubmit={handleSubmit(submitHandler)}>
+            <form noValidate dir="rtl" onSubmit={submitHandler}>
               <Stack direction="column" gap={3}>
                 <div className="grid w-full items-center gap-4">
                   <div className="flex flex-col space-y-1.5 text-right">
                     <Label htmlFor="username">{t("login.username")}</Label>
-                    <Input
+                    <TextField
                       id="username"
-                      className="text-right"
-                      style={{
-                        borderRadius: "5px",
-                        direction: "rtl",
-                        padding: "10px",
-                      }}
-                      {...register("username")}
+                    
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                     />
@@ -88,15 +86,10 @@ function App() {
 
                   <div className="flex flex-col space-y-1.5 text-right">
                     <Label htmlFor="password">{t("login.password")}</Label>
-                    <Input
+                    <TextField
                       id="password"
-                      className="text-right"
-                      style={{
-                        borderRadius: "5px",
-                        direction: "rtl",
-                        padding: "10px",
-                      }}
-                      {...register("password")}
+                      
+               
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}

@@ -241,3 +241,12 @@ body {
   text-overflow: ellipsis !important; /* Add ellipsis ("...") at the end of the text */
   width: 150px !important; /* Set the width of the container */
 }
+@media (min-width: 768px) and (max-width: 1024px){
+  .truncated-text {
+    white-space: nowrap !important; /* Prevent text from wrapping to a new line */
+    overflow: hidden !important;    /* Hide the overflowed text */
+    text-overflow: ellipsis !important; /* Add ellipsis ("...") at the end of the text */
+    width: 100px !important; /* Set the width of the container */
+  }
+}
+

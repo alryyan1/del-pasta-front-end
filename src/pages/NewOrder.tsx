@@ -186,7 +186,7 @@ const NewOrder = () => {
         )}
 
         <Box dir="rtl">
-          <div className="orders-cart h-[calc(100vh-200px)] ">
+          <div className="orders-cart h-[calc(100vh-200px)]  ">
             {showCart && (
               <div className="flex justify-center items-center">
                 {selectedOrder?.meal_orders?.length > 0 && (

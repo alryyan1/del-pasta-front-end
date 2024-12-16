@@ -57,7 +57,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
   };
   const deliveryHandler = (order: Order) => {
     setSelectedOrder(order);
-   // setOpen(true);
+   setOpen(true);
     setLoading(true);
     axiosClient
       .patch(`orders/${order.id}`, {
@@ -85,11 +85,11 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
               <TableRow>
                 <TableCell sx={{width:'30px'}}>{t("orderTable.orderNumber")}</TableCell>
                 <TableCell>{t("orderTable.customer")}</TableCell>
-                {/* <TableCell>{t("orderTable.area")}</TableCell> */}
+                <TableCell>{t("orderTable.area")}</TableCell>
                 <TableCell>{t("orderTable.status")}</TableCell>
                 <TableCell>{t("orderTable.total")}</TableCell>
                 <TableCell width={"5%"}>{t("orderTable.paid")}</TableCell>
-                {/* <TableCell width={"5%"}>{t('remaining')}</TableCell> */}
+                <TableCell width={"5%"}>{t('remaining')}</TableCell>
                 <TableCell>{t("orderTable.orderDate")}</TableCell>
                 <TableCell>{t("orderTable.deliveryDate")}</TableCell>
                 <TableCell>{t("handed")}</TableCell>
@@ -119,7 +119,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
                   <TableCell sx={{ textWrap: "nowrap" }}>
                     {order?.customer?.name}
                   </TableCell>
-                  {/* <TableCell>{order?.customer?.area}</TableCell> */}
+                  <TableCell>{order?.customer?.area}</TableCell>
                   <MyTableCellStatusSelector
                     order={order}
                     setSelectedOrder={null}
@@ -134,9 +134,9 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
                   >
                     {order.amount_paid.toFixed(3)}
                   </TdCell>
-                  {/* <TableCell>
+                  <TableCell>
                     {(order.totalPrice - order.amount_paid).toFixed(3)}
-                  </TableCell> */}
+                  </TableCell>
 
                   <TableCell sx={{ textWrap: "nowrap" }}>
                     {dayjs(new Date(order.created_at)).format(

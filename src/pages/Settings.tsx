@@ -59,11 +59,7 @@ function Settings() {
   return (
     <Grid gap={4} container>
       {/* Welcome Text */}
-      <Grid item xs={12}>
-        <Typography variant="h6" textAlign="center">
-          {t('welcomeToReact')}
-        </Typography>
-      </Grid>
+    
 
       <Grid item xs={12} lg={4}>
         <Typography textAlign={'center'} variant="h3">

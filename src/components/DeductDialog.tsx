@@ -56,26 +56,27 @@ const DeductDialog = ({
           {selectedOrder.meal_orders.map((mealOrder: Mealorder) => (
             <>
               <Typography variant='h6' sx={{mb:1}} textAlign={'center'}><Chip label={mealOrder.meal.name}></Chip></Typography>
-              {mealOrder.requested_child_meals.map((r) => (
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
+                    <Table size="small">
+                    <TableHead>
+              <TableRow>
                       <TableCell sx={{textAlign:'center'}}>الصنف</TableCell>
                       <TableCell sx={{textAlign:'center'}}>الكميه المطلوبه </TableCell>
                       <TableCell sx={{textAlign:'center'}}>الكميه المتوفره</TableCell>
                       <TableCell sx={{textAlign:'center'}}>الكميه الجديد </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
+                    </TableHead>
+                      <TableBody>
+              {mealOrder.requested_child_meals.map((r) => (
+                   
                     <TableRow key={r.id}>
-                      <TableCell sx={{textAlign:'center'}}>{r.child_meal.name}</TableCell>
+                      <TableCell sx={{textAlign:'center'}}>{r.child_meal.service.name}</TableCell>
                       <TableCell sx={{textAlign:'center'}}>{r.quantity * r.count}</TableCell>
                       <TableCell sx={{textAlign:'center'}}>{r.available - r.deducted}</TableCell>
                       <TableCell sx={{textAlign:'center'}}>{r.available - (r.quantity * r.count)}</TableCell>
                     </TableRow>
-                  </TableBody>
-                </Table>
               ))}
+              </TableBody>
+              </Table>
             </>
           ))}
           <Button color={selectedOrder.deducts.length > 0 ?'error':'inherit'}  onClick={deductHandler} sx={{mt:1}} variant='contained'> {selectedOrder.deducts.length > 0 ?'استرجاع الكميات':'خصم الكميات'}</Button>

@@ -15,10 +15,10 @@ function DefaultLayout() {
   // }
   return (
     <div className="app-container">
-           <Header/>
+           {/* <Header/> */}
 
       
-      {<Outlet />}
+      {/* {<Outlet />} */}
     </div>
   );
 }

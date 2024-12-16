@@ -17,6 +17,7 @@ import { Cost, Service } from "@/Types/types";
 import { useBeforeUnload } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useServiceStore } from "./ServiceStore";
+import TdCell from "@/helpers/TdCell";
 
 function Services() {
   useEffect(() => {
@@ -54,7 +55,7 @@ function Services() {
                 },
               })}
               fullWidth
-              label=" اسم الخدمه"
+              label=" اسم الصنف"
               variant="outlined"
               name="name"
               error={errors.name != null}
@@ -70,19 +71,19 @@ function Services() {
         <Grid item lg={8} xs={12}>
           <Box sx={{ p: 1 }}>
             <Typography variant="h6" textAlign={"center"}>
-              الخدمات
+              الاصناف
             </Typography>
             <Table size="small" style={{ direction: "rtl" }}>
               <TableHead>
                 <TableRow>
-                  <TableCell>اسم الخدمه </TableCell>
+                  <TableCell>اسم  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {serviceList.map((service: Service) => {
                   return (
                     <TableRow key={service.id}>
-                      <TableCell>{service.name}</TableCell>
+                      <TdCell item={service} colName={'name'}  table={`services`}>{service.name}</TdCell>
                     </TableRow>
                   );
                 })}

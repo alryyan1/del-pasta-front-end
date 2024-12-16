@@ -11,7 +11,7 @@ import { AppProvider, type Navigation } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useNavigation } from "react-router-dom";
 import { router } from "@/router";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
@@ -94,7 +94,20 @@ const demoTheme = createTheme({
 
 export default function DashboardLayoutBasic() {
   const [isIpadPro, setIsIpadPro] = React.useState(false);
+  const navigate =  useNavigate()
 
+  const {setUser,setToken,} = useAuthContext()
+  React.useEffect(() => {
+    axiosClient.get("/user").then(({ data }) => {
+      setUser(data);
+    }).catch((err)=>{
+    console.log('error')
+    setUser(null);
+    setToken(null)
+    navigate('/login');
+
+  });
+  }, [])
   React.useEffect(() => {
     const mediaQuery = window.matchMedia(
       '(min-width: 768px) and (max-width: 1366px)'

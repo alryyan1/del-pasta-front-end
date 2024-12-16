@@ -7,30 +7,58 @@ import {
   TableRow,
   Table,
   TextField,
+  Checkbox,
 } from "@mui/material";
 import MyCheckbox from "./MyCheckbox";
 import { ChangeEvent } from "react";
 interface RequestedChildrenTablePrps {
   mealOrder: Mealorder;
-  setSelectedOrder: (order) => void
+  setSelectedOrder: (order) => void;
 }
-function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildrenTablePrps) {
-  const addRequestedChildMealHandler = (child:ChildMeal)=>{
-    axiosClient.post(`RequestedChild/${mealOrder.id}?child=${child.id}`).then(({data})=>{
-        setSelectedOrder(data.order)
-    })
-  }
-  function changeMealCountHandler(e:ChangeEvent<HTMLInputElement>,child:ChildMeal) {
-    axiosClient.patch(`RequestedChild/${child.id}?order_meal_id=${mealOrder.id}&count=${e.target.value}`)
-   .then(({data})=>{
-    console.log(data,'update count data')
-   })
+function RequestedChildrenTable({
+  mealOrder,
+  setSelectedOrder,setShowRequestedDialog
+}: RequestedChildrenTablePrps) {
+  const addRequestedChildMealHandler = (child: ChildMeal) => {
+    axiosClient
+      .post(`RequestedChild/${mealOrder.id}?child=${child.id}`)
+      .then(({ data }) => {
+        setSelectedOrder(data.order);
+      });
+  };
+  const addAllRequestedChilds = () => {
+    axiosClient
+      .post(`RequestedChildAddAll/${mealOrder.id}`)
+      .then(({ data }) => {
+        setSelectedOrder(data.order);
+        setShowRequestedDialog(false)
+      });
+      
+  };
+  function changeMealCountHandler(
+    e: ChangeEvent<HTMLInputElement>,
+    child: ChildMeal
+  ) {
+    axiosClient
+      .patch(
+        `RequestedChild/${child.id}?order_meal_id=${mealOrder.id}&count=${e.target.value}`
+      )
+      .then(({ data }) => {
+        console.log(data, "update count data");
+      });
   }
   return (
     <Table size="small">
       <TableHead>
         <TableRow>
-          <TableCell>-</TableCell>
+          <TableCell>
+            {" "}
+            <Checkbox onChange={(e,v)=>{
+              if (v) {
+                addAllRequestedChilds()
+              }
+            }}/>
+          </TableCell>
           <TableCell>اسم</TableCell>
           <TableCell>الكميه</TableCell>
           <TableCell>سعر</TableCell>
@@ -45,14 +73,22 @@ function RequestedChildrenTable({ mealOrder ,setSelectedOrder}: RequestedChildre
           return (
             <TableRow key={index}>
               <TableCell>
-              <MyCheckbox child={child} addRequestedChildMealHandler={addRequestedChildMealHandler} checked={mealOrder.requested_child_meals.find((req)=>req.child_meal_id == child.id)!=undefined}/>
+                <MyCheckbox
+                  child={child}
+                  addRequestedChildMealHandler={addRequestedChildMealHandler}
+                  checked={
+                    mealOrder.requested_child_meals.find(
+                      (req) => req.child_meal_id == child.id
+                    ) != undefined
+                  }
+                />
               </TableCell>
-              <TableCell>{child.name}</TableCell>
+              <TableCell>{child.service.name}</TableCell>
               <TableCell>{child.quantity}</TableCell>
               <TableCell>{child.price}</TableCell>
               {/* <TableCell>{child.people_count}</TableCell> */}
               {/* <TableCell>{child.weight}</TableCell> */}
-             
+
               {/* <TableCell>
                 <div className="flex items-center gap-2">
                   <button

@@ -6,7 +6,7 @@ import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
 import { Button, IconButton, TextField, Tooltip } from "@mui/material";
 import { Stack } from "@mui/system";
-import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, Trash, UserPlus } from "lucide-react";
+import { Car, File, HomeIcon, Map, Plus, Printer, PrinterIcon, Send, Trash, UserPlus } from "lucide-react";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
@@ -65,7 +65,12 @@ function OrderHeaderMobile({
   const [loading,setloading]= useState(false)
 
   const sendMsg = () => {
-    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {
+    axiosClient.post(`sendMsgWa/${selectedOrder?.id}`).then(({ data }) => {
+      
+    });
+  };
+  const sendLocation = () => {
+    axiosClient.post(`sendMsgWaLocation/${selectedOrder?.id}`).then(({ data }) => {
       
     });
   };
@@ -190,6 +195,11 @@ function OrderHeaderMobile({
           <IconButton onClick={sendMsg}>
               <Tooltip title=" ارسال رساله ">
                 <Message />
+              </Tooltip>
+            </IconButton>
+            <IconButton onClick={sendLocation}>
+              <Tooltip title=" ارسال موقع ">
+                <Map />
               </Tooltip>
             </IconButton>
             <IconButton onClick={sendHandler}>

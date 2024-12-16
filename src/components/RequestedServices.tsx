@@ -34,12 +34,12 @@ function RequestedServices({updateRequestedQuantity,item,show,details=true}:Requ
               {item.requested_child_meals.map((requested) => (
                 <TableRow key={requested.id}>
                   {/* <TableCell>{requested.order_meal.meal.name}</TableCell> */}
-                  <TableCell>{requested.child_meal.name}</TableCell>
+                  <TableCell>{requested.child_meal.service.name}</TableCell>
                  {details && <TableCell>{requested.child_meal.price}</TableCell>}
 
                   <TableCell>{requested.child_meal.quantity}</TableCell>
                   {details &&     <TableCell className="text-center">
-                    <Stack alignItems={'center'} direction={"column"} justifyContent={'center'}>
+                    <Stack alignItems={'center'} direction={"row"} justifyContent={'center'}>
                       <button
                         onClick={() => updateRequestedQuantity(false, requested)}
                         className="p-1 w-[25px] text-center bg-gray-100 rounded"

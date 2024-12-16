@@ -42,7 +42,7 @@ const DepositDialog = ({
     axiosClient
       .post<AxiosResponseProps<Meal>>(`deposits`, {
         quantity: data.quantity,
-        child_meal_id: selectedChild,
+        service_id: selectedChild,
       })
       .then(({ data }) => {
         console.log(data, "child meals add");

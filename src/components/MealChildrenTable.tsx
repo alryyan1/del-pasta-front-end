@@ -35,7 +35,7 @@ function MealChildrenTable({
 
   return (
     <>
-      <Tooltip title="اضافه الخدمات">
+      {/* <Tooltip title="اضافه الخدمات">
         <IconButton
           onClick={() => {
             axiosClient
@@ -49,16 +49,16 @@ function MealChildrenTable({
         >
           <Download />
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
 
       <Table style={{direction:'ltr'}} size="small">
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            {/* <TableCell>العدد</TableCell> */}
+            <TableCell>العدد</TableCell>
             <TableCell>Price</TableCell>
-            {/* <TableCell>الاشخاص</TableCell> */}
-            {/* <TableCell>الوزن</TableCell> */}
+            <TableCell>الاشخاص</TableCell>
+            <TableCell>الوزن</TableCell>
             <TableCell>-</TableCell>
           </TableRow>
         </TableHead>
@@ -68,11 +68,11 @@ function MealChildrenTable({
             return (
               <TableRow key={meal.id}>
                 <TdCell item={meal} colName={"name"} table={"childMeals"}>
-                  {meal.name}
+                  {meal.service.name}
                 </TdCell>
-                {/* <TdCell item={meal} colName={"quantity"} table={"childMeals"}>
+                <TdCell item={meal} colName={"quantity"} table={"childMeals"}>
                   {meal.quantity}
-                </TdCell> */}
+                </TdCell>
                 <TdCell
                  update={setSelectedMeal}
                   show
@@ -83,8 +83,8 @@ function MealChildrenTable({
                 >
                   {meal.price}
                 </TdCell>
-                {/* <TdCell item={meal} colName={'people_count'}  table={'childMeals'}>{meal.people_count}</TdCell> */}
-                {/* <TdCell item={meal} colName={'weight'}  table={'childMeals'}>{meal.weight}</TdCell> */}
+                <TdCell item={meal} colName={'people_count'}  table={'childMeals'}>{meal.people_count}</TdCell>
+                <TdCell item={meal} colName={'weight'}  table={'childMeals'}>{meal.weight}</TdCell>
                 <TableCell>
                   <IconButton
                     color="error"

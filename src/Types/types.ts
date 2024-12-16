@@ -83,17 +83,6 @@ export interface Deduct {
 
 
 
-
-
-export interface ChildMeal {
-  id: number;
-  name: string;
-  meal:Meal;
-  quantity:number;
-  people_count: string;
-  price:number;
-  weight:string;
-}
 export interface CostCategory {
   id: number;
   name: string;
@@ -122,7 +111,7 @@ export interface Requestedchildmeal {
   child_meal_id: number;
   quantity: number;
   price: number;
-  child_meal: Childmeal;
+  child_meal: ChildMeal;
   count: number;
   available:number
 }
@@ -143,18 +132,23 @@ export interface Meal {
   created_at: null;
   updated_at: null;
   people_count: string;
-  child_meals: Childmeal[];
+  child_meals: ChildMeal[];
   image_url:string;
 }
 
-export interface Childmeal {
+
+
+
+export interface ChildMeal {
   id: number;
+  meal:Meal;
+  service:Service
+  quantity:number;
+  people_count: string;
+  price:number;
+  weight:string;
   meal_id: number;
-  quantity: number;
   name: string;
   created_at: string;
   updated_at: string;
-  price: number;
-  people_count: string;
-  weight: string;
 }

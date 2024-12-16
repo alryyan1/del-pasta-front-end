@@ -66,7 +66,7 @@ function CartItem({
     <Badge  color="primary" badgeContent={item.requested_child_meals.length}>
       <div style={{border:'1px dashed lightblue',width:'100%'}}
     >
-      <Box  sx={{overflow:'hidden'}}
+      <Box 
         className={` flex items-center justify-between px-4 p-2 bg-white rounded-xl shadow-md cart-item  ${isMultible}`}
       >
         <BasicPopover

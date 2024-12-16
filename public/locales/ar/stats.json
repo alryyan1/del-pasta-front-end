@@ -3,9 +3,9 @@
     "child_name": "اسم الصنف",
     "meal_name": "اسم الوجبة",
     "requested_quantity": "الكمية المطلوبة",
-    "available_quantity": "الكمية المتوفرة",
+    "available_quantity": "الكمية الجاهزة",
     "deducted_quantity": "الكمية المسحوبة",
-    "net_quantity": "صافي الكمية",
+    "net_quantity": "المتوفر في المخزون",
     "remaining_quantity": "الكمية الباقية",
     "add_quantity": "إضافة كمية"
   }

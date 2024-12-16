@@ -169,7 +169,7 @@ function OrderHeader({
             selectedOrder={selectedOrder}
             setSelectedOrder={setSelectedOrder}
           />}
-        {!isIpadPro && <Stack direction={"row"} gap={1}>
+        {!isIpadPro && selectedOrder.customer && <Stack direction={"row"} gap={1}>
             <IconButton onClick={printHandler}>
               <Tooltip title={t("Print Invoice")}>
                 <Printer />

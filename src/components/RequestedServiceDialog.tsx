@@ -10,7 +10,7 @@ import RequestedChildrenTable from "./RequestedChildrenTable";
 
 
 
-const RequestedServiceDialog = ({open,handleClose,mealOrder,setSelectedOrder,meal}) => {
+const RequestedServiceDialog = ({open,handleClose,mealOrder,setSelectedOrder,meal,setShowRequestedDialog}) => {
 
 
 
@@ -19,7 +19,7 @@ const RequestedServiceDialog = ({open,handleClose,mealOrder,setSelectedOrder,mea
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle></DialogTitle>
         <DialogContent className="">
-        <RequestedChildrenTable
+        <RequestedChildrenTable setShowRequestedDialog={setShowRequestedDialog}
                   setSelectedOrder={setSelectedOrder}
                   mealOrder={mealOrder}
                 />

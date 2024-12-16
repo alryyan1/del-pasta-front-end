@@ -106,7 +106,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
           <p className="text-gray-600">لم تقم بإضافة أي وجبات بعد.</p>
         )}
       </div> */}
-       {mealOrder &&  <RequestedServiceDialog setSelectedOrder={setSelectedOrder} mealOrder={mealOrder} selectedOrder={selectedOrder} open={showRequestedDialog} handleClose={()=>{
+       {mealOrder &&  <RequestedServiceDialog setShowRequestedDialog={setShowRequestedDialog} setSelectedOrder={setSelectedOrder} mealOrder={mealOrder} selectedOrder={selectedOrder} open={showRequestedDialog} handleClose={()=>{
       setShowRequestedDialog(false)
     }}/>}
     </div>

@@ -29,7 +29,7 @@ function CartItemOptions({setShow,onDelete,item,show,updateQuantity}:CartItemOpt
       </IconButton>
 
  
-      <Incremenor updateQuantity={updateQuantity} requested={item} />
+      {/* <Incremenor updateQuantity={updateQuantity} requested={item} /> */}
 
     </div>
   )

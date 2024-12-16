@@ -1,7 +1,9 @@
 import DepositDialog from "@/components/DepositDialog";
 import axiosClient from "@/helpers/axios-client";
+import { useCategoryStore } from "@/stores/CategoryStore";
 import {
   Button,
+  Chip,
   Paper,
   Table,
   TableBody,
@@ -26,17 +28,23 @@ function Stats() {
   const [childId, setChildId] = useState(null);
   const [update, setUpdate] = useState(0);
   const [showAddDepositDialog, setShowAddDepositDialog] = useState(false);
-
+    const { fetchCategories, categories, add } = useCategoryStore((state) => state);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    useEffect(() => {
+      fetchCategories();
+    }, []);
   const handleClose = () => {
     setShowAddDepositDialog(false);
     setUpdate((u) => u + 1);
   };
 
   useEffect(() => {
-    axiosClient.get(`orderMealsStats?date=${searchQuery}`).then(({ data }) => {
+    axiosClient.post(`orderMealsStats?date=${searchQuery}`,{
+      category:selectedCategory?.id
+    }).then(({ data }) => {
       setData(data);
     });
-  }, [searchQuery, update]);
+  }, [searchQuery, update,selectedCategory]);
 
   data = data.filter((d) => {
     return (
@@ -62,12 +70,24 @@ function Stats() {
             }}
             size="small"
           />
+          <Stack direction={'row'} gap={1}>
+                   {categories.map((s) => (
+                <Chip
+                  sx={{fontFamily:'cairo'}}
+                  color={s.id === selectedCategory?.id ? "primary" : "default"}
+                  variant={s.id === selectedCategory?.id ? "filled" : "outlined"}
+                  key={s.id}
+                  onClick={() => setSelectedCategory(s)}
+                  label={s.name} // Translate statuses
+                />
+              ))}
+                </Stack>
         </Stack>
 
         <Table sx={{fontSize:'24px'}} size="small" className="order-table" stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell sx={{fontSize:'24px'}}>{t("meal_name")}</TableCell>
+              {/* <TableCell sx={{fontSize:'24px'}}>{t("meal_name")}</TableCell> */}
               <TableCell sx={{fontSize:'24px'}} >{t("child_name")}</TableCell>
               <TableCell sx={{fontSize:'24px'}}>{t("requested_quantity")}</TableCell>
               <TableCell sx={{fontSize:'24px'}}>{t("available_quantity")}</TableCell>
@@ -87,7 +107,7 @@ function Stats() {
                     remaining < 0 ? "" : "bg-green-300"
                   }`}
                 >
-                  <TableCell sx={{fontSize:'24px'}}>{info.mealName}</TableCell>
+                  {/* <TableCell sx={{fontSize:'24px'}}>{info.mealName}</TableCell> */}
                   <TableCell sx={{fontSize:'24px'}}>{info.childName}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.totalQuantity}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.totalDeposit}</TableCell>
@@ -101,7 +121,7 @@ function Stats() {
                       className="hover:bg-slate-600 hover:text-white"
                       onClick={() => {
                         setShowAddDepositDialog(true);
-                        setChildId(info.childId);
+                        setChildId(info.serviceId);
                         setChildName(info.childName);
                         setMealName(info.mealName);
                       }}

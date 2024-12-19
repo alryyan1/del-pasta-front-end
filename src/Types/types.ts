@@ -14,6 +14,7 @@ export interface Category {
   id: number;
   name: string;
   image:string;
+  image_url:string;
   meals:Meal[];
 }
 export interface Service {
@@ -69,7 +70,8 @@ export interface Order {
   deducts:Deduct[]
   outside:number;
   car_palette:string
-  outside_confirmed:boolean
+  outside_confirmed:boolean;
+  draft:string;
 }
 
 export interface Deduct {

@@ -57,7 +57,7 @@ function Orders() {
   }, []);
   const [search, setSearch] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
-  const [createdAt, setCreatedAt] = useState(dayjs());
+  const [createdAt, setCreatedAt] = useState(null);
   const [page, setPage] = useState(20);
   const [links, setLinks] = useState([]);
   const {selectedOrder, setSelectedOrder} =useOutletContext()
@@ -81,6 +81,7 @@ function Orders() {
           status: selectedStatus,
           date:createdAt?.format('YYYY-MM-DD') ?? null,
           name:search
+          
         })
         .then(({ data: { data, links } }) => {
           setOrders(data);

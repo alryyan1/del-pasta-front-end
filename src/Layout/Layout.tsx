@@ -42,6 +42,7 @@ import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./../i18n";
 import ArriavalDialog from "@/components/ArriavalDialog";
 import alarm from "./../assets/alarm.wav";
+import { Meal } from "@/Types/types";
 
 const demoTheme = createTheme({
   // direction: "rtl",
@@ -97,6 +98,12 @@ export default function DashboardLayoutBasic() {
   const navigate =  useNavigate()
 
   const {setUser,setToken,} = useAuthContext()
+    const [meals,setMeals] = React.useState<Meal[]>([]);
+   React.useEffect(()=>{
+      axiosClient.get('meals').then(({data})=>{
+        setMeals(data)
+      })
+    },[])
   React.useEffect(() => {
     axiosClient.get("/user").then(({ data }) => {
       setUser(data);
@@ -232,21 +239,21 @@ export default function DashboardLayoutBasic() {
   const pauseAlarm = () => {
     audio.pause();
   };
-  React.useEffect(() => {
-    const timer = setInterval(() => {
-      axiosClient.get("arrival").then(({ data }) => {
-        console.log(data);
-        setOrders(data);
-        if (data.length > 0) {
-          setOpen(true);
-          playAlarm();
-        }
-      });
-    }, 15000);
-    return () => {
-      clearInterval(timer);
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     axiosClient.get("arrival").then(({ data }) => {
+  //       console.log(data);
+  //       setOrders(data);
+  //       if (data.length > 0) {
+  //         setOpen(true);
+  //         playAlarm();
+  //       }
+  //     });
+  //   }, 15000);
+  //   return () => {
+  //     clearInterval(timer);
+  //   };
+  // }, []);
   const handleClose = () => {
     setOpen(false);
   };
@@ -265,7 +272,8 @@ export default function DashboardLayoutBasic() {
         fallback={
           <Box
             sx={{
-              height: "100vh",
+              userSelect:'none',
+              // height: "100vh",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -294,7 +302,7 @@ export default function DashboardLayoutBasic() {
                     context={{
                       selectedOrder,
                       setSelectedOrder,
-                      isIpadPro, setIsIpadPro
+                      isIpadPro, setIsIpadPro,meals
                     }}
                   />
                 </PageContainer>{" "}

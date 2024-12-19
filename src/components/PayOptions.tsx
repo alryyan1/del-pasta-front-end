@@ -61,10 +61,10 @@ export default function PayOptions({selectedOrder:activeSell,setSelectedOrder}:P
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <LoadingButton loading={loading} size='small'  onClick={handleClick}>{payment}</LoadingButton>
+        <LoadingButton fullWidth loading={loading} size='small'  onClick={handleClick}>{payment}</LoadingButton>
   
         <Button
-         
+         fullWidth
           size="small"
           onClick={handleToggle}
         >

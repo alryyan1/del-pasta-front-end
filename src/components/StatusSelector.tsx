@@ -7,8 +7,8 @@ import axiosClient from "@/helpers/axios-client";
 const statusOptions = [
   { label: "Pending", value: "pending" },
   { label: "Confirmed", value: "confirmed" },
-  { label: "In Preparation", value: "in preparation" },
-  { label: "Completed", value: "Completed" },
+  // { label: "In Preparation", value: "in preparation" },
+  // { label: "Completed", value: "Completed" },
   { label: "Delivered", value: "delivered" },
   { label: "Cancelled", value: "cancelled" },
 ];
@@ -35,7 +35,7 @@ const StatusSelector = ({
 
   return (
     <Autocomplete
-      sx={{ width: "170px" }}
+      sx={{ width: "180px" }}
       value={status}
       size="small"
       onChange={handleChange}

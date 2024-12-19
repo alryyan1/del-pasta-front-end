@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Stack } from "@mui/system";
 
 function encodeImageFileAsURL(file, colName) {
   var reader = new FileReader();
@@ -78,7 +79,7 @@ function Settings() {
         )}
         <img width={100} src={image1.src} alt="" />
 
-        <Divider />
+     
         <Typography textAlign={'center'} variant="h3">
           {t('footer')}
         </Typography>
@@ -98,7 +99,7 @@ function Settings() {
       </Grid>
 
       <Grid item xs={12} lg={3}>
-        <Box key={settings?.id} sx={{ p: 1 }}>
+        <Stack direction={'column'} gap={1} key={settings?.id} sx={{ p: 1 }}>
           <FormGroup>
             <FormControlLabel
               control={
@@ -116,7 +117,7 @@ function Settings() {
             />
           </FormGroup>
 
-          <Divider />
+       
           <FormGroup>
             <FormControlLabel
               control={
@@ -133,7 +134,7 @@ function Settings() {
               label={t('footerLabel')}
             />
           </FormGroup>
-          <Divider />
+       
 
           <FormGroup>
             <FormControlLabel
@@ -151,13 +152,14 @@ function Settings() {
               label={t('logoLabel')}
             />
           </FormGroup>
-          <Divider />
+       
 
           <TextField
             defaultValue={settings?.kitchen_name}
             sx={{ mb: 1 }}
             label={t('institutionName')}
             fullWidth
+            variant='standard'
             onChange={(e) => {
               axiosClient.post("settings", {
                 colName: "kitchen_name",
@@ -165,13 +167,14 @@ function Settings() {
               });
             }}
           />
-          <Divider />
+       
 
           <TextField
             defaultValue={settings?.currency}
             sx={{ mb: 1 }}
             label={t('currencyLabel')}
             fullWidth
+            variant='standard'
             onChange={(e) => {
               axiosClient.post("settings", {
                 colName: "currency",
@@ -179,13 +182,14 @@ function Settings() {
               });
             }}
           />
-          <Divider />
+       
 
           <TextField
             defaultValue={settings?.inventory_notification_number}
             sx={{ mb: 1 }}
             label={t('employeePhone')}
             fullWidth
+            variant='standard'
             onChange={(e) => {
               axiosClient.post("settings", {
                 colName: "inventory_notification_number",
@@ -193,12 +197,13 @@ function Settings() {
               });
             }}
           />
-          <Divider />
+       
 
           <TextField
             defaultValue={settings?.vatin}
             label={t('vatin')}
             fullWidth
+            variant='standard'
             onChange={(e) => {
               axiosClient.post("settings", {
                 colName: "vatin",
@@ -206,12 +211,13 @@ function Settings() {
               });
             }}
           />
-          <Divider />
+       
 
           <TextField
             defaultValue={settings?.cr}
             label={t('cr')}
             fullWidth
+            variant='standard'
             onChange={(e) => {
               axiosClient.post("settings", {
                 colName: "cr",
@@ -219,12 +225,13 @@ function Settings() {
               });
             }}
           />
-          <Divider />
+       
 
           <TextField
             defaultValue={settings?.email}
             label={t('emailLabel')}
             fullWidth
+            variant='standard'
             onChange={(e) => {
               axiosClient.post("settings", {
                 colName: "email",
@@ -232,12 +239,13 @@ function Settings() {
               });
             }}
           />
-          <Divider />
+       
 
           <TextField
             defaultValue={settings?.address}
             label={t('addressLabel')}
             fullWidth
+            variant='standard'
             onChange={(e) => {
               axiosClient.post("settings", {
                 colName: "address",
@@ -245,7 +253,7 @@ function Settings() {
               });
             }}
           />
-        </Box>
+        </Stack>
       </Grid>
 
       <Grid item xs={12} lg={3}>
@@ -263,6 +271,7 @@ function Settings() {
           />
           <Button
             fullWidth
+            variant='standard'
             variant="contained"
             sx={{ mb: 1 }}
             onClick={() => {
@@ -279,8 +288,9 @@ function Settings() {
             {t('save')}
           </Button>
 
-          <Divider />
-          <TextField
+       
+          <div style={{direction:'ltr'}}>
+              <TextField
             defaultValue={settings?.footer_content}
             rows={3}
             label={t('footerContent')}
@@ -293,7 +303,9 @@ function Settings() {
               });
             }}
           />
-          <Divider />
+          </div>
+        
+       
         </Box>
       </Grid>
     </Grid>

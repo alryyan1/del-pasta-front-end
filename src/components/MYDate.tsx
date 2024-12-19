@@ -22,11 +22,11 @@ function MyDateField2({ val, item ,disabled, label='تاريخ الطلب',path,
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateField
-      
+      fullWidth
       disabled={disabled}
       label={label}
       format='YYYY-MM-DD'
-      sx={{width: '120px'}}
+      // sx={{width: '120px'}}
         size="small"
         defaultValue={dayjs(date)}
         value={dayjs(date)}

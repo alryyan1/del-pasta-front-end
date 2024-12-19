@@ -1,6 +1,6 @@
 import { Eye, Minus, Plus, Trash2 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { Meal, Mealorder, Requestedchildmeal } from "../Types/types";
+import { Meal, Mealorder, Order, Requestedchildmeal } from "../Types/types";
 import BasicPopover from "./Mypopover";
 import MealChildrenTable from "./MealChildrenTable";
 import { ColorPicker, ColorPickerChangeEvent } from 'primereact/colorpicker';
@@ -25,6 +25,7 @@ import { useOutletContext } from "react-router-dom";
 import CartItemOptionsMobile from "./CartItemOptionsMobile";
 interface CartItemProbs {
   item: Mealorder;
+  selectedOrder:Order;
   updateQuantity: (increment: boolean, item: Mealorder) => void;
   isMultible: string;
   setSelectedOrder: (item: Mealorder) => void;
@@ -35,7 +36,8 @@ function CartItem({
   updateQuantity,
   item,
   setSelectedOrder,
-  updateRequestedQuantity
+  updateRequestedQuantity,
+  selectedOrder
 }: CartItemProbs) {
 
   const [show,setShow] = useState(false)
@@ -70,6 +72,7 @@ function CartItem({
         className={` flex items-center justify-between px-4 p-2 bg-white rounded-xl shadow-md cart-item  ${isMultible}`}
       >
         <BasicPopover
+        selectedOrder={selectedOrder}
           title={item.meal.name}
           content={
             <span className="text-gray-700">
@@ -83,7 +86,7 @@ function CartItem({
           }
         />
 
-        {isIpadPro ? <CartItemOptionsMobile item={item} onDelete={onDelete} setShow={setShow} show={show} setColor={setColor} updateQuantity={updateQuantity}/> : <CartItemOptions item={item} onDelete={onDelete} setShow={setShow} show={show} setColor={setColor} updateQuantity={updateQuantity}/>}
+        {isIpadPro ? <CartItemOptionsMobile item={item} onDelete={onDelete} setShow={setShow} show={show} setColor={setColor} updateQuantity={updateQuantity}/> : <CartItemOptions selectedOrder={selectedOrder} item={item} onDelete={onDelete} setShow={setShow} show={show} setColor={setColor} updateQuantity={updateQuantity}/>}
       </Box>
       {item.requested_child_meals.length > 0 && (
 

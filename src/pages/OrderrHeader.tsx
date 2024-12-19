@@ -4,14 +4,30 @@ import StatusSelector from "@/components/StatusSelector";
 import axiosClient from "@/helpers/axios-client";
 import { Customer, Order } from "@/Types/types";
 import { Autocomplete, LoadingButton } from "@mui/lab";
-import { Button, Chip, CircularProgress, IconButton, TextField, Tooltip } from "@mui/material";
+import {
+  Button,
+  Chip,
+  CircularProgress,
+  IconButton,
+  TextField,
+  Tooltip,
+} from "@mui/material";
 import { Stack } from "@mui/system";
-import { Car, File, HomeIcon, Plus, Printer, PrinterIcon, Send, UserPlus } from "lucide-react";
+import {
+  Car,
+  File,
+  HomeIcon,
+  Plus,
+  Printer,
+  PrinterIcon,
+  Send,
+  UserPlus,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useCustomerStore } from "./Customer/useCustomer";
 import printJS from "print-js";
 import BasicTimePicker from "@/components/TimePicker";
-import { Message, WhatsApp } from "@mui/icons-material";
+import { EditNote, Message, WhatsApp } from "@mui/icons-material";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next"; // Import useTranslation
 import { useOutletContext } from "react-router-dom";
@@ -21,6 +37,9 @@ interface OrderHeaderProps {
   setSelectedOrder: (order: Order) => void;
   newOrderHandler: () => void;
   setIsFormOpen: (isOpen: boolean) => void;
+  setOpen: (state) => void;
+  handleClose: () => void;
+  customers: Customer[];
 }
 
 function OrderHeader({
@@ -28,15 +47,12 @@ function OrderHeader({
   setSelectedOrder,
   newOrderHandler,
   setIsFormOpen,
+  setOpen,
+  handleClose,
+  customers
 }: OrderHeaderProps) {
-  const { t } = useTranslation('orderheader'); // Initialize useTranslation hook
-  const { customers, addCustomer, updateCustomer, fetchData } =
-    useCustomerStore();
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
+  const { t } = useTranslation("orderheader"); // Initialize useTranslation hook
+ 
   const sendHandler = () => {
     setloading(true);
     axiosClient
@@ -87,7 +103,7 @@ function OrderHeader({
         });
       });
   };
-  const {isIpadPro, setIsIpadPro} = useOutletContext();
+  const { isIpadPro, setIsIpadPro } = useOutletContext();
 
   return (
     <Stack
@@ -97,7 +113,7 @@ function OrderHeader({
       alignItems={"center"}
       className="shadow-lg items-center rounded-sm order-header"
     >
-    <Chip variant="contained" label={selectedOrder?.id}></Chip>
+      <Chip variant="contained" label={selectedOrder?.id}></Chip>
       <LoadingButton variant="outlined" onClick={newOrderHandler}>
         <Plus />
       </LoadingButton>
@@ -140,7 +156,11 @@ function OrderHeader({
             }}
             renderInput={(params) => {
               return (
-                <TextField variant="standard" label={t("Customer")} {...params} />
+                <TextField
+                  variant="standard"
+                  label={t("Customer")}
+                  {...params}
+                />
               );
             }}
           ></Autocomplete>
@@ -149,7 +169,21 @@ function OrderHeader({
 
       {selectedOrder && (
         <>
-          <Stack direction={"row"} gap={1} alignItems={"center"} justifyContent={"center"}>
+          <Stack
+            direction={"row"}
+            gap={1}
+            alignItems={"center"}
+            justifyContent={"center"}
+          >
+            <Tooltip title="مسوده">
+              <IconButton
+                onClick={() => {
+                  setOpen(true);
+                }}
+              >
+                <EditNote />
+              </IconButton>
+            </Tooltip>
             <MyDateField2
               label={t("Delivery Date")}
               path="orders"
@@ -165,32 +199,43 @@ function OrderHeader({
             setSelectedOrder={setSelectedOrder}
             key={selectedOrder.id}
           />
-                {!isIpadPro && <StatusSelector
-            selectedOrder={selectedOrder}
-            setSelectedOrder={setSelectedOrder}
-          />}
-        {!isIpadPro && selectedOrder.customer && <Stack direction={"row"} gap={1}>
-            <IconButton onClick={printHandler}>
-              <Tooltip title={t("Print Invoice")}>
-                <Printer />
-              </Tooltip>
-            </IconButton>
-            <IconButton onClick={sendMsg}>
-              <Tooltip title={t("Send Message")}>
-                <Message />
-              </Tooltip>
-            </IconButton>
-            <IconButton disabled={selectedOrder?.whatsapp} onClick={sendHandler}>
-              <Tooltip title={t("Send Invoice")}>
-                {loading ? <CircularProgress /> : <WhatsApp color="success" />}
-              </Tooltip>
-            </IconButton>
-            <IconButton color="success" onClick={deliveryHandler}>
-              <Tooltip title={t("Delivery")}>
-                {selectedOrder.is_delivery ? <Car /> : <HomeIcon />}
-              </Tooltip>
-            </IconButton>
-          </Stack>}
+          {!isIpadPro && (
+            <StatusSelector
+              selectedOrder={selectedOrder}
+              setSelectedOrder={setSelectedOrder}
+            />
+          )}
+          {!isIpadPro && selectedOrder.customer && (
+            <Stack direction={"row"} gap={1}>
+              <IconButton onClick={printHandler}>
+                <Tooltip title={t("Print Invoice")}>
+                  <Printer />
+                </Tooltip>
+              </IconButton>
+              <IconButton onClick={sendMsg}>
+                <Tooltip title={t("Send Message")}>
+                  <Message />
+                </Tooltip>
+              </IconButton>
+              <IconButton
+                disabled={selectedOrder?.whatsapp}
+                onClick={sendHandler}
+              >
+                <Tooltip title={t("Send Invoice")}>
+                  {loading ? (
+                    <CircularProgress />
+                  ) : (
+                    <WhatsApp color="success" />
+                  )}
+                </Tooltip>
+              </IconButton>
+              <IconButton color="success" onClick={deliveryHandler}>
+                <Tooltip title={t("Delivery")}>
+                  {selectedOrder.is_delivery ? <Car /> : <HomeIcon />}
+                </Tooltip>
+              </IconButton>
+            </Stack>
+          )}
         </>
       )}
     </Stack>

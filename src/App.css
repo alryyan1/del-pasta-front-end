@@ -51,7 +51,9 @@ nav {
   --secondary: #947b9c;
 }
 body {
-  overflow: hidden;
+  /* overflow: hidden; */
+  user-select: none;
+  /* height: 80vh!important; */
 }
 .MuiDrawer-paper,
 .MuiDrawer-root,
@@ -252,3 +254,10 @@ body {
   }
 }
 
+.muirtl-17jr764-MuiPaper-root-MuiDialog-paper{
+  max-width: fit-content!important;
+}
+.muirtl-t3xolk{
+height: unset!important;
+width: unset!important;
+}

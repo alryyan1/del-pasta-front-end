@@ -21,6 +21,7 @@ import OrderHeaderMobile from "@/components/OrderHeaderMobile";
 import { useTranslation } from "react-i18next";
 import Language from "./language";
 import { useOutlet, useOutletContext } from "react-router-dom";
+import NoteDialog from "@/components/NoteDialog";
 
 const NewOrder = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -28,6 +29,13 @@ const NewOrder = () => {
   const [showOrderSettings, setOrderSettings] = useState(false);
   const [showCart, setShowCart] = useState(window.innerWidth > 700);
   const [showCategories, setShowCategories] = useState(window.innerWidth > 700);
+  const { customers, addCustomer, updateCustomer, fetchData } =
+  useCustomerStore();
+
+useEffect(() => {
+  fetchData();
+}, []);
+
   const [selectedCustomer, setSelectedCustomer] = useState<
     Customer | undefined
   >();
@@ -52,9 +60,11 @@ const NewOrder = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
+  const [open,setOpen] = useState(false);
+  const handleNoteClose = ()=>{
+    setOpen(false);
+  }
   const {selectedOrder, setSelectedOrder} =useOutletContext()
-  const { customers, addCustomer, updateCustomer } = useCustomerStore();
   const { data, setData, add, deleteItem } = useAuthContext();
   const [orders, setOrders] = useState<Order[]>([]);
   const printHandler = () => {
@@ -148,6 +158,7 @@ const NewOrder = () => {
         <Slide direction="up" in={true} mountOnEnter unmountOnExit>
           <div>
             <OrderHeaderMobile
+             
               showOrderSettings={showOrderSettings}
               setIsFormOpen={setIsFormOpen}
               key={selectedOrder?.id}
@@ -161,6 +172,9 @@ const NewOrder = () => {
 
       {width > 830 && (
         <OrderHeader
+        customers={customers}
+          setOpen={setOpen}
+          handleClose={handleNoteClose}
           showOrderSettings={showOrderSettings}
           setIsFormOpen={setIsFormOpen}
           key={selectedOrder?.id}
@@ -219,6 +233,7 @@ const NewOrder = () => {
           open={isFormOpen}
           onClose={handleClose}
         />
+       {selectedOrder &&  <NoteDialog handleClose={handleNoteClose} open={open} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder}/>}
       </div>
     </>
   );

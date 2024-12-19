@@ -14,7 +14,7 @@ import { Label } from "../components/ui/label";
 import { useAuthContext } from "@/contexts/stateContext";
 import axiosClient from "@/helpers/axios-client";
 import { Button } from "@/components/ui/button";
-import loginBack from "./../assets/images/laundry-1.jpg";
+import loginBack from "./../assets/images/table.jpg";
 
 function App() {
   const { t } = useTranslation('login'); // Importing translation function

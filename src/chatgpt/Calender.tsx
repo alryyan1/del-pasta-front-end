@@ -126,8 +126,8 @@ const ReservationCalendar = () => {
         <DialogContent>
           <TextField
            multiline
-            rows={12}
-            sx={{width:'500px'}}
+            rows={14}
+            sx={{width:'700px'}}
             autoFocus
             margin="dense"
             label="Title"
@@ -151,6 +151,7 @@ const ReservationCalendar = () => {
           <Button onClick={handleSave} color="primary">
             Save
           </Button>
+        
         </DialogActions>
       </Dialog>
     </div>

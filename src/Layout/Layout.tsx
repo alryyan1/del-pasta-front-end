@@ -117,6 +117,7 @@ export default function DashboardLayoutBasic() {
     setUser(null);
     setToken(null)
     navigate('/login');
+  localStorage.removeItem('ACCESS_TOKEN')
 
   });
   }, [])

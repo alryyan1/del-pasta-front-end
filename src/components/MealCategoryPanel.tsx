@@ -55,7 +55,7 @@ function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCatego
               }`}
               style={{ borderRadius: "10px" }}
             >
-              {t(category.name)}
+              {category.name}
             </Button>
           </li>
         ))}

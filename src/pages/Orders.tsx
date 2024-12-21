@@ -72,6 +72,16 @@ function Orders() {
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   };
+  useEffect(()=>{
+    setOrders((prev)=>{
+      return prev.map((o)=>{
+        if(selectedOrder?.id === o.id){
+          return selectedOrder
+        }
+        return o;
+      })
+    })
+  },[selectedOrder])
 
   useEffect(() => {
     setSelectedOrder(null)

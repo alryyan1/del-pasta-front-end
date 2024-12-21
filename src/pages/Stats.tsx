@@ -113,7 +113,7 @@ function Stats() {
                   <TableCell sx={{fontSize:'24px'}}>{info.totalDeposit}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.totalDeduct}</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>{info.totalDeposit - info.totalDeduct}</TableCell>
-                  <TableCell sx={{fontSize:'24px'}}>{remaining}</TableCell>
+                  <TableCell sx={{fontSize:'24px'}}>{remaining > 0 ? `+${remaining}` : remaining }</TableCell>
                   <TableCell sx={{fontSize:'24px'}}>
                     <Button
                       variant="contained"

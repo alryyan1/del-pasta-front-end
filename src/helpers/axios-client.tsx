@@ -2,6 +2,7 @@ import axios from "axios";
 import { host, schema } from "./constants";
 import { toast } from "react-toastify";
 import { AxiosResponse } from "axios";
+import { useAuthStore } from "@/AuthStore";
 const axiosClient = axios.create({
   // baseURL : `https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api`
   // baseURL: `${schema}://${host}/mylaundry/kitchen-laravel/public/api`,
@@ -40,6 +41,9 @@ axiosClient.interceptors.response.use(
     if (response.status == 401) {
       console.log("removing access token");
       localStorage.removeItem("ACCESS_TOKEN");
+      useAuthStore.setState({
+        openLoginDialog:true
+      })
       toast.error(response?.data?.message ?? "هنالك خطا", {
         autoClose: 2000,
         hideProgressBar: false,

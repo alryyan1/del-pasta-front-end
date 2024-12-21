@@ -55,16 +55,17 @@ const DepositDialog = ({
     <div className="">
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
-          <Typography className='shadow-sm border rounded-sm bg-orange-500 text-yellow-50 p-3' variant="h5">{mealName}</Typography>
+          {/* <Typography className='shadow-sm border rounded-sm bg-orange-500 text-yellow-50 p-3' variant="h5">{mealName}</Typography> */}
           <Typography variant="h5" textAlign={'center'} sx={{m:1}} ><Chip size='medium' label={childName}></Chip></Typography>
         </DialogTitle>
         <DialogContent className="">
-          <Typography>اضافه للمخزن</Typography>
+          {/* <Typography>اضافه للمخزن</Typography> */}
 
           <form onSubmit={handleSubmit(submitHandler)}>
             <Stack gap={2} alignItems={'center'} justifyContent={'center'} direction={"row"}>
 
               <TextField
+               autoFocus
                 label="العدد"
                 {...register("quantity",{
                   required: "العدد مطلوب",

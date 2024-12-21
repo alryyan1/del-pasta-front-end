@@ -43,6 +43,8 @@ import i18n from "./../i18n";
 import ArriavalDialog from "@/components/ArriavalDialog";
 import alarm from "./../assets/alarm.wav";
 import { Meal } from "@/Types/types";
+import LoginDialog from "@/components/LoginDialog";
+import { useAuthStore } from "@/AuthStore";
 
 const demoTheme = createTheme({
   // direction: "rtl",
@@ -95,15 +97,18 @@ const demoTheme = createTheme({
 
 export default function DashboardLayoutBasic() {
   const [isIpadPro, setIsIpadPro] = React.useState(false);
+  const {openLoginDialog,setCloseLoginDialog,setOpenLoginDialog} =  useAuthStore((state)=>state)
+  console.log(openLoginDialog,'openDialog')
   const navigate =  useNavigate()
-
-  const {setUser,setToken,} = useAuthContext()
+   const {setUser,setToken,} = useAuthContext()
     const [meals,setMeals] = React.useState<Meal[]>([]);
    React.useEffect(()=>{
       axiosClient.get('meals').then(({data})=>{
         setMeals(data)
       })
     },[])
+
+   
   React.useEffect(() => {
     axiosClient.get("/user").then(({ data }) => {
       setUser(data);
@@ -319,6 +324,12 @@ export default function DashboardLayoutBasic() {
         open={open}
         orders={orders}
       />
+      <React.Suspense>
+      <LoginDialog open={openLoginDialog} handleClose={()=>{
+        setCloseLoginDialog()
+      }}/>
+      </React.Suspense>
+    
     </AppProvider>
     // preview-end
   );

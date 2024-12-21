@@ -90,6 +90,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const authenticate = (token) => {
+    // alert('d')
     if (token) {
       // alert('dd')
       setToken(() => token);

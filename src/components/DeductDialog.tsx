@@ -62,7 +62,7 @@ const DeductDialog = ({
                       <TableCell sx={{textAlign:'center'}}>الصنف</TableCell>
                       <TableCell sx={{textAlign:'center'}}>الكميه المطلوبه </TableCell>
                       <TableCell sx={{textAlign:'center'}}>الكميه المتوفره</TableCell>
-                      <TableCell sx={{textAlign:'center'}}>الكميه الجديد </TableCell>
+                      {/* <TableCell sx={{textAlign:'center'}}>الكميه الجديد </TableCell> */}
                     </TableRow>
                     </TableHead>
                       <TableBody>
@@ -71,8 +71,8 @@ const DeductDialog = ({
                     <TableRow key={r.id}>
                       <TableCell sx={{textAlign:'center'}}>{r.child_meal.service.name}</TableCell>
                       <TableCell sx={{textAlign:'center'}}>{r.quantity * r.count}</TableCell>
-                      <TableCell sx={{textAlign:'center'}}>{r.available - r.deducted}</TableCell>
-                      <TableCell sx={{textAlign:'center'}}>{r.available - (r.quantity * r.count)}</TableCell>
+                      <TableCell sx={{textAlign:'center'}}>{r.available - r.deducted }</TableCell>
+                      {/* <TableCell sx={{textAlign:'center'}}>{r.available - (r.quantity * r.count)}</TableCell> */}
                     </TableRow>
               ))}
               </TableBody>

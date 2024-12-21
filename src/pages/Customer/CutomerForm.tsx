@@ -85,7 +85,7 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
               label={t('customerForm.area')}
               defaultValue={initialData?.area}
               fullWidth
-              multiline
+              
             />
 
             <TextField

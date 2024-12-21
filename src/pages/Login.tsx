@@ -15,8 +15,10 @@ import { useAuthContext } from "@/contexts/stateContext";
 import axiosClient from "@/helpers/axios-client";
 import { Button } from "@/components/ui/button";
 import loginBack from "./../assets/images/table.jpg";
+import { useAuthStore } from "@/AuthStore";
 
 function App() {
+  const {setCloseLoginDialog,startSession} = useAuthStore((state)=>state)
   const { t } = useTranslation('login'); // Importing translation function
   const [error, setError] = useState({ val: false, msg: "" });
   const [loading, setLoading] = useState(false);
@@ -39,8 +41,12 @@ function App() {
       })
       .then(({ data }) => {
         if (data.status) {
+          setCloseLoginDialog()
           setUser(data.user);
           authenticate(data.token);
+          startSession(data.token,data.user)
+
+          
           localStorage.setItem("user_type", data.user.user_type);
         }
       })

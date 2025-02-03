@@ -79,7 +79,7 @@ const DeductDialog = ({
               </Table>
             </>
           ))}
-          <Button color={selectedOrder?.deducts?.length > 0 ?'error':'inherit'}  onClick={deductHandler} sx={{mt:1}} variant='contained'> {selectedOrder.deducts.length > 0 ?'استرجاع الكميات':'خصم الكميات'}</Button>
+          <Button color={selectedOrder?.deducts?.length > 0 ?'error':'inherit'}  onClick={deductHandler} sx={{mt:1}} variant='contained'> {selectedOrder?.deducts?.length > 0 ?'استرجاع الكميات':'خصم الكميات'}</Button>
         </DialogContent>
         <DialogActions>
           <Button  onClick={handleClose} color="primary">

@@ -32,7 +32,8 @@ function App() {
     setValue
   } = useForm();
  
-  const submitHandler = () => {
+  const submitHandler = (e) => {
+    e.preventDefault()
     setLoading(true);
     axiosClient
       .post("login", {

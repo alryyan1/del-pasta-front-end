@@ -27,10 +27,13 @@ import { OrderDetailsPopover } from "@/components/OrderDetails";
 import { LoadingButton } from "@mui/lab";
 import axiosClient from "@/helpers/axios-client";
 import DeductDialog from "@/components/DeductDialog";
-import { Settings } from "lucide-react";
+import { Car, Settings } from "lucide-react";
 import SettingsDialog from "@/components/SettingsDialog";
 import { CustomerForm } from "../Customer/CutomerForm";
 import { useOutletContext } from "react-router-dom";
+import Waves from "@/components/Waves";
+import { Stack } from "@mui/system";
+import { EditNote } from "@mui/icons-material";
 
 interface OrderTableProps {
   orders: Order[];
@@ -45,7 +48,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
   const [openSettings, setOpenSettings] = useState(false);
   // const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const {selectedOrder, setSelectedOrder} =useOutletContext()
+  const { selectedOrder, setSelectedOrder } = useOutletContext();
 
   const handleClose = () => {
     setOpen(false);
@@ -57,7 +60,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
   };
   const deliveryHandler = (order: Order) => {
     setSelectedOrder(order);
-   setOpen(true);
+    setOpen(true);
     setLoading(true);
     axiosClient
       .patch(`orders/${order.id}`, {
@@ -73,7 +76,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
   };
   return (
     <>
-      <Paper >
+      <Paper>
         <TableContainer
           sx={{
             overflowX: "auto",
@@ -83,13 +86,15 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
           <Table className=" border border-collapse order-table" stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell sx={{width:'30px'}}>{t("orderTable.orderNumber")}</TableCell>
+                <TableCell sx={{ width: "30px" }}>
+                  {t("orderTable.orderNumber")}
+                </TableCell>
                 <TableCell>{t("orderTable.customer")}</TableCell>
                 <TableCell>{t("orderTable.area")}</TableCell>
                 <TableCell>{t("orderTable.status")}</TableCell>
                 <TableCell>{t("orderTable.total")}</TableCell>
                 <TableCell width={"5%"}>{t("orderTable.paid")}</TableCell>
-                <TableCell width={"5%"}>{t('remaining')}</TableCell>
+                <TableCell width={"5%"}>{t("remaining")}</TableCell>
                 <TableCell>{t("orderTable.orderDate")}</TableCell>
                 <TableCell>{t("orderTable.deliveryDate")}</TableCell>
                 <TableCell>{t("handed")}</TableCell>
@@ -99,88 +104,111 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.filter((o)=>{
-                // if (selectedOrder) {
-                  
-                //   return  o.id == selectedOrder?.id
-                // }else{
-                //   return true 
-                // }
-                return true
-              }).map((order) => (
-                <TableRow key={order.updated_at} hover>
-                  <TableCell sx={{width:'30px'}}>
-                    <BasicPopover
-                    truncate={false}
-                      title={order.id}
-                      content={<OrderDetailsPopover order={order} />}
-                    />
-                  </TableCell>
-                  <TableCell sx={{ textWrap: "nowrap" }}>
-                    {order?.customer?.name}
-                  </TableCell>
-                  <TableCell>{order?.customer?.area}</TableCell>
-                  <MyTableCellStatusSelector
-                    order={order}
-                    setSelectedOrder={null}
-                  />
-                  <TableCell>{order.totalPrice.toFixed(3)}</TableCell>
-                  <TdCell
-                    isNum
-                    sx={{ width: "50px" }}
-                    table={"orders"}
-                    item={order}
-                    colName={"amount_paid"}
-                  >
-                    {order.amount_paid.toFixed(3)}
-                  </TdCell>
-                  <TableCell>
-                    {(order.totalPrice - order.amount_paid).toFixed(3)}
-                  </TableCell>
+              {orders
+                .filter((o) => {
+                  // if (selectedOrder) {
 
-                  <TableCell sx={{ textWrap: "nowrap" }}>
-                    {dayjs(new Date(order.created_at)).format(
-                      "YYYY-MM-DD HH:mm A"
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <MyDateField2
-                      path={`orders`}
-                      item={order}
-                      colName="delivery_date"
-                      val={order.delivery_date}
-                      label={t("orderTable.deliveryDate")}
+                  //   return  o.id == selectedOrder?.id
+                  // }else{
+                  //   return true
+                  // }
+                  return true;
+                })
+                .map((order) => (
+                  <TableRow key={order.updated_at} hover>
+                    <TableCell sx={{ width: "30px" }}>
+                      <BasicPopover
+                        truncate={false}
+                        title={order.id}
+                        content={<OrderDetailsPopover order={order} />}
+                      />
+                    </TableCell>
+                    <TableCell sx={{ textWrap: "nowrap" }}>
+                      <Stack justifyContent={'space-between'} direction={"row"} gap={1}>
+                        {order?.customer?.name}{" "}
+                        {order.draft.trim().length > 0 && (
+                          <IconButton
+                            onClick={() => {
+                              setOpen(true);
+                            }}
+                          >
+                            <EditNote />
+                          </IconButton>
+                        )}
+                      {order.is_delivery   ?   <IconButton color="success" >
+                          <Tooltip title={t("Delivery")}>
+                           <Car /> 
+                          </Tooltip>
+                        </IconButton> :''}
+                      </Stack>
+                    </TableCell>
+                    <TableCell>{order?.customer?.area}</TableCell>
+                    <MyTableCellStatusSelector
+                      order={order}
+                      setSelectedOrder={null}
                     />
-                  </TableCell>
-                  <TableCell>
-                    <LoadingButton
-                      loading={loading}
-                      onClick={() => {
-                        deliveryHandler(order);
-                      }}
-                      size="small"
-                      variant="contained"
-                      color={order.status == "delivered" ? "error" : "inherit"}
+                    <TableCell>{order.totalPrice.toFixed(3)}</TableCell>
+                    <TdCell
+                      isNum
+                      sx={{ width: "50px" }}
+                      table={"orders"}
+                      item={order}
+                      colName={"amount_paid"}
                     >
-                      {order.status == "delivered" ? "الغاء " : "تسليم"}
-                    </LoadingButton>
-                  </TableCell>
-                  <TableCell>
-                    <Tooltip title="اعدادات الطلب" content="اعدادات الطلب">
-                      <IconButton
+                      {order.amount_paid.toFixed(3)}
+                    </TdCell>
+                    <TableCell>
+                      {(order.totalPrice - order.amount_paid).toFixed(3)}
+                    </TableCell>
+
+                    <TableCell sx={{ textWrap: "nowrap" }}>
+                      {dayjs(new Date(order.created_at)).format(
+                        "YYYY-MM-DD HH:mm A"
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <MyDateField2
+                        path={`orders`}
+                        item={order}
+                        colName="delivery_date"
+                        val={order.delivery_date}
+                        label={t("orderTable.deliveryDate")}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <LoadingButton
+                        loading={loading}
                         onClick={() => {
-                          setSelectedOrder(order);
-                          setOpenSettings(true);
+                          deliveryHandler(order);
                         }}
+                        size="small"
+                        variant="contained"
+                        color={
+                          order.status == "delivered" ? "error" : "inherit"
+                        }
                       >
-                        <Settings />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                  {/* <TableCell>{order.delivery_address}</TableCell> */}
-                  {/* <TableCell>{order.notes}</TableCell> */}
-                </TableRow>
-              ))}
+                        {order.status == "delivered" ? "الغاء " : "تسليم"}
+                      </LoadingButton>
+                    </TableCell>
+                    <TableCell>
+                      <Stack direction="row" gap={1}>
+                        <Tooltip title="اعدادات الطلب" content="اعدادات الطلب">
+                          <IconButton
+                            onClick={() => {
+                              setSelectedOrder(order);
+                              setOpenSettings(true);
+                            }}
+                          >
+                            <Settings />
+                          </IconButton>
+                        </Tooltip>
+                        {order.notes.length > 0 && <Waves />}
+                      </Stack>
+                    </TableCell>
+                    {/* <TableCell>{order.delivery_address}</TableCell> */}
+                    {/* <TableCell>{order.notes}</TableCell> */}
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>

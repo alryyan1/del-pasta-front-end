@@ -10,6 +10,7 @@ import {
   useMediaQuery,
   IconButton,
   Tooltip,
+  Button,
 } from "@mui/material";
 import { Order } from "@/Types/types";
 import { StatusChip } from "./StatusShip";
@@ -34,13 +35,15 @@ import { useOutletContext } from "react-router-dom";
 import Waves from "@/components/Waves";
 import { Stack } from "@mui/system";
 import { EditNote } from "@mui/icons-material";
+import DeductButton from "./DeductButton";
+import DeliveryButon from "./DeliveryButon";
 
 interface OrderTableProps {
   orders: Order[];
   setOrders: React.Dispatch<React.SetStateAction<Order[]>>;
 }
 
-export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
+export const OrderTable = ({ orders, setOrders,setUpdate }: OrderTableProps) => {
   const isMobile = useMediaQuery("(max-width:600px)"); // adjust based on screen size
   const { t } = useTranslation("orderTable");
   const [loading, setLoading] = useState(false);
@@ -50,6 +53,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { selectedOrder, setSelectedOrder } = useOutletContext();
 
+
   const handleClose = () => {
     setOpen(false);
     setIsFormOpen(false);
@@ -58,22 +62,7 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
     setOpenSettings(false);
     setSelectedOrder(null);
   };
-  const deliveryHandler = (order: Order) => {
-    setSelectedOrder(order);
-    setOpen(true);
-    setLoading(true);
-    axiosClient
-      .patch(`orders/${order.id}`, {
-        status: order.status == "delivered" ? "cancelled" : "delivered",
-      })
-      .then(({ data }) => {
-        console.log("order delivered", data);
-        setOrders((prev) => {
-          return prev.map((o) => (o.id === order.id ? data.order : o));
-        });
-      })
-      .finally(() => setLoading(false));
-  };
+
   return (
     <>
       <Paper>
@@ -176,19 +165,11 @@ export const OrderTable = ({ orders, setOrders }: OrderTableProps) => {
                       />
                     </TableCell>
                     <TableCell>
-                      <LoadingButton
-                        loading={loading}
-                        onClick={() => {
-                          deliveryHandler(order);
-                        }}
-                        size="small"
-                        variant="contained"
-                        color={
-                          order.status == "delivered" ? "error" : "inherit"
-                        }
-                      >
-                        {order.status == "delivered" ? "الغاء " : "تسليم"}
-                      </LoadingButton>
+                      <Stack direction='column'>
+                      <DeliveryButon order={order} setOpen={setOpen} setOrders={setOrders} setSelectedOrder={setSelectedOrder} setUpdate={setUpdate} />
+                      <DeductButton order={order} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder} />
+                      </Stack>
+                    
                     </TableCell>
                     <TableCell>
                       <Stack direction="row" gap={1}>

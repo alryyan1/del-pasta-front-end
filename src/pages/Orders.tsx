@@ -43,6 +43,8 @@ function Orders() {
     "Cancelled",
   ];
   const [orders, setOrders] = useState<Order[]>([]);
+  const [orders2, setOrders2] = useState<Order[]>([]);
+  const [update, setUpdate] = useState(0);
   const [width, setWidth] = useState(window.innerWidth);
 
   useEffect(() => {
@@ -100,6 +102,22 @@ function Orders() {
     }, 300);
     return () => clearTimeout(timer);
   }, [page, search, createdAt, selectedStatus]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      axiosClient
+        .post(`orders/pagination/10000`, {
+          status: selectedStatus,
+          date:createdAt?.format('YYYY-MM-DD') ?? null,
+          name:search
+          
+        })
+        .then(({ data: { data, links } }) => {
+          setOrders2(data);
+          // setLinks(links);
+        });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [update]);
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
@@ -209,7 +227,7 @@ function Orders() {
         >
           <Typography variant="h6">{t("total")}</Typography>
           <Typography variant="h6">
-            {orders.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}
+            {orders2.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}
           </Typography>
         </Stack>
         <Stack
@@ -220,7 +238,7 @@ function Orders() {
         >
           <Typography variant="h6">{t("paid")}</Typography>
           <Typography variant="h6">
-            {orders.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}
+            {orders2.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}
           </Typography>
         </Stack>
         <Stack
@@ -232,8 +250,8 @@ function Orders() {
           <Typography variant="h6">{t("remaining")}</Typography>
           <Typography variant="h6">
             {(
-              orders.reduce((prev, curr) => prev + curr.totalPrice, 0) -
-              orders.reduce((prev, curr) => prev + curr.amount_paid, 0)
+              orders2.reduce((prev, curr) => prev + curr.totalPrice, 0) -
+              orders2.reduce((prev, curr) => prev + curr.amount_paid, 0)
             ).toFixed(3)}
           </Typography>
         </Stack>
@@ -246,7 +264,7 @@ function Orders() {
           <Typography variant="h6">  {t('handed')} </Typography>
           <Typography variant="h6">
             {(
-              orders.filter((o)=>o.status =='delivered').length
+              orders2.filter((o)=>o.status =='delivered').length
             )}
           </Typography>
         </Stack>
@@ -259,12 +277,12 @@ function Orders() {
           <Typography variant="h6"> {t('notHanded')} </Typography>
           <Typography variant="h6">
             {(
-              orders.filter((o)=>o.status !='delivered').length
+              orders2.filter((o)=>o.status !='delivered').length
             )}
           </Typography>
         </Stack>
       </Stack>
-      <OrderTable setOrders={setOrders} orders={orders} />
+      <OrderTable setUpdate={setUpdate} setOrders={setOrders} orders={orders} />
       {links.length > 0 && (
         <Grid sx={{ gap: "4px", mt: 1 }} style={{ direction: "ltr" }} container>
           {links.map((link, i) => {

@@ -77,7 +77,7 @@ function OrderHeader({
 
   const [loading, setloading] = useState(false);
   const sendMsg = () => {
-    axiosClient.post(`sendMsg/${selectedOrder?.id}`).then(({ data }) => {});
+    axiosClient.post(`sendMsgWa/${selectedOrder?.id}`).then(({ data }) => {});
   };
   const deliveryHandler = () => {
     axiosClient

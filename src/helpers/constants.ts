@@ -34,14 +34,14 @@ export function blurForNoramlUsers() {
   return "blurForNormalUsers";
 }
 // export const url = "https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api/"
-export const url = `${schema}://${host}/del-pasta/public/api/`;
+export const url = `${schema}://${host}/kitchen-laravel/public/api/`;
 // export const url = `${schema}://${host}/mylaundry/del-pasta/public/api/`;
 //  export const url = "http://192.168.1.5/del-pasta/public/api/"
 // export const url = "https://om-pharmacy.com/del-pasta/public/api/"
 // export const webUrl = "https://intaj-starstechnology.com/jawda1/del-pasta/public/"
 //  export const webUrl = "http://192.168.1.5/del-pasta/public/"
 // export const webUrl = `${schema}://${host}/mylaundry/del-pasta/public/`;
-export const webUrl = `${schema}://${host}/del-pasta/public/`;
+export const webUrl = `${schema}://${host}/kitchen-laravel/public/`;
 // export const webUrl = "https://om-pharmacy.com/laravel-react-app/public/"
 export const notifyMe = (title, data, address, action) => {
   // alert(Notification.permission)

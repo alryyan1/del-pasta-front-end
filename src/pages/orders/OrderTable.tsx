@@ -79,6 +79,7 @@ export const OrderTable = ({ orders, setOrders,setUpdate }: OrderTableProps) => 
                   {t("orderTable.orderNumber")}
                 </TableCell>
                 <TableCell>{t("orderTable.customer")}</TableCell>
+                <TableCell>المحافظه</TableCell>
                 <TableCell>{t("orderTable.area")}</TableCell>
                 <TableCell>{t("orderTable.status")}</TableCell>
                 <TableCell>{t("orderTable.total")}</TableCell>
@@ -131,6 +132,7 @@ export const OrderTable = ({ orders, setOrders,setUpdate }: OrderTableProps) => 
                         </IconButton> :''}
                       </Stack>
                     </TableCell>
+                    <TableCell>{order?.customer?.state}</TableCell>
                     <TableCell>{order?.customer?.area}</TableCell>
                     <MyTableCellStatusSelector
                       order={order}
@@ -183,7 +185,7 @@ export const OrderTable = ({ orders, setOrders,setUpdate }: OrderTableProps) => 
                             <Settings />
                           </IconButton>
                         </Tooltip>
-                        {order.notes.length > 0 && <Waves />}
+                        {order.notes?.length > 0 && <Waves />}
                       </Stack>
                     </TableCell>
                     {/* <TableCell>{order.delivery_address}</TableCell> */}

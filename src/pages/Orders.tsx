@@ -29,11 +29,11 @@ type Status = [
   "Completed",
   "In Preparation",
   "Delivered",
-  "Cancelled"
+  "Cancelled",
 ];
 
 function Orders() {
-  const { t } = useTranslation('orders'); // Initialize t function for translations
+  const { t } = useTranslation("orders"); // Initialize t function for translations
   const statuses: Status = [
     "Pending",
     "Confirmed",
@@ -50,20 +50,21 @@ function Orders() {
   useEffect(() => {
     const handleResize = () => {
       setWidth(window.innerWidth);
-
-     
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
   const [search, setSearch] = useState(null);
+  const [searchByState, setSearchByState] = useState(null);
+  const [searchByCity, setSearchByCity] = useState(null);
+  const [searchById, setSearchById] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
   const [createdAt, setCreatedAt] = useState(null);
   const [page, setPage] = useState(20);
   const [links, setLinks] = useState([]);
-  const {selectedOrder, setSelectedOrder} =useOutletContext()
-  
+  const { selectedOrder, setSelectedOrder } = useOutletContext();
+
   const updateItemsTable = (link, setLoading) => {
     setLoading(true);
     axiosClient(`${link.url}&word=${search}`)
@@ -74,26 +75,29 @@ function Orders() {
       .catch((error) => console.log(error))
       .finally(() => setLoading(false));
   };
-  useEffect(()=>{
-    setOrders((prev)=>{
-      return prev.map((o)=>{
-        if(selectedOrder?.id === o.id){
-          return selectedOrder
+  useEffect(() => {
+    setOrders((prev) => {
+      return prev.map((o) => {
+        if (selectedOrder?.id === o.id) {
+          return selectedOrder;
         }
         return o;
-      })
-    })
-  },[selectedOrder])
+      });
+    });
+  }, [selectedOrder]);
 
   useEffect(() => {
-    setSelectedOrder(null)
+    setSelectedOrder(null);
     const timer = setTimeout(() => {
       axiosClient
         .post(`orders/pagination/${page}`, {
           status: selectedStatus,
-          date:createdAt?.format('YYYY-MM-DD') ?? null,
-          name:search
-          
+          date: createdAt?.format("YYYY-MM-DD") ?? null,
+          name: search,
+          city: searchByCity,
+          state: searchByState,
+          id: searchById,
+
         })
         .then(({ data: { data, links } }) => {
           setOrders(data);
@@ -101,15 +105,16 @@ function Orders() {
         });
     }, 300);
     return () => clearTimeout(timer);
-  }, [page, search, createdAt, selectedStatus]);
+  }, [page, search, createdAt, selectedStatus, searchByState, searchByCity,searchById]);
   useEffect(() => {
     const timer = setTimeout(() => {
       axiosClient
         .post(`orders/pagination/10000`, {
           status: selectedStatus,
-          date:createdAt?.format('YYYY-MM-DD') ?? null,
-          name:search
-          
+          date: createdAt?.format("YYYY-MM-DD") ?? null,
+          name: search,
+          city: searchByCity,
+          state: searchByState,
         })
         .then(({ data: { data, links } }) => {
           setOrders2(data);
@@ -131,16 +136,40 @@ function Orders() {
         sx={{ m: 2 }}
         className="!my-1"
       >
-       
         <TextField
           size="small"
           variant="outlined"
           placeholder={t("searchOrders")}
           value={search}
           onChange={(e) => {
-            setCreatedAt(null)
-            setSearch(e.target.value)
-
+            setCreatedAt(null);
+            setSearch(e.target.value);
+          }}
+          InputProps={{
+            startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
+          }}
+        />
+        <TextField
+          size="small"
+          variant="outlined"
+          placeholder={"بحث بالمحافظه"}
+          value={searchByState}
+          onChange={(e) => {
+            setCreatedAt(null);
+            setSearchByState(e.target.value);
+          }}
+          InputProps={{
+            startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
+          }}
+        />
+        <TextField
+          size="small"
+          variant="outlined"
+          placeholder={"بحث بالمنطقه"}
+          value={searchByCity}
+          onChange={(e) => {
+            setCreatedAt(null);
+            setSearchByCity(e.target.value);
           }}
           InputProps={{
             startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
@@ -150,31 +179,46 @@ function Orders() {
           onChange={(e) => setDeliveryDate(e.target.value)}
           type="date"
         /> */}
- <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DateField
-       onDoubleClick={()=>{
-        setCreatedAt(dayjs())
-       }}
-      
-      label={'تاريخ'}
-      format='DD-MM-YYYY'
-      sx={{width: '125px'}}
-        size="small"
-        defaultValue={createdAt}
-        value={dayjs(createdAt)}
-        onChange={(val) => {
-          const dayJsObj = dayjs(val);
 
-          setCreatedAt(dayJsObj);
-       
-          // axiosClient.post(`orders/pagination/20`,{date:createdAt.format('YYYY-MM-DD')}).then(({data})=>{
-          //    setOrders(data.data)
-          //    setLinks(data.links)
-          // })
-            
-        }}
-      />
-    </LocalizationProvider>        <select onChange={(val) => setPage(val.target.value)}>
+<TextField
+          size="small"
+          variant="outlined"
+          placeholder={'بحث برقم الطلب'}
+          value={searchById}
+          onChange={(e) => {
+            setCreatedAt(null)
+            setSearchById(e.target.value)
+
+          }}
+          InputProps={{
+            startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
+          }}
+        />
+
+        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DateField
+            onDoubleClick={() => {
+              setCreatedAt(dayjs());
+            }}
+            label={"تاريخ"}
+            format="DD-MM-YYYY"
+            sx={{ width: "125px" }}
+            size="small"
+            defaultValue={createdAt}
+            value={dayjs(createdAt)}
+            onChange={(val) => {
+              const dayJsObj = dayjs(val);
+
+              setCreatedAt(dayJsObj);
+
+              // axiosClient.post(`orders/pagination/20`,{date:createdAt.format('YYYY-MM-DD')}).then(({data})=>{
+              //    setOrders(data.data)
+              //    setLinks(data.links)
+              // })
+            }}
+          />
+        </LocalizationProvider> */}
+        <select onChange={(val) => setPage(val.target.value)}>
           <option value="5">5</option>
           <option selected value="10">
             10
@@ -184,21 +228,25 @@ function Orders() {
           <option value="50">50</option>
           <option value="100">100</option>
         </select>
-        <Button variant="contained" href={`${webUrl}orders`}>
+        <Button
+          variant="contained"
+          href={`${webUrl}ordersAi?state=${searchByState}&searchByCity=${searchByCity}`}
+        >
           {t("report")}
         </Button>
-        <Stack textAlign="center" alignItems="center"        direction={isMobile ? "column" : "row"}
+        <Stack
+          textAlign="center"
+          alignItems="center"
+          direction={isMobile ? "column" : "row"}
         >
           <Box>
             <Tooltip title={t("filter")}>
               <IconButton>
-                
-              <Filter onClick={()=>setSelectedStatus(null)} />
+                <Filter onClick={() => setSelectedStatus(null)} />
               </IconButton>
             </Tooltip>
           </Box>
-          <Stack gap={1}        direction={isMobile ? "column" : "row"}
->
+          <Stack gap={1} direction={isMobile ? "column" : "row"}>
             {statuses.map((s) => (
               <Chip
                 color={s === selectedStatus ? "primary" : "default"}
@@ -213,8 +261,7 @@ function Orders() {
       </Stack>
       <Stack
         sx={{ m: 2 }}
-               direction={isMobile ? "column" : "row"}
-
+        direction={isMobile ? "column" : "row"}
         gap={1}
         justifyContent="space-around"
         alignItems="center"
@@ -227,7 +274,9 @@ function Orders() {
         >
           <Typography variant="h6">{t("total")}</Typography>
           <Typography variant="h6">
-            {orders2.reduce((prev, curr) => prev + curr.totalPrice, 0).toFixed(3)}
+            {orders2
+              .reduce((prev, curr) => prev + curr.totalPrice, 0)
+              .toFixed(3)}
           </Typography>
         </Stack>
         <Stack
@@ -238,7 +287,9 @@ function Orders() {
         >
           <Typography variant="h6">{t("paid")}</Typography>
           <Typography variant="h6">
-            {orders2.reduce((prev, curr) => prev + curr.amount_paid, 0).toFixed(3)}
+            {orders2
+              .reduce((prev, curr) => prev + curr.amount_paid, 0)
+              .toFixed(3)}
           </Typography>
         </Stack>
         <Stack
@@ -261,11 +312,9 @@ function Orders() {
           justifyContent="center"
           className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
         >
-          <Typography variant="h6">  {t('handed')} </Typography>
+          <Typography variant="h6"> {t("handed")} </Typography>
           <Typography variant="h6">
-            {(
-              orders2.filter((o)=>o.status =='delivered').length
-            )}
+            {orders2.filter((o) => o.status == "delivered").length}
           </Typography>
         </Stack>
         <Stack
@@ -274,11 +323,9 @@ function Orders() {
           justifyContent="center"
           className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
         >
-          <Typography variant="h6"> {t('notHanded')} </Typography>
+          <Typography variant="h6"> {t("notHanded")} </Typography>
           <Typography variant="h6">
-            {(
-              orders2.filter((o)=>o.status !='delivered').length
-            )}
+            {orders2.filter((o) => o.status != "delivered").length}
           </Typography>
         </Stack>
       </Stack>

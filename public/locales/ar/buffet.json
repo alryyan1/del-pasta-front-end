@@ -1,0 +1,31 @@
+{
+    "step1": {
+      "title": "اختر الباقة"
+    },
+    "step2": {
+      "title": "اختر عدد الضيوف"
+    },
+    "stepSummary": {
+      "title": "ملخص الطلب والتأكيد"
+    },
+    "previous": "السابق",
+    "next": "التالي",
+    "select": "اختيار",
+    "selectionLimitReached": "تم الوصول إلى الحد الأقصى للاختيار",
+    "selectionValidationError": "يرجى اختيار بين {{min}} و{{max}} عناصر للمتابعة.",
+    "newBuffetOrder": "طلب بوفيه جديد",
+    "package": "الباقة",
+    "guests": "الضيوف",
+    "price": "السعر",
+    "customer": "العميل",
+    "deliveryDate": "تاريخ التوصيل",
+    "deliveryTime": "وقت التوصيل",
+    "notes": "ملاحظات",
+    "totalPrice": "السعر الإجمالي",
+    "confirmAndSend": "تأكيد وإرسال إلى واتساب",
+    "selectCustomerError": "يرجى اختيار العميل.",
+    "addNewCustomer": "إضافة عميل جديد",
+    "orderPlacedSuccess": "تم تقديم الطلب بنجاح!",
+    "orderPlacedError": "فشل في تقديم الطلب. يرجى المحاولة مرة أخرى."
+  }
+  

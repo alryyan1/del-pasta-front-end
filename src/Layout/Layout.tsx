@@ -168,6 +168,12 @@ export default function DashboardLayoutBasic() {
       title: t("Orders"), // Use translation key for "Orders"
       icon: <List />,
     },
+    {
+      segment: "buffet-order",
+      title: t("Buffet Order"), // Use translation key for "Buffet Order"
+      icon: <AddShoppingCartIcon />,
+    },
+    
 
     {
       segment: "stats",
@@ -205,6 +211,11 @@ export default function DashboardLayoutBasic() {
           segment: "meals",
           title: t("Services"), // Use translation key for "Services"
           icon: <Grid2x2PlusIcon />,
+        },
+        {
+          segment: "buffet-packages",
+          title: t("Buffet Packages"), // Use translation key for "Buffet Packages"
+          icon: <AddShoppingCartIcon />,
         },
         {
           segment: "MealCategories",

@@ -154,3 +154,34 @@ export interface ChildMeal {
   created_at: string;
   updated_at: string;
 }
+
+
+
+// src/Types/buffet-types.ts
+
+// ... other types ...
+
+// This Category type is simpler, just for the dropdown in the form.
+export interface Category {
+    id: number;
+    name: string;
+}
+
+export interface BuffetStep {
+    id: number;
+    step_number: number;
+    title_ar: string;
+    title_en: string | null;
+    instructions_ar: string | null;
+    min_selections: number;
+    max_selections: number;
+    is_active: boolean;
+    category_id?: number; // Add this for form state
+    category?: {
+        id: number;
+        name: string;
+        // meals might be loaded sometimes, so keep it optional
+        meals?: Meal[];
+    };
+}
+// ...

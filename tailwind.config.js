@@ -16,6 +16,13 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        
+        
+        'brand-pink': {
+          light: '#FFC0CB', // Light Pink
+          DEFAULT: '#FF69B4', // Hot Pink (or a softer pink like '#F472B6')
+          dark: '#DB7093',   // PaleVioletRed
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

@@ -134,9 +134,9 @@ function OrderHeader({
             sx={{ width: "250px", mb: 1 }}
             options={customers}
             isOptionEqualToValue={(option, val) => option.id === val.id}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => `${option.name} ${option.id}`}
             filterOptions={(options, state) => {
-              return options.filter((customer) => {
+              let results =  options.filter((customer) => {
                 return (
                   customer.name
                     .toLowerCase()
@@ -144,6 +144,8 @@ function OrderHeader({
                   customer.phone.includes(state.inputValue.toLowerCase())
                 );
               });
+              console.log(results)
+              return results;
             }}
             onChange={(e, data) => {
               axiosClient

@@ -21,10 +21,10 @@ export const cacheRtl = createCache({
 // export const host = 'intaj-starstechnology.com'
 
 // export const url = "https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api/"
-export const schema = "https";
+export const schema = "http";
 // export const host = "intaj-starstechnology.com";
-export const host = "del-pasta-om.com";
-// export const host = "127.0.0.1";
+// export const host = "del-pasta-om.com";
+export const host = "127.0.0.1";
 // export const host = "rain-laundry.com";
 // export const host = 'server1'مركز النعيم
 
@@ -33,15 +33,26 @@ export function blurForNoramlUsers() {
   // return classname has filter properties
   return "blurForNormalUsers";
 }
+// src/constants/labels.ts
+export const LABELS = {
+  ITEM: "الصنف", // Item
+  PRICE: "السعر", // Price
+  // Add other labels if needed:
+  // QUANTITY: "العدد",
+  // PEOPLE: "الاشخاص",
+  // WEIGHT: "الوزن",
+};
+
+export const CURRENCY = "OMR"; // Or "ريال" if you prefer, but be consistent
 // export const url = "https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api/"
-export const url = `${schema}://${host}/kitchen-laravel/public/api/`;
+export const url = `${schema}://${host}/del-pasta/public/api/`;
 // export const url = `${schema}://${host}/mylaundry/del-pasta/public/api/`;
 //  export const url = "http://192.168.1.5/del-pasta/public/api/"
 // export const url = "https://om-pharmacy.com/del-pasta/public/api/"
 // export const webUrl = "https://intaj-starstechnology.com/jawda1/del-pasta/public/"
 //  export const webUrl = "http://192.168.1.5/del-pasta/public/"
 // export const webUrl = `${schema}://${host}/mylaundry/del-pasta/public/`;
-export const webUrl = `${schema}://${host}/kitchen-laravel/public/`;
+export const webUrl = `${schema}://${host}/del-pasta/public/`;
 // export const webUrl = "https://om-pharmacy.com/laravel-react-app/public/"
 export const notifyMe = (title, data, address, action) => {
   // alert(Notification.permission)

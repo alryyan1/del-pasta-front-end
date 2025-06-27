@@ -37,7 +37,7 @@ function FoodMenu() {
                       {meal.child_meals.map((child) => {
                         return (
                           <TableRow key={child.id}>
-                            <TableCell >{child.name}</TableCell>
+                            <TableCell >{child.service.name}</TableCell>
                             <TableCell >{child.quantity}</TableCell>
                             <TableCell >{child.price}</TableCell>
                             <TableCell >{child.people_count}</TableCell>

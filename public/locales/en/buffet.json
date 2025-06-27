@@ -1,0 +1,30 @@
+{
+    "step1": {
+      "title": "Choose Your Package"
+    },
+    "step2": {
+      "title": "Select Number of Guests"
+    },
+    "stepSummary": {
+      "title": "Order Summary & Confirmation"
+    },
+    "previous": "Previous",
+    "next": "Next",
+    "select": "Select",
+    "selectionLimitReached": "Selection limit reached",
+    "selectionValidationError": "Please select between {{min}} and {{max}} items to continue.",
+    "newBuffetOrder": "New Buffet Order",
+    "package": "Package",
+    "guests": "Guests",
+    "price": "Price",
+    "customer": "Customer",
+    "deliveryDate": "Delivery Date",
+    "deliveryTime": "Delivery Time",
+    "notes": "Notes",
+    "totalPrice": "Total Price",
+    "confirmAndSend": "Confirm & Send to WhatsApp",
+    "selectCustomerError": "Please select a customer.",
+    "addNewCustomer": "Add New Customer",
+    "orderPlacedSuccess": "Order has been placed successfully!",
+    "orderPlacedError": "Failed to place the order. Please try again."
+  }

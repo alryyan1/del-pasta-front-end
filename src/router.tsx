@@ -63,10 +63,7 @@ const guestRoutes: RouteObject = {
       path: "/menu", // General food menu
       element: <FoodMenu />,
     },
-    {
-      path: "/buffet-order", // Buffet ordering page
-      element: <BuffetOrderPage />,
-    },
+   
     // Redirect root guest path to login
     {
       path: "/",
@@ -95,6 +92,10 @@ const authorizedRoutes: RouteObject = {
     {
       path: "/orders",
       element: <Orders />,
+    },
+    {
+      path: "/buffet-order", // Buffet ordering page
+      element: <BuffetOrderPage />,
     },
     {
       path: "/stats",

@@ -10,6 +10,13 @@ import { PlusCircle } from 'lucide-react';
 import { BuffetPackagesTable } from '@/components/admin/BuffetPackagesTable';
 import { BuffetPackageFormDialog } from '@/components/admin/BuffetPackageFormDialog';
 
+interface PackageFormData {
+  name_ar: string;
+  name_en?: string;
+  description_ar?: string;
+  is_active: boolean;
+}
+
 const BuffetPackagesPage: React.FC = () => {
   const [packages, setPackages] = useState<BuffetPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -50,12 +57,12 @@ const BuffetPackagesPage: React.FC = () => {
       await axiosClient.delete(`/admin/buffet-packages/${packageId}`);
       toast.success('Package deleted successfully.');
       fetchPackages(); // Refetch the list
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete package.');
     }
   };
 
-  const handleSave = async (data: any, packageId?: number) => {
+  const handleSave = async (data: PackageFormData, packageId?: number) => {
     setIsLoading(true);
     const apiCall = packageId 
         ? axiosClient.put(`/admin/buffet-packages/${packageId}`, data)
@@ -66,7 +73,7 @@ const BuffetPackagesPage: React.FC = () => {
         toast.success(`Package ${packageId ? 'updated' : 'created'} successfully.`);
         setIsDialogOpen(false);
         fetchPackages(); // Refetch
-    } catch(error) {
+    } catch {
         toast.error(`Failed to ${packageId ? 'update' : 'create'} package.`);
     } finally {
         setIsLoading(false);

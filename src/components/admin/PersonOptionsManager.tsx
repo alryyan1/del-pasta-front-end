@@ -39,7 +39,7 @@ export const PersonOptionsManager: React.FC<PersonOptionsManagerProps> = ({
   onDataChange,
 }) => {
   const { t } = useTranslation(["admin", "common"]); // Use admin and common namespaces
-
+  console.log(packageId, "packageId", initialOptions, "initialOptions");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingOption, setEditingOption] = useState<BuffetPersonOption | null>(
     null

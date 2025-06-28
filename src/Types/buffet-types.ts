@@ -7,6 +7,8 @@ export interface BuffetPackage {
     name_en: string | null;
     description_ar: string | null;
     image_url: string | null;
+    person_options?: BuffetPersonOption[];
+    steps?: BuffetStep[];
 }
 
 export interface BuffetPersonOption {

@@ -1,27 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { Meal, Mealorder, Order, Requestedchildmeal } from "@/Types/types";
 import axiosClient from "@/helpers/axios-client";
-import { LoadingButton } from "@mui/lab";
-import "./../magicCard.css";
-import { Box, Stack } from "@mui/system";
-import CartItem from "./CartItem";
-import { Plus, ShoppingCart } from "lucide-react";
-import { Autocomplete, Button, Divider, TextField, Typography } from "@mui/material";
-import { Notes } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
+import { toast } from "sonner";
+
+// Shadcn UI Components
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+// Icons
+import { Plus, ShoppingCart, CreditCard, Receipt, DollarSign } from "lucide-react";
+
+// Components
+import CartItem from "./CartItem";
 
 interface CartProps {
   selectedOrder: Order;
-  setSelectedOrder: (order) => void;
+  setSelectedOrder: (order: Order) => void;
   printHandler: () => void;
 }
 
 function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
-  const { t } = useTranslation("cart"); // Using the i18n translation hook
+  const { t } = useTranslation("cart");
   const [colName, setColName] = useState("");
-  const [selectedMeal,setSelectedMeal]= useState<Meal|null>(null)
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [val, setVal] = useState("");
+  const [isConfirming, setIsConfirming] = useState(false);
+
+  const { meals } = useOutletContext<{ meals: Meal[] }>();
+
   const updateQuantity = (increment: boolean, item: Requestedchildmeal) => {
     axiosClient
       .patch(`RequestedChild/${item.id}`, {
@@ -44,177 +56,242 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
       });
   };
 
-  const orderUpdateHandler = () => {
-    axiosClient
-      .patch(`orders/${selectedOrder.id}`, {
+  const orderUpdateHandler = async () => {
+    setIsConfirming(true);
+    try {
+      const { data } = await axiosClient.patch(`orders/${selectedOrder.id}`, {
         order_confirmed: 1,
-      })
-      .then(({ data }) => {
-        if (data.status) {
-          axiosClient.post(`orderConfirmed/${selectedOrder.id}`);
-          printHandler();
-        }
-        setSelectedOrder(data.order);
-        // setTimeout(() => {
-        //   setSelectedOrder(null);
-        // }, 300);
       });
+      
+      if (data.status) {
+        await axiosClient.post(`orderConfirmed/${selectedOrder.id}`);
+        printHandler();
+        setSelectedOrder(data.order);
+        toast.success(t("orderConfirmed", "Order confirmed successfully!"));
+      }
+         } catch {
+       toast.error(t("orderConfirmError", "Failed to confirm order"));
+     } finally {
+      setIsConfirming(false);
+    }
   };
 
-  const orderItemUpdateHandler = (val, orderMeal, colName = "delivery_fee") => {
+  const orderItemUpdateHandler = (value: string, orderMeal: Order, columnName = "delivery_fee") => {
     axiosClient
       .patch(`orders/${orderMeal.id}`, {
-        [colName]: val,
+        [columnName]: value,
       })
       .then(({ data }) => {
         setSelectedOrder(data.order);
       });
   };
- 
+
   useEffect(() => {
-    if (colName !='') {
-          const timer = setTimeout(() => {
-      orderItemUpdateHandler(val, selectedOrder, colName);
-    }, 400);
-    return () => clearTimeout(timer);
+    if (colName !== '') {
+      const timer = setTimeout(() => {
+        orderItemUpdateHandler(val, selectedOrder, colName);
+      }, 400);
+      return () => clearTimeout(timer);
     }
+  }, [val, colName, selectedOrder]);
 
-  }, [val]);
-  const mealOrderHandler = ()=>{
-      axiosClient.post('orderMeals',{
-        order_id:selectedOrder?.id,
-        meal_id:selectedMeal?.id,
-        quantity:1,
-        price:selectedMeal?.price
-      }).then(({data})=>{
-        setSelectedOrder(data.order)
-        // setMealOrder(data.mealOrder)
-          // console.log(data)
-      })
-   }
-   const {meals} = useOutletContext()
+  const mealOrderHandler = () => {
+    if (!selectedMeal) return;
+    
+    axiosClient.post('orderMeals', {
+      order_id: selectedOrder?.id,
+      meal_id: selectedMeal?.id,
+      quantity: 1,
+      price: selectedMeal?.price
+    }).then(({ data }) => {
+      setSelectedOrder(data.order);
+      setSelectedMeal(null);
+    });
+  };
+
   return (
-    <div className="cart-items-div flex justify-center  ">
-      <Stack
-        className="shadow-lg overflow-auto h-[calc(100vh-200px)]"
-        direction={"column"}
-        // justifyContent={"space-between"}
-        sx={{
-          p: 2,
-        }}
-        gap={1}
-      >
-        <Stack direction={'row'} gap={1}>
-          <Autocomplete onChange={(e,val)=>{
-            setSelectedMeal(val)
-          }} fullWidth getOptionLabel={(op)=>op.name} renderInput={(params)=>{
-          return <TextField label='الوجبات' {...params}/>
-        }}  options={meals}/>
-        <Button disabled={selectedOrder?.order_confirmed} onClick={()=>{
-          mealOrderHandler()
-        }} variant="contained"><Plus/></Button>
-        </Stack>
-        
-        <Typography variant="h4" textAlign={'center'}>الطلبات</Typography>
-        <div className="space-y-4 mb-6 grid">
-          {selectedOrder?.meal_orders?.map((item) => {
-            const isMultible = item.quantity > 1 ? "" : "";
-            return (
-              <CartItem
-               selectedOrder={selectedOrder}
-                updateRequestedQuantity={updateQuantity}
-                setSelectedOrder={setSelectedOrder}
-                updateQuantity={updateMealOrderQuantity}
-                isMultible={isMultible}
-                item={item}
-              />
-            );
-          })}
+    <div className="h-full flex flex-col bg-white dark:bg-slate-950">
+      {/* Quick Add Meal Section */}
+      <div className="p-4 border-b">
+        <div className="flex gap-2">
+          <Select value={selectedMeal?.id?.toString() || ""} onValueChange={(value) => {
+            const meal = meals.find(m => m.id === parseInt(value));
+            setSelectedMeal(meal || null);
+          }}>
+            <SelectTrigger className="flex-1">
+              <SelectValue placeholder={t("selectMeal", "Select meal to add...")} />
+            </SelectTrigger>
+            <SelectContent>
+              {meals.map((meal) => (
+                <SelectItem key={meal.id} value={meal.id.toString()}>
+                  {meal.name} - {Number(meal.price).toFixed(3)} {t("currency_OMR", "OMR")}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button 
+            onClick={mealOrderHandler}
+            disabled={!selectedMeal || selectedOrder?.order_confirmed}
+            size="icon"
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
+      </div>
 
-       {selectedOrder?.meal_orders?.length > 0 &&  <div>
-          <Box>
-            <TextField
-              autoComplete="off"
-              variant="standard"
-              fullWidth
-              label={t("notes")}
-              key={selectedOrder.id}
-              onChange={(e) => {
-                setColName("notes");
-                setVal(e.target.value);
-              }}
-              defaultValue={selectedOrder.notes}
-            ></TextField>
-          </Box>
-          <Box>
-            <TextField
-              autoComplete="off"
-              variant="standard"
-              fullWidth
-              label={t("delivery_address")}
-              key={selectedOrder.id}
-              onChange={(e) => {
-                setColName("delivery_address");
+      {/* Cart Items */}
+      <ScrollArea className="flex-1">
+        <div className="p-4">
+          {selectedOrder?.meal_orders?.length > 0 ? (
+            <div className="space-y-3">
+              {selectedOrder.meal_orders.map((item) => (
+                                 <CartItem
+                   key={item.id}
+                   selectedOrder={selectedOrder}
+                   updateRequestedQuantity={updateQuantity}
+                   setSelectedOrder={() => {
+                     // Refresh the whole order after cart item changes
+                     axiosClient.get(`orders/${selectedOrder.id}`).then(({ data }) => {
+                       setSelectedOrder(data);
+                     });
+                   }}
+                   updateQuantity={updateMealOrderQuantity}
+                   isMultible=""
+                   item={item}
+                 />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <ShoppingCart className="h-16 w-16 text-slate-300 dark:text-slate-600 mb-4" />
+              <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">
+                {t("emptyCart", "Cart is empty")}
+              </h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
+                {t("addItemsToCart", "Add items from the menu to get started")}
+              </p>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
 
-
-                setVal(e.target.value);
-              }}
-              defaultValue={selectedOrder.delivery_address}
-            ></TextField>
-          </Box>
-          <div className="space-y-2 text-sm mb-6 mt-4">
-            <Stack direction={"row"} gap={2} justifyContent={'space-around'}>
-              <Stack direction={"column"} gap={1}>
-                <span className="text-gray-600">{t("total_amount")}</span>
-                <span className="text-gray-900">
-                  {selectedOrder?.totalPrice.toFixed(3)}
-                </span>
-              </Stack>
-
-
-
-              <Stack direction={'column'}>
-                <span className="text-gray-600">{t("paid")}</span>
-                <span className="text-gray-900">
-                  {selectedOrder?.amount_paid.toFixed(3)}
-                </span>
-              </Stack >
-              <Stack direction={'column'}>
-              <span className="text-gray-600">{t("delivery_fee")}</span>
-              <span className="text-gray-900">
-                <TextField
-                 onFocus={(event) => {
-                  event.target.select();
+      {/* Order Details & Actions */}
+      {selectedOrder?.meal_orders?.length > 0 && (
+        <div className="border-t bg-slate-50 dark:bg-slate-900/50">
+          {/* Order Notes & Delivery Address */}
+          <div className="p-4 space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="notes" className="text-sm font-medium">
+                {t("notes", "Order Notes")}
+              </Label>
+              <Input
+                id="notes"
+                placeholder={t("notesPlaceholder", "Add notes for this order...")}
+                defaultValue={selectedOrder.notes}
+                onChange={(e) => {
+                  setColName("notes");
+                  setVal(e.target.value);
                 }}
-                  type="number"
-                  key={selectedOrder.id}
-                  variant="standard"
-                  sx={{ width: "50px", direction: "ltr" }}
-                  onChange={(e) => {
-                    orderItemUpdateHandler(e.target.value, selectedOrder);
-                  }}
-                  defaultValue={selectedOrder?.delivery_fee}
-                ></TextField>
-                <span>{t("currency_OMR")}</span>
-              </span>
-              </Stack >
-            </Stack>
-
-          
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="delivery_address" className="text-sm font-medium">
+                {t("delivery_address", "Delivery Address")}
+              </Label>
+              <Input
+                id="delivery_address"
+                placeholder={t("deliveryAddressPlaceholder", "Enter delivery address...")}
+                defaultValue={selectedOrder.delivery_address}
+                onChange={(e) => {
+                  setColName("delivery_address");
+                  setVal(e.target.value);
+                }}
+              />
+            </div>
           </div>
-          <Box className="flex justify-center">
-            <LoadingButton
-              disabled={selectedOrder?.order_confirmed}
+
+          <Separator />
+
+          {/* Order Summary */}
+          <div className="p-4">
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="space-y-1">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  {t("total_amount", "Subtotal")}
+                </p>
+                <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
+                  {selectedOrder?.totalPrice.toFixed(3)} {t("currency_OMR", "OMR")}
+                </p>
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="delivery_fee" className="text-sm text-slate-600 dark:text-slate-400">
+                  {t("delivery_fee", "Delivery Fee")}
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="delivery_fee"
+                    type="number"
+                    step="0.001"
+                    className="w-20 text-right"
+                    defaultValue={selectedOrder?.delivery_fee}
+                    onChange={(e) => {
+                      orderItemUpdateHandler(e.target.value, selectedOrder);
+                    }}
+                    onFocus={(e) => e.target.select()}
+                  />
+                  <span className="text-sm text-slate-600 dark:text-slate-400">
+                    {t("currency_OMR", "OMR")}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-slate-100 dark:bg-slate-800 rounded-lg mb-4">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-green-600" />
+                <span className="font-medium text-slate-900 dark:text-slate-100">
+                  {t("paid", "Amount Paid")}
+                </span>
+              </div>
+              <span className="text-lg font-bold text-green-600">
+                {selectedOrder?.amount_paid.toFixed(3)} {t("currency_OMR", "OMR")}
+              </span>
+            </div>
+
+            {/* Confirm Order Button */}
+            <Button
               onClick={orderUpdateHandler}
-              variant="contained"
-              sx={{}}
+              disabled={selectedOrder?.order_confirmed || isConfirming}
+              className="w-full h-12 bg-green-600 hover:bg-green-700 text-white font-semibold"
+              size="lg"
             >
-              {t("confirm_order")}
-            </LoadingButton>
-          </Box>
-        </div>}
-      </Stack>
+              {isConfirming ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  {t("confirming", "Confirming...")}
+                </>
+              ) : (
+                <>
+                  {selectedOrder?.order_confirmed ? (
+                    <>
+                      <Receipt className="mr-2 h-5 w-5" />
+                      {t("orderConfirmed", "Order Confirmed")}
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="mr-2 h-5 w-5" />
+                      {t("confirm_order", "Confirm Order")}
+                    </>
+                  )}
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

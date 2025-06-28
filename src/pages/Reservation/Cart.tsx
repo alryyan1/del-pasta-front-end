@@ -1,69 +1,154 @@
-import { CartItem as CartItemType } from './types'; 
-import { ShoppingCart, Minus, Plus, Trash2 } from 'lucide-react';
+// src/components/Cart.tsx
+import React, { useState } from "react";
+import { Order } from "@/Types/types";
+import axiosClient from "@/helpers/axios-client";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import printJS from "print-js";
+
+// Components & Icons
+import CartItem from "./CartItem";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Separator } from "./ui/separator";
+import { Loader2, ShoppingCart } from "lucide-react";
+import { webUrl } from "@/helpers/constants";
 
 interface CartProps {
-  items: CartItemType[];
-  onUpdateQuantity: (itemId: string, change: number) => void;
-  onRemoveItem: (itemId: string) => void;
+  selectedOrder: Order | null;
+  setSelectedOrder: (order: Order | null) => void;
 }
 
-export default function Cart({ items, onUpdateQuantity, onRemoveItem }: CartProps) {
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+const Cart: React.FC<CartProps> = ({ selectedOrder, setSelectedOrder }) => {
+  const { t } = useTranslation("cart");
+  const [isLoading, setIsLoading] = useState(false);
 
-  if (items.length === 0) {
+  const handleConfirmAndPrint = () => {
+    if (!selectedOrder) return;
+
+    setIsLoading(true);
+    axiosClient
+      .patch(`orders/${selectedOrder.id}`, { order_confirmed: 1 })
+      .then(({ data }) => {
+        if (data.status) {
+          setSelectedOrder(data.order);
+          toast.success("Order Confirmed!");
+          // Trigger print after confirmation
+          return axiosClient.get(
+            `printSale?order_id=${selectedOrder.id}&base64=1`
+          );
+        }
+        throw new Error(data.message || "Confirmation failed");
+      })
+      .then(({ data }) => {
+        printJS({
+          printable: data.slice(data.indexOf("JVB")),
+          base64: true,
+          type: "pdf",
+        });
+      })
+      .catch((err) => toast.error(err.message || "An error occurred."))
+      .finally(() => setIsLoading(false));
+  };
+
+  if (!selectedOrder) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <div className="flex flex-col items-center justify-center text-gray-500">
-          <ShoppingCart size={48} className="mb-4" />
-          <p>Your cart is empty</p>
-        </div>
-      </div>
+      <Card className="flex flex-col items-center justify-center h-full text-center p-6 border-dashed">
+        <ShoppingCart className="h-12 w-12 text-muted-foreground mb-4" />
+        <CardTitle>{t("noOrderSelected.title", "No Order Selected")}</CardTitle>
+        <CardDescription>
+          {t(
+            "noOrderSelected.description",
+            "Create a new order or select one from the list."
+          )}
+        </CardDescription>
+      </Card>
     );
   }
 
+  const orderIsEmpty =
+    !selectedOrder?.meal_orders || selectedOrder?.meal_orders?.length === 0;
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4">Your Order</h2>
-      <div className="space-y-4">
-        {items.map((item) => (
-          <div key={item.id} className="flex items-center justify-between">
-            <div className="flex-1">
-              <h3 className="font-medium">{item.name}</h3>
-              <p className="text-sm text-gray-600">{item.price}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => onUpdateQuantity(item.id, -1)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
-                <Minus size={16} />
-              </button>
-              <span className="w-8 text-center">{item.quantity}</span>
-              <button
-                onClick={() => onUpdateQuantity(item.id, 1)}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
-                <Plus size={16} />
-              </button>
-              <button
-                onClick={() => onRemoveItem(item.id)}
-                className="p-1 hover:bg-gray-100 rounded text-red-500"
-              >
-                <Trash2 size={16} />
-              </button>
-            </div>
+    <Card className="flex flex-col h-full">
+      <CardHeader>
+        <CardTitle>{t("title", "Current Order")}</CardTitle>
+        <CardDescription>
+          {t(
+            "description",
+            `Review items for order #${selectedOrder?.order_number || "N/A"}`
+          )}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex-grow overflow-y-auto p-4 space-y-3">
+        {orderIsEmpty ? (
+          <div className="flex flex-col items-center justify-center h-full text-center p-6 text-muted-foreground">
+            <ShoppingCart className="h-10 w-10 mb-4" />
+            <p>
+              {t("emptyCart", "This order is empty. Add items from the menu.")}
+            </p>
           </div>
-        ))}
-      </div>
-      <div className="mt-6 pt-4 border-t">
-        <div className="flex justify-between items-center mb-4">
-          <span className="font-semibold">Total:</span>
-          <span className="font-semibold">{total.toFixed(2)}</span>
+        ) : (
+          selectedOrder?.meal_orders?.map((item) => (
+            <CartItem
+              key={item.id}
+              item={item}
+              setSelectedOrder={setSelectedOrder}
+              disabled={selectedOrder?.order_confirmed}
+            />
+          ))
+        )}
+      </CardContent>
+      <CardFooter className="flex flex-col gap-4 p-4 border-t dark:border-slate-800">
+        <div className="w-full space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">{t("deliveryFee")}</span>
+            <Input
+              type="number"
+              className="w-24 h-8 text-right"
+              defaultValue={selectedOrder?.delivery_fee}
+              onBlur={(e) =>
+                axiosClient
+                  .patch(`/orders/${selectedOrder.id}`, {
+                    delivery_fee: e.target.value,
+                  })
+                  .then(({ data }) => setSelectedOrder(data.order))
+              }
+              disabled={selectedOrder?.order_confirmed}
+            />
+          </div>
+          <Separator />
+          <div className="flex justify-between font-semibold text-base">
+            <span className="text-slate-800 dark:text-slate-100">
+              {t("total")}
+            </span>
+            <span className="text-brand-pink-DEFAULT dark:text-brand-pink-light">
+                {Number(selectedOrder?.totalPrice).toFixed(3)}{" "}
+              {t("currency_OMR", "OMR")}
+            </span>
+          </div>
         </div>
-        <button className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors">
-          Proceed to Checkout
-        </button>
-      </div>
-    </div>
+        <Button
+          className="w-full bg-brand-pink-DEFAULT hover:bg-brand-pink-dark"
+          onClick={handleConfirmAndPrint}
+          disabled={isLoading || selectedOrder?.order_confirmed || orderIsEmpty}
+        >
+          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          {selectedOrder?.order_confirmed
+            ? t("confirmed", "Confirmed")
+            : t("confirmAndPrint", "Confirm & Print")}
+        </Button>
+      </CardFooter>
+    </Card>
   );
-}
+};
+
+export default Cart;

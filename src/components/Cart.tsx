@@ -117,7 +117,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
         
         <Typography variant="h4" textAlign={'center'}>الطلبات</Typography>
         <div className="space-y-4 mb-6 grid">
-          {selectedOrder.meal_orders.map((item) => {
+          {selectedOrder?.meal_orders?.map((item) => {
             const isMultible = item.quantity > 1 ? "" : "";
             return (
               <CartItem
@@ -132,7 +132,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
           })}
         </div>
 
-       {selectedOrder.meal_orders.length > 0 &&  <div>
+       {selectedOrder?.meal_orders?.length > 0 &&  <div>
           <Box>
             <TextField
               autoComplete="off"
@@ -168,7 +168,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
               <Stack direction={"column"} gap={1}>
                 <span className="text-gray-600">{t("total_amount")}</span>
                 <span className="text-gray-900">
-                  {selectedOrder.totalPrice.toFixed(3)}
+                  {selectedOrder?.totalPrice.toFixed(3)}
                 </span>
               </Stack>
 
@@ -177,7 +177,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
               <Stack direction={'column'}>
                 <span className="text-gray-600">{t("paid")}</span>
                 <span className="text-gray-900">
-                  {selectedOrder.amount_paid.toFixed(3)}
+                  {selectedOrder?.amount_paid.toFixed(3)}
                 </span>
               </Stack >
               <Stack direction={'column'}>
@@ -194,7 +194,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
                   onChange={(e) => {
                     orderItemUpdateHandler(e.target.value, selectedOrder);
                   }}
-                  defaultValue={selectedOrder.delivery_fee}
+                  defaultValue={selectedOrder?.delivery_fee}
                 ></TextField>
                 <span>{t("currency_OMR")}</span>
               </span>
@@ -205,7 +205,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
           </div>
           <Box className="flex justify-center">
             <LoadingButton
-              disabled={selectedOrder.order_confirmed}
+              disabled={selectedOrder?.order_confirmed}
               onClick={orderUpdateHandler}
               variant="contained"
               sx={{}}

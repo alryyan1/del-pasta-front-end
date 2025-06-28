@@ -1,117 +1,129 @@
-import { Category, Mealorder, Order } from '@/Types/types';
-import React, { useEffect, useState } from 'react'
-import { Button } from './ui/button';
-import MealItem from '@/pages/MealItem';
+// src/components/MealCategoryPanel.tsx
+import React, { useEffect, useState } from 'react';
 import axiosClient from '@/helpers/axios-client';
-import { useAuthContext } from '@/contexts/stateContext';
+import { Category, Mealorder, Order } from '@/Types/types';
+import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+
+// Components
+import MealItem from '@/pages/MealItem'; // Ensure the path is correct
 import RequestedServiceDialog from './RequestedServiceDialog';
 
+// Shadcn UI & Icons
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
+
 interface MealCategoryPanelProps {
-    setSelectedOrder: () => void;
-    selectedOrder :Order|null;
-    setOrders:(orders:Order[])=>void
+  selectedOrder: Order | null;
+  setSelectedOrder: (order: Order) => void;
 }
-function MealCategoryPanel({setSelectedOrder,selectedOrder,setOrders}:MealCategoryPanelProps) {
-    const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-        null
-      );
-    const {t} =   useTranslation('mealCategoryPanel')
 
-      const { data, setData ,add,deleteItem} = useAuthContext();
+const MealCategoryPanel: React.FC<MealCategoryPanelProps> = ({ selectedOrder, setSelectedOrder }) => {
+  const { t } = useTranslation("menu");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  // State for the meal details/services dialog
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [activeMealOrder, setActiveMealOrder] = useState<Mealorder | null>(null);
 
-      useEffect(() => {
-        axiosClient.get<Category>(`categories`).then(({ data }) => {
-          setData(data);
-          setSelectedCategory(data[0]);
-        });
-      }, []);
-      const [showRequestedDialog,setShowRequestedDialog] = useState(false)
-      const [mealOrder,setMealOrder] = useState<Mealorder|null>(null)
+  useEffect(() => {
+    setIsLoading(true);
+    axiosClient.get<Category[]>(`categories`)
+      .then(({ data }) => {
+        setCategories(data);
+        if (data.length > 0) {
+          setSelectedCategory(data[0]); // Default to the first category
+        }
+      })
+      .catch(() => toast.error(t('error.fetchCategories', "Failed to load meal categories.")))
+      .finally(() => setIsLoading(false));
+  }, [t]);
+
+  const handleMealSelect = (mealOrder: Mealorder) => {
+    setActiveMealOrder(mealOrder);
+    setIsDetailDialogOpen(true);
+  };
+  
   return (
-    <div
-    style={{ border: "1px " }}
-    className="flex flex-1 overflow-hidden "
-  >
-    {/* Sidebar */}
-    <div className="">
-      <h2 className="text-xl font-semibold mb-6 text-gray-800">
-        {t('category')}  
-      </h2>
-      <ul className="space-y-4">
-        {data.map((category: Category) => (
-          <li key={category.id}>
-            <Button
-              onClick={() => setSelectedCategory(category)}
-              variant={
-                selectedCategory?.id === category.id
-                  ? "primary"
-                  : "outline"
-              }
-              className={`w-full text-lg font-medium rounded-lg transition-all duration-300 ${
-                selectedCategory?.id === category.id
-                  ? "bg-[var(--primary)] text-black"
-                  : "border-gray-300 text-gray-800 hover:bg-gray-200"
-              }`}
-              style={{ borderRadius: "10px" }}
-            >
-              {category.name}
-            </Button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Card className="h-full flex flex-col">
+        {/* Category Buttons Header */}
+        <CardHeader className="p-2 border-b dark:border-slate-800 flex-shrink-0">
+          <ScrollArea className="w-full whitespace-nowrap">
+            <div className="flex w-max space-x-2 rtl:space-x-reverse p-1">
+              {isLoading ? (
+                // Skeleton for category buttons
+                [...Array(5)].map((_, i) => <Skeleton key={i} className="h-9 w-24 rounded-md" />)
+              ) : (
+                categories.map((category) => (
+                  <Button
+                    key={category.id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                    className={cn(
+                        "transition-colors",
+                        selectedCategory?.id === category.id 
+                            ? "bg-brand-pink-DEFAULT text-white hover:bg-brand-pink-dark" 
+                            : "hover:bg-slate-100 dark:hover:bg-slate-800"
+                    )}
+                  >
+                    {category.name}
+                  </Button>
+                ))
+              )}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </CardHeader>
 
-    {/* Meals Display */}
-    <div className=" w-full meals sm:w-2/3 md:w-3/4 p-1 overflow-y-auto  md:mt-0">
-   
-      <div className="meal-container  h-[calc(100vh-200px)] overflow-auto">
-        
-        {selectedCategory ? (
-          selectedCategory.meals.map((meal, index) => (
-            <MealItem setShowRequestedDialog={setShowRequestedDialog} setMealOrder={setMealOrder}  selected={selectedOrder?.meal_orders.find((m)=>m.meal.id==meal.id)!=undefined} setSelectedOrder={setSelectedOrder} selectedOrder={selectedOrder}  meal={meal} setOrders={setOrders} />
-          ))
-        ) : (
-          <p className="text-gray-600 text-lg text-center mt-10">
-            {t('select_category')}
-          </p>
-        )}
-      </div>
+        {/* Meals Grid */}
+        <CardContent className="flex-grow overflow-y-auto p-4">
+          {isLoading ? (
+            // Skeleton for meal grid
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {[...Array(12)].map((_, i) => <Skeleton key={i} className="h-40 rounded-lg"/>)}
+            </div>
+          ) : selectedCategory && selectedCategory.meals.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {selectedCategory.meals.map((meal) => {
+                // Determine if this meal is already in the current order
+                const isMealInOrder = !!selectedOrder?.meal_orders.find(mo => mo.meal_id === meal.id);
+                return (
+                  <MealItem
+                    key={meal.id}
+                    meal={meal}
+                    selectedOrder={selectedOrder}
+                    setSelectedOrder={setSelectedOrder}
+                    isMealInOrder={isMealInOrder}
+                    onMealSelect={handleMealSelect}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            // Empty state for when category has no meals
+            <div className="flex items-center justify-center h-full">
+              <p className="text-muted-foreground">{t('noMealsInCategory', 'No meals in this category.')}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Order Summary */}
-      {/* <div className="mt-10 p-4 bg-white rounded-lg shadow-md">
-        <h3 className="text-xl font-bold mb-4">ملخص الطلب</h3>
-        {orders.length > 0 ? (
-          <>
-            <ul className="space-y-2">
-              {orders.map((meal, index) => (
-                <li key={index} className="flex justify-between">
-                  <span>{meal.name}</span>
-                  <span>{meal.price}$</span>
-                </li>
-              ))}
-            </ul>
-            <h4 className="mt-4 font-semibold">
-              الإجمالي: {orders.totalPrice}$
-            </h4>
-            <Button
-              onClick={confirmOrder}
-              variant="primary"
-              className="mt-4 w-full bg-blue-500 hover:bg-blue-600"
-            >
-              تأكيد الطلب
-            </Button>
-          </>
-        ) : (
-          <p className="text-gray-600">لم تقم بإضافة أي وجبات بعد.</p>
-        )}
-      </div> */}
-       {mealOrder &&  <RequestedServiceDialog setShowRequestedDialog={setShowRequestedDialog} setSelectedOrder={setSelectedOrder} mealOrder={mealOrder} selectedOrder={selectedOrder} open={showRequestedDialog} handleClose={()=>{
-      setShowRequestedDialog(false)
-    }}/>}
-    </div>
-  </div>
-  )
-}
+      {/* The dialog for adding/editing services for a meal in the cart */}
+      <RequestedServiceDialog
+        open={isDetailDialogOpen}
+        handleClose={() => setIsDetailDialogOpen(false)}
+        mealOrder={activeMealOrder}
+        setSelectedOrder={setSelectedOrder}
+      />
+    </>
+  );
+};
 
-export default MealCategoryPanel
+export default MealCategoryPanel;

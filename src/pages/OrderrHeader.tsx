@@ -1,247 +1,181 @@
-import MyDateField2 from "@/components/MYDate";
-import PayOptions from "@/components/PayOptions";
-import StatusSelector from "@/components/StatusSelector";
+// src/pages/OrderrHeader.tsx
+import React, { useState } from 'react';
 import axiosClient from "@/helpers/axios-client";
-import { Customer, Order } from "@/Types/types";
-import { Autocomplete, LoadingButton } from "@mui/lab";
+import { Order } from "@/Types/types";
+import { useCustomerStore } from './Customer/useCustomer';
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+
+// Components & Icons
+import { CustomerCombobox } from '@/components/CustomerCombobox';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  Button,
-  Chip,
-  CircularProgress,
-  IconButton,
-  TextField,
-  Tooltip,
-} from "@mui/material";
-import { Stack } from "@mui/system";
-import {
-  Car,
-  File,
-  HomeIcon,
-  Plus,
-  Printer,
-  PrinterIcon,
-  Send,
-  UserPlus,
+  Car, HomeIcon, MessageSquare, PenSquare, Plus, Printer, Trash2, Loader2,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { useCustomerStore } from "./Customer/useCustomer";
-import printJS from "print-js";
-import BasicTimePicker from "@/components/TimePicker";
-import { EditNote, Message, WhatsApp } from "@mui/icons-material";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next"; // Import useTranslation
-import { useOutletContext } from "react-router-dom";
+import { FaWhatsapp } from 'react-icons/fa'; // Using react-icons for WhatsApp
+import dayjs from 'dayjs';
 
 interface OrderHeaderProps {
   selectedOrder: Order | null;
-  setSelectedOrder: (order: Order) => void;
+  setSelectedOrder: (order: Order | null) => void;
   newOrderHandler: () => void;
-  setIsFormOpen: (isOpen: boolean) => void;
-  setOpen: (state) => void;
-  handleClose: () => void;
-  customers: Customer[];
+  setIsCustomerFormOpen: (isOpen: boolean) => void;
+  setIsNoteDialogOpen: (isOpen: boolean) => void;
 }
 
-function OrderHeader({
+const OrderHeader: React.FC<OrderHeaderProps> = ({
   selectedOrder,
   setSelectedOrder,
   newOrderHandler,
-  setIsFormOpen,
-  setOpen,
-  handleClose,
-  customers
-}: OrderHeaderProps) {
-  const { t } = useTranslation("orderheader"); // Initialize useTranslation hook
- 
-  const sendHandler = () => {
-    setloading(true);
-    axiosClient
-      .get(`printSale?order_id=${selectedOrder?.id}&base64=2`)
+  setIsCustomerFormOpen,
+  setIsNoteDialogOpen
+}) => {
+  const { t } = useTranslation("orderheader");
+  const { customers, fetchData: fetchCustomers } = useCustomerStore();
+  const [isSending, setIsSending] = useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (customers.length === 0) {
+      fetchCustomers();
+    }
+  }, [customers, fetchCustomers]);
+
+  const updateOrder = (field: Partial<Order>) => {
+    if (!selectedOrder) return;
+    axiosClient.patch(`/orders/${selectedOrder.id}`, field)
+      .then(({ data }) => {
+        if (data.status) {
+          setSelectedOrder(data.order);
+          toast.success(`${Object.keys(field)[0]} updated.`);
+        } else {
+          toast.error(data.message || 'Update failed.');
+        }
+      })
+      .catch(() => toast.error('Failed to update order.'));
+  };
+
+  const handleCustomerSelect = (customer: any) => {
+    if (customer) {
+      updateOrder({ customer_id: customer.id });
+    }
+  };
+
+  const handlePrint = (asBase64ForWhatsApp = false) => {
+    if (!selectedOrder) return;
+    setIsSending(true);
+    const endpoint = `printSale?order_id=${selectedOrder.id}&base64=${asBase64ForWhatsApp ? 2 : 1}`;
+    
+    axiosClient.get(endpoint)
       .then(({ data }) => {
         if (data.error) {
           toast.error(data.error);
           return;
         }
-        axiosClient
-          .patch(`orders/${selectedOrder?.id}`, { whatsapp: 1 })
-          .then(({ data }) => {
-            setSelectedOrder(data.order);
+        if (asBase64ForWhatsApp) {
+          // The base64 data is already in the response to be sent
+          toast.success(data.message || 'WhatsApp message sent!');
+          updateOrder({ whatsapp: true });
+        } else {
+          // For direct printing
+          printJS({
+            printable: data.slice(data.indexOf("JVB")),
+            base64: true,
+            type: "pdf",
           });
-        console.log(data, "message sent");
-        toast.success(data.message, {
-          style: { width: "100px" },
-        });
+        }
       })
-      .finally(() => setloading(false));
+      .catch(() => toast.error('Action failed.'))
+      .finally(() => setIsSending(false));
   };
 
-  const [loading, setloading] = useState(false);
-  const sendMsg = () => {
-    axiosClient.post(`sendMsgWa/${selectedOrder?.id}`).then(({ data }) => {});
-  };
-  const deliveryHandler = () => {
-    axiosClient
-      .patch(`orders/${selectedOrder?.id}`, {
-        is_delivery: !selectedOrder?.is_delivery,
-      })
-      .then(({ data }) => {
-        setSelectedOrder(data.order);
-      });
-  };
-  const printHandler = () => {
-    const form = new URLSearchParams();
-    axiosClient
-      .get(`printSale?order_id=${selectedOrder?.id}&base64=1`)
-      .then(({ data }) => {
-        form.append("data", data);
-        form.append("node_direct", "0");
-
-        printJS({
-          printable: data.slice(data.indexOf("JVB")),
-          base64: true,
-          type: "pdf",
-        });
-      });
-  };
-  const { isIpadPro, setIsIpadPro } = useOutletContext();
+  const handleDeleteOrder = () => {
+    if (!selectedOrder) return;
+    if (window.confirm("Are you sure you want to delete this order?")) {
+        axiosClient.delete(`/orders/${selectedOrder.id}`)
+            .then(() => {
+                toast.success(`Order #${selectedOrder.order_number} deleted.`);
+                setSelectedOrder(null); // Clear the selected order
+                // The parent component should handle removing it from the list
+            })
+            .catch(() => toast.error('Failed to delete order.'));
+    }
+  }
 
   return (
-    <Stack
-      justifyContent={"space-around"}
-      gap={2}
-      direction={"row"}
-      alignItems={"center"}
-      className="shadow-lg items-center rounded-sm order-header"
-    >
-      <Chip variant="contained" label={selectedOrder?.id}></Chip>
-      <LoadingButton variant="outlined" onClick={newOrderHandler}>
-        <Plus />
-      </LoadingButton>
+    <div className="flex flex-wrap items-center justify-between gap-2 md:gap-4">
+      {/* Left side: Order Info & Creation */}
+      <div className="flex items-center gap-2">
+        <Button size="icon" variant="outline" onClick={newOrderHandler}>
+          <Plus className="h-4 w-4" />
+          <span className="sr-only">New Order</span>
+        </Button>
+        <div className="flex items-center p-2 h-10 rounded-md border bg-slate-100 dark:bg-slate-800">
+          <span className="text-sm font-medium text-muted-foreground mr-2">Order:</span>
+          <span className="font-bold text-lg">#{selectedOrder?.order_number || 'N/A'}</span>
+        </div>
+      </div>
 
+      {/* Center: Customer & Date (only if an order is selected) */}
       {selectedOrder && (
-        <Stack direction={"row"} alignItems={"center"}>
-          <Button
-            size="small"
-            onClick={() => {
-              setIsFormOpen(true);
-            }}
-          >
-            <UserPlus />
+        <div className="flex flex-wrap items-center gap-2 flex-grow justify-center">
+            <CustomerCombobox
+              customers={customers}
+              selectedCustomer={selectedOrder.customer || null}
+              onSelectCustomer={handleCustomerSelect}
+              onAddNew={() => setIsCustomerFormOpen(true)}
+              disabled={!selectedOrder}
+            />
+            <div className="flex items-center gap-2">
+                <Label htmlFor="delivery-date" className="text-sm">Date:</Label>
+                <Input
+                  id="delivery-date"
+                  type="date"
+                  className="w-[150px]"
+                  value={selectedOrder.delivery_date ? dayjs(selectedOrder.delivery_date).format('YYYY-MM-DD') : ''}
+                  onChange={(e) => updateOrder({ delivery_date: e.target.value })}
+                />
+            </div>
+        </div>
+      )}
+
+      {/* Right side: Actions (only if an order is selected) */}
+      {selectedOrder && (
+        <div className="flex items-center gap-1">
+          <Select value={selectedOrder.status} onValueChange={(value) => updateOrder({ status: value })}>
+              <SelectTrigger className="w-[130px] h-9">
+                  <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="confirmed">Confirmed</SelectItem>
+                  <SelectItem value="in preparation">In Preparation</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+              </SelectContent>
+          </Select>
+          
+          <Button variant="outline" size="icon" onClick={() => setIsNoteDialogOpen(true)} title="Notes">
+            <PenSquare className="h-4 w-4" />
           </Button>
 
-          <Autocomplete
-            value={selectedOrder?.customer}
-            sx={{ width: "250px", mb: 1 }}
-            options={customers}
-            isOptionEqualToValue={(option, val) => option.id === val.id}
-            getOptionLabel={(option) => `${option.name} ${option.id}`}
-            filterOptions={(options, state) => {
-              let results =  options.filter((customer) => {
-                return (
-                  customer.name
-                    .toLowerCase()
-                    .includes(state.inputValue.toLowerCase()) ||
-                  customer.phone.includes(state.inputValue.toLowerCase())
-                );
-              });
-              console.log(results)
-              return results;
-            }}
-            onChange={(e, data) => {
-              axiosClient
-                .patch(`orders/${selectedOrder?.id}`, {
-                  customer_id: data?.id,
-                })
-                .then(({ data }) => {
-                  setSelectedOrder(data.order);
-                });
-            }}
-            renderInput={(params) => {
-              return (
-                <TextField
-                  variant="standard"
-                  label={t("Customer")}
-                  {...params}
-                />
-              );
-            }}
-          ></Autocomplete>
-        </Stack>
-      )}
+          <Button variant="outline" size="icon" onClick={() => handlePrint(false)} title="Print">
+            <Printer className="h-4 w-4" />
+          </Button>
 
-      {selectedOrder && (
-        <>
-          <Stack
-            direction={"row"}
-            gap={1}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <Tooltip title="مسوده">
-              <IconButton
-                onClick={() => {
-                  setOpen(true);
-                }}
-              >
-                <EditNote />
-              </IconButton>
-            </Tooltip>
-            <MyDateField2
-              label={t("Delivery Date")}
-              path="orders"
-              colName="delivery_date"
-              disabled={false}
-              val={selectedOrder?.delivery_date ?? new Date()}
-              item={selectedOrder}
-            />
-          </Stack>
-
-          <PayOptions
-            selectedOrder={selectedOrder}
-            setSelectedOrder={setSelectedOrder}
-            key={selectedOrder.id}
-          />
-          {!isIpadPro && (
-            <StatusSelector
-              selectedOrder={selectedOrder}
-              setSelectedOrder={setSelectedOrder}
-            />
-          )}
-          {!isIpadPro && selectedOrder.customer && (
-            <Stack direction={"row"} gap={1}>
-              <IconButton onClick={printHandler}>
-                <Tooltip title={t("Print Invoice")}>
-                  <Printer />
-                </Tooltip>
-              </IconButton>
-              <IconButton onClick={sendMsg}>
-                <Tooltip title={t("Send Message")}>
-                  <Message />
-                </Tooltip>
-              </IconButton>
-              <IconButton
-                disabled={selectedOrder?.whatsapp}
-                onClick={sendHandler}
-              >
-                <Tooltip title={t("Send Invoice")}>
-                  {loading ? (
-                    <CircularProgress />
-                  ) : (
-                    <WhatsApp color="success" />
-                  )}
-                </Tooltip>
-              </IconButton>
-              <IconButton color="success" onClick={deliveryHandler}>
-                <Tooltip title={t("Delivery")}>
-                  {selectedOrder.is_delivery ? <Car /> : <HomeIcon />}
-                </Tooltip>
-              </IconButton>
-            </Stack>
-          )}
-        </>
+          <Button variant="outline" size="icon" onClick={() => handlePrint(true)} disabled={isSending} title="Send WhatsApp">
+            {isSending ? <Loader2 className="h-4 w-4 animate-spin"/> : <FaWhatsapp className="h-4 w-4 text-green-500"/>}
+          </Button>
+          
+          <Button variant="destructive" size="icon" onClick={handleDeleteOrder} title="Delete Order">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       )}
-    </Stack>
+    </div>
   );
-}
+};
 
 export default OrderHeader;

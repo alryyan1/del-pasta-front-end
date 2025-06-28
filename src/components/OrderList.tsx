@@ -1,35 +1,100 @@
-import { Order } from '@/Types/types';
-import { LoadingButton } from '@mui/lab';
-import { Badge, Typography } from '@mui/material';
-import { Stack } from '@mui/system';
-import React from 'react'
+// src/components/OrderList.tsx
+import React from "react";
+import { Order } from "@/Types/types";
+import { useTranslation } from "react-i18next";
+
+// Shadcn UI Components & Icons
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils"; // Utility for conditional classes
 
 interface OrderListProps {
-    orders : Order[];
-    selectedOrder : Order | null;
-    setSelectedOrder : (order: Order | null) => void;  // Function to set the selected order  // Add any other necessary props here  // Remember to import the necessary types from Types/types.ts  // The 'LoadingButton' component is assumed to be a custom component, replace it with the actual implementation in your project  // Make sure to handle the case when no order is selected, and adjust the styling accordingly  // The badge variant is set to 'standard' and badge
-}
-function OrderList({orders,selectedOrder,setSelectedOrder}:OrderListProps) {
-  return (
-    <Stack direction={'column'} gap={1} sx={{p:1}} style={{ border: "1px dashed lightpink" }}>
-          <Typography textAlign={'center'}>Orders</Typography>
-          {orders.map((order) => {
-            // console.log(order);
-            return (
-              <Badge key={order.id} color='info'  variant="standard" badgeContent={order?.meal_orders.length}>
-                    <LoadingButton style={order.order_confirmed && selectedOrder?.id != order.id ? {backgroundColor:'green'}:null} sx={{backgroundColor:(theme)=>{
-                return selectedOrder?.id == order.id ? theme.palette.warning.light :''
-              }}} onClick={()=>{
-                setSelectedOrder(order)
-              }} size="small" fullWidth variant="contained">
-                {order.order_number}
-              </LoadingButton>
-              </Badge>
-          
-            );
-          })}
-        </Stack>
-  )
+  orders: Order[];
+  selectedOrder: Order | null;
+  setSelectedOrder: (order: Order | null) => void;
 }
 
-export default OrderList
+const OrderList: React.FC<OrderListProps> = ({
+  orders,
+  selectedOrder,
+  setSelectedOrder,
+}) => {
+  const { t } = useTranslation("cart"); // Using cart translations for consistency
+
+  const getStatusVariant = (
+    status: string
+  ): "default" | "destructive" | "outline" | "secondary" => {
+    switch (status) {
+      case "confirmed":
+        return "default"; // Blue/Primary
+      case "delivered":
+        return "secondary"; // Green-like
+      case "cancelled":
+        return "destructive"; // Red
+      case "pending":
+      default:
+        return "outline"; // Gray/Subtle
+    }
+  };
+
+  return (
+    <Card className="h-full flex flex-col">
+      <CardHeader className="p-4 border-b dark:border-slate-800">
+        <CardTitle className="text-lg">
+          {t("todaysOrders", "Today's Orders")}
+        </CardTitle>
+      </CardHeader>
+
+      <CardContent className="p-0 flex-grow">
+        <ScrollArea className="h-full">
+          {orders.length > 0 ? (
+            <div className="p-2 space-y-2">
+              {orders.map((order) => (
+                <Button
+                  key={order.id}
+                  variant="ghost"
+                  onClick={() => setSelectedOrder(order)}
+                  className={cn(
+                    "w-full h-auto justify-between p-3 text-left",
+                    selectedOrder?.id === order.id
+                      ? "bg-slate-100 dark:bg-slate-800"
+                      : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                  )}
+                >
+                  <div className="flex flex-col items-start">
+                    <span className="font-bold text-slate-900 dark:text-slate-50">
+                      #{order.order_number}
+                    </span>
+                    <span className="text-xs text-muted-foreground truncate max-w-[120px]">
+                      {order.customer?.name || t("noCustomer", "No Customer")}
+                    </span>
+                  </div>
+
+                  <div className="flex flex-col items-end">
+                    <span className="font-semibold text-sm text-slate-800 dark:text-slate-200">
+                      {Number(order.totalPrice).toFixed(3)}
+                    </span>
+                    <Badge
+                      variant={getStatusVariant(order.status)}
+                      className="mt-1 text-xs"
+                    >
+                      {order.status}
+                    </Badge>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-full text-muted-foreground p-4">
+              <p>{t("noOrdersToday", "No orders placed yet today.")}</p>
+            </div>
+          )}
+        </ScrollArea>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default OrderList;

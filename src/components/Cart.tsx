@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Meal, Mealorder, Order, Requestedchildmeal } from "@/Types/types";
 import axiosClient from "@/helpers/axios-client";
 import { useTranslation } from "react-i18next";
@@ -27,9 +27,7 @@ interface CartProps {
 
 function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
   const { t } = useTranslation("cart");
-  const [colName, setColName] = useState("");
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
-  const [val, setVal] = useState("");
   const [isConfirming, setIsConfirming] = useState(false);
 
   const { meals } = useOutletContext<{ meals: Meal[] }>();
@@ -86,14 +84,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
       });
   };
 
-  useEffect(() => {
-    if (colName !== '') {
-      const timer = setTimeout(() => {
-        orderItemUpdateHandler(val, selectedOrder, colName);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [val, colName, selectedOrder]);
+
 
   const mealOrderHandler = () => {
     if (!selectedMeal) return;
@@ -141,7 +132,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
       </div>
 
       {/* Cart Items */}
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 h-[200px]">
         <div className="p-4">
           {selectedOrder?.meal_orders?.length > 0 ? (
             <div className="space-y-3">
@@ -179,38 +170,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
       {/* Order Details & Actions */}
       {selectedOrder?.meal_orders?.length > 0 && (
         <div className="border-t bg-slate-50 dark:bg-slate-900/50">
-          {/* Order Notes & Delivery Address */}
-          <div className="p-4 space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="notes" className="text-sm font-medium">
-                {t("notes", "Order Notes")}
-              </Label>
-              <Input
-                id="notes"
-                placeholder={t("notesPlaceholder", "Add notes for this order...")}
-                defaultValue={selectedOrder.notes}
-                onChange={(e) => {
-                  setColName("notes");
-                  setVal(e.target.value);
-                }}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="delivery_address" className="text-sm font-medium">
-                {t("delivery_address", "Delivery Address")}
-              </Label>
-              <Input
-                id="delivery_address"
-                placeholder={t("deliveryAddressPlaceholder", "Enter delivery address...")}
-                defaultValue={selectedOrder.delivery_address}
-                onChange={(e) => {
-                  setColName("delivery_address");
-                  setVal(e.target.value);
-                }}
-              />
-            </div>
-          </div>
+
 
           <Separator />
 
@@ -292,6 +252,8 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
           </div>
         </div>
       )}
+
+
     </div>
   );
 }

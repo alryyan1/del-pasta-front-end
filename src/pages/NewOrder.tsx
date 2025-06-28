@@ -12,12 +12,13 @@ import MealCategoryPanel from "@/components/MealCategoryPanel";
 import Cart from "@/components/Cart";
 import { CustomerForm } from "./Customer/CutomerForm";
 import NoteDialog from "@/components/NoteDialog";
+import OrderNotesDialog from "@/components/OrderNotesDialog";
 
 // Shadcn UI & Icons
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LayoutGrid, ShoppingCart, Receipt, Clock } from "lucide-react";
+import { LayoutGrid, ShoppingCart, Receipt, Clock, FileText, Edit3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NewOrder: React.FC = () => {
@@ -27,6 +28,7 @@ const NewOrder: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isCustomerFormOpen, setIsCustomerFormOpen] = useState(false);
   const [isNoteDialogOpen, setIsNoteDialogOpen] = useState(false);
+  const [isOrderNotesDialogOpen, setIsOrderNotesDialogOpen] = useState(false);
 
   // State to control which "view" is active on mobile screens
   const [mobileView, setMobileView] = useState<"menu" | "cart">("menu");
@@ -155,7 +157,17 @@ const NewOrder: React.FC = () => {
                     #{selectedOrder.order_number}
                   </span>
                 )}
-              </div>
+
+                              {/* Order Notes  and delivery address*/}
+                  <Button
+                    onClick={() => setIsOrderNotesDialogOpen(true)}
+                    variant="outline"
+                    disabled={!selectedOrder}
+                  >
+                   +
+                    <Edit3 className="h-3 w-3 text-slate-400" />
+                  </Button>
+                </div>
             </div>
             <CardContent className="p-0 flex-1 overflow-hidden">
               {selectedOrder ? (
@@ -365,6 +377,16 @@ const NewOrder: React.FC = () => {
               setSelectedOrder(order);
             }
           }}
+        />
+      )}
+
+      {/* Order Notes Dialog */}
+      {selectedOrder && (
+        <OrderNotesDialog
+          open={isOrderNotesDialogOpen}
+          onClose={() => setIsOrderNotesDialogOpen(false)}
+          selectedOrder={selectedOrder}
+          setSelectedOrder={setSelectedOrder}
         />
       )}
     </div>

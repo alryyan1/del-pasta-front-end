@@ -36,6 +36,8 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import { AuthProvider } from "./contexts/stateContext";
 import FoodMenu from "./pages/Reservation/FoodMenu";
+import BuffetOrdersListPage from "./pages/BuffetOrdersListPage";
+import BuffetOrderSuccessPage from "./pages/BuffetOrderSuccessPage";
 
 // --- Route Definitions ---
 
@@ -71,7 +73,11 @@ const guestRoutes: RouteObject = {
     },
   ],
 };
-
+// Add the new success route
+// const buffetOrderSuccess: RouteObject = {
+//   path: "/buffet-order/success/:orderId", // Notice the :orderId parameter
+//   element: <BuffetOrderSuccessPage />,
+// };
 // AUTHORIZED ROUTES (Accessible ONLY when logged in)
 const authorizedRoutes: RouteObject = {
   path: "/",
@@ -90,12 +96,25 @@ const authorizedRoutes: RouteObject = {
       element: <NewOrder />,
     },
     {
+      path: "/buffet-order/success/:orderId", // Notice the :orderId parameter
+      element: <BuffetOrderSuccessPage />,
+    },
+    {
       path: "/orders",
       element: <Orders />,
+    },
+
+    {
+      path: "/buffet-orders-management", // <-- Add new route
+      element: <BuffetOrdersListPage />,
     },
     {
       path: "/buffet-order", // Buffet ordering page
       element: <BuffetOrderPage />,
+    },
+    {
+      path: "/buffet-order-success", // Buffet ordering page
+      element: <BuffetOrderSuccessPage />,
     },
     {
       path: "/stats",

@@ -41,7 +41,16 @@ export const BuffetPackageFormDialog: React.FC<BuffetPackageFormDialogProps> = (
   });
 
   React.useEffect(() => {
-    form.reset(initialData || { name_ar: '', name_en: '', description_ar: '', is_active: true });
+    if (initialData) {
+      form.reset({
+        name_ar: initialData.name_ar,
+        name_en: initialData.name_en || '',
+        description_ar: initialData.description_ar || '',
+        is_active: initialData.is_active,
+      });
+    } else {
+      form.reset({ name_ar: '', name_en: '', description_ar: '', is_active: true });
+    }
   }, [initialData, form]);
 
   const handleSubmit = (data: PackageFormValues) => {

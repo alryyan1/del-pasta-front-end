@@ -99,3 +99,22 @@ export interface BuffetPackage {
     personOptions?: BuffetPersonOption[];
     steps?: BuffetStep[];
 }
+
+// src/Types/buffet-types.ts
+// ...
+export interface BuffetOrder {
+    id: number;
+    order_number: string;
+    customer: { name: string; phone: string };
+    buffetPackage: { name_ar: string };
+    buffetPersonOption: { label_ar: string };
+    base_price: number;
+    delivery_date: string;
+    delivery_time: string;
+    notes: string | null;
+    status: string;
+    selections?: { // This will be loaded on demand for the dialog
+        meal: { name: string };
+        buffetStep: { title_ar: string };
+    }[];
+}

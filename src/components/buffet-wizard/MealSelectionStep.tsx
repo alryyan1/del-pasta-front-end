@@ -1,5 +1,5 @@
 // src/components/buffet-wizard/MealSelectionStep.tsx
-import React from 'react';
+import React, { startTransition } from 'react';
 import { useBuffetStore } from '@/stores/useBuffetStore';
 import { useTranslation } from 'react-i18next';
 import { BuffetStep, Meal } from '@/Types/buffet-types';
@@ -24,7 +24,9 @@ export const MealSelectionStep: React.FC<MealSelectionStepProps> = ({ step }) =>
     if (currentSelections.length >= step.max_selections && !currentSelections.includes(mealId)) {
         toast.warning(t('selectionLimitReached', { max: step.max_selections }));
     } else {
-        updateMealSelection(step.id, mealId);
+        startTransition(() => {
+            updateMealSelection(step.id, mealId);
+        });
     }
   }
 

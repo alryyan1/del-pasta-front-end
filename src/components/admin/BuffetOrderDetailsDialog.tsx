@@ -29,7 +29,7 @@ export const BuffetOrderDetailsDialog: React.FC<BuffetOrderDetailsDialogProps> =
     if (!acc[stepTitle]) {
       acc[stepTitle] = [];
     }
-    acc[stepTitle].push(selection.meal.name);
+    acc[stepTitle].push(selection.meal?.name || 'Unknown Meal');
     return acc;
   }, {} as Record<string, string[]>);
 
@@ -39,14 +39,14 @@ export const BuffetOrderDetailsDialog: React.FC<BuffetOrderDetailsDialogProps> =
         <DialogHeader>
           <DialogTitle>{t('buffetOrders.detailsTitle', 'Buffet Order Details')} #{order.order_number}</DialogTitle>
           <DialogDescription>
-            {t('common:package')}: <span className="font-semibold">{order.buffetPackage.name_ar}</span>
+            {t('common:package')}: <span className="font-semibold">{order.buffetPackage?.name_ar || 'N/A'}</span>
           </DialogDescription>
         </DialogHeader>
         
         <div className="py-4 space-y-4 text-sm">
           <div className="grid grid-cols-2 gap-2">
-            <div><strong>{t('common:customer')}:</strong> {order.customer.name}</div>
-            <div><strong>{t('common:phone')}:</strong> {order.customer.phone}</div>
+            <div><strong>{t('common:customer')}:</strong> {order.customer?.name || 'N/A'}</div>
+            <div><strong>{t('common:phone')}:</strong> {order.customer?.phone || 'N/A'}</div>
             <div><strong>{t('common:deliveryDate')}:</strong> {dayjs(order.delivery_date).format('DD MMM, YYYY')}</div>
             <div><strong>{t('common:deliveryTime')}:</strong> {dayjs(`1970-01-01 ${order.delivery_time}`).format('h:mm A')}</div>
             <div><strong>{t('common:price')}:</strong> <span className="font-bold text-brand-pink-DEFAULT">{Number(order.base_price).toFixed(3)} OMR</span></div>

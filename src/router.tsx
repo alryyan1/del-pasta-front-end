@@ -5,7 +5,6 @@ import GuestLayout from "./components/GuestLayout";
 import DashboardLayoutBasic from "./Layout/Layout"; // Main authenticated layout
 
 // General Pages
-import Error from "./Error";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/dashboard";
@@ -32,9 +31,6 @@ import ManagePackageDetailsPage from "./pages/config/ManagePackageDetailsPage";
 
 // Helper components
 import ProtectedRoute from "./pages/Protected";
-import { I18nextProvider } from "react-i18next";
-import i18n from "./i18n";
-import { AuthProvider } from "./contexts/stateContext";
 import FoodMenu from "./pages/Reservation/FoodMenu";
 import BuffetOrdersListPage from "./pages/BuffetOrdersListPage";
 import BuffetOrderSuccessPage from "./pages/BuffetOrderSuccessPage";
@@ -44,14 +40,7 @@ import BuffetOrderSuccessPage from "./pages/BuffetOrderSuccessPage";
 // GUEST ROUTES (Accessible when NOT logged in)
 const guestRoutes: RouteObject = {
   path: "/",
-  element: (
-    // Wrap the entire guest experience in providers
-    <I18nextProvider i18n={i18n}>
-      <AuthProvider>
-        <GuestLayout />
-      </AuthProvider>
-    </I18nextProvider>
-  ),
+  element: <GuestLayout />,
   children: [
     {
       path: "/login",
@@ -65,7 +54,11 @@ const guestRoutes: RouteObject = {
       path: "/menu", // General food menu
       element: <FoodMenu />,
     },
-   
+  
+    {
+      path: "/buffet-order/success/:orderId", // Notice the :orderId parameter
+      element: <BuffetOrderSuccessPage />,
+    },
     // Redirect root guest path to login
     {
       path: "/",
@@ -95,10 +88,7 @@ const authorizedRoutes: RouteObject = {
       path: "/makeOrder",
       element: <NewOrder />,
     },
-    {
-      path: "/buffet-order/success/:orderId", // Notice the :orderId parameter
-      element: <BuffetOrderSuccessPage />,
-    },
+
     {
       path: "/orders",
       element: <Orders />,
@@ -108,10 +98,7 @@ const authorizedRoutes: RouteObject = {
       path: "/buffet-orders-management", // <-- Add new route
       element: <BuffetOrdersListPage />,
     },
-    {
-      path: "/buffet-order", // Buffet ordering page
-      element: <BuffetOrderPage />,
-    },
+  
     {
       path: "/buffet-order-success", // Buffet ordering page
       element: <BuffetOrderSuccessPage />,
@@ -181,6 +168,10 @@ const standaloneRoutes: RouteObject[] = [
     {
         path: "/arrive/:id",
         element: <Arrive />,
+    },
+    {
+      path: "/buffet-order", // Buffet ordering page
+      element: <BuffetOrderPage />,
     },
     {
         path: "/forbidden",

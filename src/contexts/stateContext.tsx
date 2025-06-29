@@ -6,7 +6,6 @@ import {
   useContext,
   useEffect,
 } from "react";
-import { useNavigate, Navigate } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -43,7 +42,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [data, setData] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("ACCESS_TOKEN"));
-  const navigate =  useNavigate()
 
   const add = (actionItem,setState)=>{
 

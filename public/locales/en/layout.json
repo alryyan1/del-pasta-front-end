@@ -1,0 +1,18 @@
+{
+    "main_items": "Main Menu",
+    "dashboard": "Dashboard",
+    "new_order": "New Order",
+    "orders": "Orders",
+    "order_quantities": "Order Quantities",
+    "expenses": "Expenses",
+    "menu": "Food Menu",
+    "reservations": "Reservations",
+    "settings_group": "Configuration",
+    "settings_main": "General Settings",
+    "services_nav": "Main Services",
+    "categories_nav": "Categories",
+    "customers_nav": "Customers",
+    "users_nav": "Users",
+    "sub_services_nav": "Sub-Services",
+    "other_settings_nav": "Other Settings"
+  }

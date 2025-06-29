@@ -105,9 +105,9 @@ export interface BuffetPackage {
 export interface BuffetOrder {
     id: number;
     order_number: string;
-    customer: { name: string; phone: string };
-    buffetPackage: { name_ar: string };
-    buffetPersonOption: { label_ar: string };
+    customer?: { name: string; phone: string };
+    buffetPackage?: { name_ar: string };
+    buffetPersonOption?: { label_ar: string };
     base_price: number;
     delivery_date: string;
     delivery_time: string;
@@ -117,4 +117,12 @@ export interface BuffetOrder {
         meal: { name: string };
         buffetStep: { title_ar: string };
     }[];
+}
+
+export interface Customer {
+    id: string;
+    name: string;
+    phone: string;
+    address?: string; // Add address as an optional field
+    // ... any other fields like state, area
 }

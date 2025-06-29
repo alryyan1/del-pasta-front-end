@@ -77,8 +77,8 @@ export const BuffetOrdersTable: React.FC<BuffetOrdersTableProps> = ({ orders, pa
                 {orders.length > 0 ? orders.map((order) => (
                     <TableRow key={order.id}>
                         <TableCell className="font-medium">{order.order_number}</TableCell>
-                        <TableCell>{order.customer.name}</TableCell>
-                        <TableCell>{order.buffetPackage.name_ar}</TableCell>
+                        <TableCell>{order.customer?.name || 'N/A'}</TableCell>
+                        <TableCell>{order.buffetPackage?.name_ar || 'N/A'}</TableCell>
                         <TableCell>{Number(order.base_price).toFixed(3)}</TableCell>
                         <TableCell>{dayjs(order.delivery_date).format('DD MMM, YYYY')} @ {dayjs(`1970-01-01 ${order.delivery_time}`).format('h:mm A')}</TableCell>
                         <TableCell>

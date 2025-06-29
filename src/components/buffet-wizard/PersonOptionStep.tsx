@@ -1,5 +1,5 @@
 // src/components/buffet-wizard/PersonOptionStep.tsx
-import React, { useState } from 'react';
+import React, { useState, startTransition } from 'react';
 import { useBuffetStore } from '@/stores/useBuffetStore';
 import { useTranslation } from 'react-i18next';
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -15,13 +15,16 @@ export const PersonOptionStep = () => {
     const handleSelectPersonOption = (option: BuffetPersonOption) => {
         setIsLoading(true);
         selectPersonOption(option);
-        axiosClient.get(`/buffet/person-options/${option.id}/juice-info`).then(res => {
-            setJuiceInfo(res.data);
-        }).catch(() => {
-            setJuiceInfo(null); // Handle case where no specific rule is set
-        }).finally(() => {
-            setIsLoading(false);
-            setCurrentStep(3);
+        
+        startTransition(() => {
+            axiosClient.get(`/buffet/person-options/${option.id}/juice-info`).then(res => {
+                setJuiceInfo(res.data);
+            }).catch(() => {
+                setJuiceInfo(null); // Handle case where no specific rule is set
+            }).finally(() => {
+                setIsLoading(false);
+                setCurrentStep(3);
+            });
         });
     };
 

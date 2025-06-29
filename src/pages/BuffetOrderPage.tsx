@@ -1,6 +1,6 @@
 // src/pages/BuffetOrderPage.tsx
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, startTransition, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import axiosClient from "@/helpers/axios-client";
@@ -45,22 +45,27 @@ const BuffetOrderPage: React.FC = () => {
   // This effect runs only once on mount to fetch the initial packages
   useEffect(() => {
     setIsPageLoading(true);
-    axiosClient
-      .get<BuffetPackage[]>("/buffet/packages")
-      .then((res) => {
-        setPackages(res.data);
-      })
-      .catch(() => {
-        toast.error(t("error.packages", "Could not load buffet packages."));
-      })
-      .finally(() => {
-        setIsPageLoading(false);
-      });
+    
+    startTransition(() => {
+      axiosClient
+        .get<BuffetPackage[]>("/buffet/packages")
+        .then((res) => {
+          setPackages(res.data);
+        })
+        .catch(() => {
+          toast.error(t("error.packages", "Could not load buffet packages."));
+        })
+        .finally(() => {
+          setIsPageLoading(false);
+        });
+    });
   }, [setPackages, t]);
 
   // Set document direction based on language
   useEffect(() => {
-    document.body.dir = i18n.language === "ar" ? "rtl" : "ltr";
+    startTransition(() => {
+      document.body.dir = i18n.language === "ar" ? "rtl" : "ltr";
+    });
   }, [i18n.language]);
 
   // Calculate total steps and progress, memoized for performance
@@ -111,7 +116,9 @@ const BuffetOrderPage: React.FC = () => {
       }
       return;
     }
-    setCurrentStep(currentStep + 1);
+    startTransition(() => {
+      setCurrentStep(currentStep + 1);
+    });
   };
 
   const handleBack = () => {
@@ -119,9 +126,13 @@ const BuffetOrderPage: React.FC = () => {
       // Potentially navigate away or just do nothing
       return;
     } else if (currentStep === 2) {
-      resetBuffetState(); // Fully reset if going back from person selection
+      startTransition(() => {
+        resetBuffetState(); // Fully reset if going back from person selection
+      });
     } else {
-      setCurrentStep(currentStep - 1);
+      startTransition(() => {
+        setCurrentStep(currentStep - 1);
+      });
     }
   };
 
@@ -168,7 +179,9 @@ const BuffetOrderPage: React.FC = () => {
       resetBuffetState(); // Reset state for a new order
 
       // Navigate to the success page with the new order's ID
-      navigate(`/buffet-order/success/${newOrder.id}`);
+      startTransition(() => {
+        navigate(`/buffet-order/success/${newOrder.id}`);
+      });
     } catch (error) {
       const errorMsg =
         (error as any).response?.data?.message ||
@@ -218,40 +231,52 @@ const BuffetOrderPage: React.FC = () => {
   };
 
   return (
-    <div
-      className="min-h-screen bg-pink-50/30 w-full"
-      dir={i18n.language === "ar" ? "rtl" : "ltr"}
-    >
-      <div className="container mx-auto p-4 md:p-8 max-w-4xl">
-        {currentStep > 1 && (
-          <Progress value={progressValue} className="w-full mb-6 md:mb-8 h-2" />
-        )}
-        <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 md:p-8 rounded-lg shadow-xl min-h-[60vh] relative">
-          {renderStepContent()}
-        </div>
-        <div className="flex justify-between mt-8">
-          <Button
-            onClick={handleBack}
-            disabled={isSubmitting || currentStep === 1}
-            variant="outline"
-          >
-            <ArrowLeft
-              className={`me-2 h-4 w-4 ${i18n.language === "ar" ? "rotate-180" : ""}`}
-            />
-            {t("common:previous")}
-          </Button>
-
-          {currentStep < totalSteps && (
-            <Button onClick={handleNext} disabled={!canGoNext || isPageLoading}>
-              {t("common:next")}
-              <ArrowRight
-                className={`ms-2 h-4 w-4 ${i18n.language === "ar" ? "rotate-180" : ""}`}
-              />
-            </Button>
+    <Suspense fallback={
+      <div className="min-h-screen bg-pink-50/30 w-full flex items-center justify-center">
+        <Loader2 className="h-10 w-10 animate-spin text-brand-pink-DEFAULT" />
+      </div>
+    }>
+      <div
+        className="min-h-screen bg-pink-50/30 w-full"
+        dir={i18n.language === "ar" ? "rtl" : "ltr"}
+      >
+        <div className="container mx-auto p-4 md:p-8 max-w-4xl">
+          {currentStep > 1 && (
+            <Progress value={progressValue} className="w-full mb-6 md:mb-8 h-2" />
           )}
+          <div className="bg-white dark:bg-slate-900 p-4 sm:p-6 md:p-8 rounded-lg shadow-xl min-h-[60vh] relative">
+            <Suspense fallback={
+              <div className="flex justify-center items-center min-h-[50vh]">
+                <Loader2 className="h-10 w-10 animate-spin text-brand-pink-DEFAULT" />
+              </div>
+            }>
+              {renderStepContent()}
+            </Suspense>
+          </div>
+          <div className="flex justify-between mt-8">
+            <Button
+              onClick={handleBack}
+              disabled={isSubmitting || currentStep === 1}
+              variant="outline"
+            >
+              <ArrowLeft
+                className={`me-2 h-4 w-4 ${i18n.language === "ar" ? "rotate-180" : ""}`}
+              />
+              {t("common:previous")}
+            </Button>
+
+            {currentStep < totalSteps && (
+              <Button onClick={handleNext} disabled={!canGoNext || isPageLoading}>
+                {t("common:next")}
+                <ArrowRight
+                  className={`ms-2 h-4 w-4 ${i18n.language === "ar" ? "rotate-180" : ""}`}
+                />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 };
 

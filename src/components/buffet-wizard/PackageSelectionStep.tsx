@@ -1,5 +1,5 @@
 // src/components/buffet-wizard/PackageSelectionStep.tsx
-import React, { useState }from 'react';
+import React, { useState, startTransition }from 'react';
 import { useBuffetStore } from '@/stores/useBuffetStore';
 import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -17,18 +17,20 @@ export const PackageSelectionStep = () => {
         setIsLoading(true);
         selectPackage(pkg);
         
-        const optionsPromise = axiosClient.get(`/buffet/packages/${pkg.id}/person-options`);
-        const stepsPromise = axiosClient.get(`/buffet/packages/${pkg.id}/steps`);
+        startTransition(() => {
+            const optionsPromise = axiosClient.get(`/buffet/packages/${pkg.id}/person-options`);
+            const stepsPromise = axiosClient.get(`/buffet/packages/${pkg.id}/steps`);
 
-        Promise.all([optionsPromise, stepsPromise]).then(([optionsRes, stepsRes]) => {
-            setPersonOptions(optionsRes.data);
-            setSteps(stepsRes.data);
-            setCurrentStep(2);
-        }).catch(() => {
-            toast.error(t('error.packageDetails', "Failed to load package details."));
-            selectPackage(null); // Revert selection on error
-        }).finally(() => {
-            setIsLoading(false)
+            Promise.all([optionsPromise, stepsPromise]).then(([optionsRes, stepsRes]) => {
+                setPersonOptions(optionsRes.data);
+                setSteps(stepsRes.data);
+                setCurrentStep(2);
+            }).catch(() => {
+                toast.error(t('error.packageDetails', "Failed to load package details."));
+                selectPackage(null); // Revert selection on error
+            }).finally(() => {
+                setIsLoading(false)
+            });
         });
     };
     

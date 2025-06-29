@@ -1,21 +1,29 @@
 import { useAuthContext } from '@/contexts/stateContext'
-import React, { useEffect } from 'react'
-import { Navigate, Outlet } from 'react-router-dom'
-import Header from './header'
-import i18n from '@/i18n'
+import React, { useEffect, startTransition, Suspense } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 function GuestLayout() {
-    const {token} =useAuthContext()
+    const {token} = useAuthContext()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+      if (token) {
+        startTransition(() => {
+          navigate('/dashboard')
+        })
+      }
+    }, [token, navigate])
 
     if (token) {
-      return <Navigate to={'/dashboard'}></Navigate>
+      return null // Don't render anything while transitioning
     }
+
   return (
-    <div>
+    <Suspense fallback={<div>Loading...</div>}>
       {/* <Header /> */}
       
         {<Outlet />}
-    </div>
+    </Suspense>
   )
 }
 

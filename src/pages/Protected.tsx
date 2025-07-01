@@ -1,5 +1,5 @@
 // ProtectedRoute.js
-import { useAuthContext } from '@/contexts/stateContext';
+import { useAuthContext } from '@/contexts/AppContext';
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 

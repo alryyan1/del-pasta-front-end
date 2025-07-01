@@ -13,7 +13,7 @@ import {
   TextField,
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
-import { useAuthContext } from '@/contexts/stateContext';
+import { useAuthContext } from '@/contexts/AppContext';
 import { Meal } from '@/Types/types';
 import MealChildrenDialog from './MealChildrenDialog';
 import placeHolder from './../assets/images/ph.jpg'
@@ -86,7 +86,7 @@ const MealsTableMobile: React.FC = () => {
     }
    })
   return (
-    <TableContainer sx={{mt:1}}  dir="rtl">
+    <TableContainer sx={{mt:1, mx: 'auto'}}  dir="rtl">
       <TextField onChange={(e)=>{
         setSearch(e.target.value)
       }} size='small'/>

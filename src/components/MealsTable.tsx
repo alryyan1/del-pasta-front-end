@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
-import { useAuthContext } from '@/contexts/stateContext';
+import { useAuthContext } from '@/contexts/AppContext';
 import { Meal } from '@/Types/types';
 import MealChildrenDialog from './MealChildrenDialog';
 import placeHolder from './../assets/images/ph.jpg';
@@ -77,7 +77,7 @@ const MealTable: React.FC = ({selectedCategory}) => {
 
 
   return (<>
-    {showGallary ? <ImageGallery fetchMeals={fetchMeals} setShowImageGallary={setShowGallary} selectedMeal={selectedMeal}/> :<TableContainer sx={{ mt: 1 }} dir="rtl">
+    {showGallary ? <ImageGallery fetchMeals={fetchMeals} setShowImageGallary={setShowGallary} selectedMeal={selectedMeal}/> :<TableContainer sx={{ mt: 1, mx: 'auto' }} dir="rtl">
       <TextField
         onChange={(e) => setSearch(e.target.value)}
         size="small"

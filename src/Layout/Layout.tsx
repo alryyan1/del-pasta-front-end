@@ -1,21 +1,14 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { createTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import DescriptionIcon from "@mui/icons-material/Description";
-import LayersIcon from "@mui/icons-material/Layers";
-import { AppProvider, type Navigation } from "@toolpad/core/AppProvider";
+import { AppProvider, type Navigation, type Router } from "@toolpad/core/AppProvider";
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { useDemoRouter } from "@toolpad/core/internal";
 import { PageContainer } from "@toolpad/core/PageContainer";
-import { Outlet, useNavigate, useNavigation } from "react-router-dom";
-import { router } from "@/router";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
-import { Button, CircularProgress } from "@mui/material";
+import { useAuthContext } from "@/contexts/AppContext";
+import { CircularProgress } from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
@@ -23,16 +16,13 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
 import {
-  Beef,
   Grid2x2PlusIcon,
   HandPlatter,
   LayoutPanelTop,
   List,
-  PersonStanding,
   Scale,
   Users,
 } from "lucide-react";
-import logo from "./../assets/images/h2o-logo.png";
 import del from "./../assets/logo.png";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
 import SidebarFooter from "@/components/footer";
@@ -42,7 +32,7 @@ import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./../i18n";
 import ArriavalDialog from "@/components/ArriavalDialog";
 import alarm from "./../assets/alarm.wav";
-import { Meal } from "@/Types/types";
+import { Meal, Order } from "@/Types/types";
 import LoginDialog from "@/components/LoginDialog";
 import { useAuthStore } from "@/AuthStore";
 
@@ -94,14 +84,31 @@ const demoTheme = createTheme({
   colorSchemes: { light: true, dark: true },
 });
 
+// Custom router that integrates React Router with @toolpad/core
+function useReactRouter(): Router {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return React.useMemo(() => {
+    return {
+      pathname: location.pathname,
+      searchParams: new URLSearchParams(location.search),
+      navigate: (url: string | URL) => {
+        const urlString = typeof url === 'string' ? url : url.toString();
+        navigate(urlString);
+      },
+    };
+  }, [navigate, location]);
+}
 
 export default function DashboardLayoutBasic() {
   const [isIpadPro, setIsIpadPro] = React.useState(false);
-  const {openLoginDialog,setCloseLoginDialog,setOpenLoginDialog} =  useAuthStore((state)=>state)
+  const {openLoginDialog,setCloseLoginDialog} =  useAuthStore((state)=>state)
   console.log(openLoginDialog,'openDialog')
   const navigate =  useNavigate()
    const {setUser,setToken,} = useAuthContext()
     const [meals,setMeals] = React.useState<Meal[]>([]);
+  const router = useReactRouter();
    React.useEffect(()=>{
       axiosClient.get('meals').then(({data})=>{
         setMeals(data)
@@ -112,7 +119,7 @@ export default function DashboardLayoutBasic() {
   React.useEffect(() => {
     axiosClient.get("/user").then(({ data }) => {
       setUser(data);
-    }).catch((err)=>{
+    }).catch(()=>{
     console.log('error')
     setUser(null);
     setToken(null)
@@ -120,13 +127,13 @@ export default function DashboardLayoutBasic() {
   localStorage.removeItem('ACCESS_TOKEN')
 
   });
-  }, [])
+  }, [navigate])
   React.useEffect(() => {
     const mediaQuery = window.matchMedia(
       '(min-width: 768px) and (max-width: 1366px)'
     );
 
-    const handleResize = (e) => setIsIpadPro(e.matches);
+    const handleResize = (e: MediaQueryListEvent) => setIsIpadPro(e.matches);
     if (mediaQuery.matches) {
       console.log('The screen width is between 768px and 1366px');
     } else {
@@ -134,7 +141,7 @@ export default function DashboardLayoutBasic() {
     }
     
 
-    handleResize(mediaQuery); // Initial check
+    setIsIpadPro(mediaQuery.matches); // Initial check
     mediaQuery.addEventListener('change', handleResize);
 
     return () => mediaQuery.removeEventListener('change', handleResize);
@@ -251,14 +258,11 @@ export default function DashboardLayoutBasic() {
       ],
     },
   ];
-  const [orders, setOrders] = React.useState([]);
+  const [orders, setOrders] = React.useState<Order[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [selectedOrder, setSelectedOrder] = React.useState(null);
+  const [selectedOrder, setSelectedOrder] = React.useState<Order | null>(null);
   const [audio] = React.useState(new Audio(alarm));
 
-  const playAlarm = () => {
-    audio.play();
-  };
   const pauseAlarm = () => {
     audio.pause();
   };
@@ -309,28 +313,26 @@ export default function DashboardLayoutBasic() {
       >
         <I18nextProvider i18n={i18n}>
           <CacheProvider value={cacheRtl}>
-            <AuthProvider>
-              {/* sx={{height:'90vh'}}  */}
-              <DashboardLayout
-                slots={{
-                  sidebarFooter: SidebarFooter,
-                  toolbarActions: NavActions,
-                }}
+            {/* sx={{height:'90vh'}}  */}
+            <DashboardLayout
+              slots={{
+                sidebarFooter: SidebarFooter,
+                toolbarActions: NavActions,
+              }}
+            >
+              <PageContainer
+                className="root-container"
+                sx={{ margin: 0, p: 1 }}
               >
-                <PageContainer
-                  className="root-container"
-                  sx={{ margin: 0, p: 1 }}
-                >
-                  <Outlet
-                    context={{
-                      selectedOrder,
-                      setSelectedOrder,
-                      isIpadPro, setIsIpadPro,meals
-                    }}
-                  />
-                </PageContainer>{" "}
-              </DashboardLayout>
-            </AuthProvider>
+                <Outlet
+                  context={{
+                    selectedOrder,
+                    setSelectedOrder,
+                    isIpadPro, setIsIpadPro,meals
+                  }}
+                />
+              </PageContainer>{" "}
+            </DashboardLayout>
           </CacheProvider>
         </I18nextProvider>
       </React.Suspense>
@@ -341,6 +343,7 @@ export default function DashboardLayoutBasic() {
         handleClose={handleClose}
         open={open}
         orders={orders}
+        setOrders={setOrders}
       />
       <React.Suspense>
       <LoginDialog open={openLoginDialog} handleClose={()=>{

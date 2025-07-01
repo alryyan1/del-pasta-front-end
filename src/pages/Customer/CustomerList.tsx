@@ -44,7 +44,7 @@ export const CustomerList: React.FC<CustomerListProps> = ({
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: 440, mx: 'auto' }}>
         <Table stickyHeader>
           <TableHead>
             <TableRow>

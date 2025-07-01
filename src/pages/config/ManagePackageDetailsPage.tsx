@@ -20,7 +20,7 @@ import { BuffetStepsManager } from "@/components/admin/BuffetStepsManager";
 import { JuiceRulesManager } from "@/components/admin/JuiceRulesManager";
 
 const ManagePackageDetailsPage: React.FC = () => {
-  const { t } = useTranslation("admin");
+  const { t } = useTranslation("buffet");
   const { packageId } = useParams<{ packageId: string }>();
 
   const [pkg, setPkg] = useState<BuffetPackage | null>(null);
@@ -30,7 +30,7 @@ const ManagePackageDetailsPage: React.FC = () => {
   // It will be passed as a prop to child components to trigger a data refresh.
   const fetchPackageDetails = useCallback(async () => {
     if (!packageId) {
-      toast.error(t("error.noPackageId", "No package ID provided."));
+      toast.error(t("packageDetails.noPackageId"));
       return;
     }
 
@@ -44,9 +44,7 @@ const ManagePackageDetailsPage: React.FC = () => {
       );
       setPkg(response.data);
     } catch (error) {
-      toast.error(
-        t("error.fetchDetailsFailed", "Failed to fetch package details.")
-      );
+      toast.error(t("packageDetails.fetchDetailsFailed"));
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -94,18 +92,15 @@ const ManagePackageDetailsPage: React.FC = () => {
     return (
       <div className="container mx-auto p-4 md:p-6 lg:p-8 text-center">
         <h2 className="text-xl font-semibold text-destructive mb-4">
-          {t("error.packageNotFound", "Package Not Found")}
+          {t("packageDetails.packageNotFound")}
         </h2>
         <p className="text-muted-foreground mb-6">
-          {t(
-            "error.packageNotFoundDescription",
-            "The package you are looking for does not exist or has been deleted."
-          )}
+          {t("packageDetails.packageNotFoundDescription")}
         </p>
         <Button asChild variant="outline">
           <Link to="/config/buffet-packages">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("backToPackages", "Go Back to All Packages")}
+            {t("packageDetails.goBackToPackages")}
           </Link>
         </Button>
       </div>
@@ -120,7 +115,7 @@ const ManagePackageDetailsPage: React.FC = () => {
         <Button asChild variant="outline" size="sm" className="mb-4">
           <Link to="/config/buffet-packages">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            {t("backToPackages", "Back to All Packages")}
+            {t("packageDetails.backToPackages")}
           </Link>
         </Button>
         <div>

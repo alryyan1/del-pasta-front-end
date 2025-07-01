@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axiosClient from '@/helpers/axios-client';
 import { BuffetPackage } from '@/Types/buffet-types';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ interface PackageFormData {
 }
 
 const BuffetPackagesPage: React.FC = () => {
+  const { t } = useTranslation('buffet');
   const [packages, setPackages] = useState<BuffetPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -29,7 +31,7 @@ const BuffetPackagesPage: React.FC = () => {
       const response = await axiosClient.get('/admin/buffet-packages');
       setPackages(response.data);
     } catch (error) {
-      toast.error('Failed to fetch buffet packages.');
+      toast.error(t('packagesManagement.fetchError'));
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -51,14 +53,14 @@ const BuffetPackagesPage: React.FC = () => {
   };
 
   const handleDelete = async (packageId: number) => {
-    if (!window.confirm('Are you sure you want to delete this package and all its options/steps?')) return;
+    if (!window.confirm(t('packagesManagement.deleteConfirm'))) return;
 
     try {
       await axiosClient.delete(`/admin/buffet-packages/${packageId}`);
-      toast.success('Package deleted successfully.');
+      toast.success(t('packagesManagement.deleteSuccess'));
       fetchPackages(); // Refetch the list
     } catch {
-      toast.error('Failed to delete package.');
+      toast.error(t('packagesManagement.deleteError'));
     }
   };
 
@@ -70,11 +72,11 @@ const BuffetPackagesPage: React.FC = () => {
 
     try {
         await apiCall;
-        toast.success(`Package ${packageId ? 'updated' : 'created'} successfully.`);
+        toast.success(packageId ? t('packagesManagement.updateSuccess') : t('packagesManagement.createSuccess'));
         setIsDialogOpen(false);
         fetchPackages(); // Refetch
     } catch {
-        toast.error(`Failed to ${packageId ? 'update' : 'create'} package.`);
+        toast.error(packageId ? t('packagesManagement.updateError') : t('packagesManagement.createError'));
     } finally {
         setIsLoading(false);
     }
@@ -86,18 +88,18 @@ const BuffetPackagesPage: React.FC = () => {
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle>Buffet Packages Management</CardTitle>
-              <CardDescription>Create, edit, and manage your buffet offerings.</CardDescription>
+              <CardTitle>{t('packagesManagement.title')}</CardTitle>
+              <CardDescription>{t('packagesManagement.description')}</CardDescription>
             </div>
             <Button onClick={handleCreateNew}>
               <PlusCircle className="mr-2 h-4 w-4" />
-              Add New Package
+              {t('packagesManagement.addNewPackage')}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <p>Loading...</p>
+            <p>{t('packagesManagement.loading')}</p>
           ) : (
             <BuffetPackagesTable packages={packages} onEdit={handleEdit} onDelete={handleDelete} />
           )}

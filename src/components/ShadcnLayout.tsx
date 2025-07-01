@@ -1,7 +1,7 @@
 import React, { useState, useEffect, startTransition } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAuthContext } from "@/contexts/stateContext";
+import { useAuthContext } from "@/contexts/AppContext";
 import axiosClient from "@/helpers/axios-client";
 import { Order } from "@/Types/types";
 

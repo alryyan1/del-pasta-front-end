@@ -1,16 +1,16 @@
 // src/components/admin/BuffetOrdersTable.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { BuffetOrder } from '@/Types/buffet-types';
 import dayjs from 'dayjs';
 import axiosClient from '@/helpers/axios-client';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, ArrowRight, Eye } from 'lucide-react';
-import { BuffetOrderDetailsDialog } from './BuffetOrderDetailsDialog'; // Import the new dialog
 
 interface PaginationData {
   current_page: number;
@@ -24,11 +24,11 @@ interface BuffetOrdersTableProps {
   paginationData: PaginationData | null;
   onPageChange: (url: string) => void;
   onUpdate: () => void; // Add a callback to refresh data after status update
+  onViewDetails?: (orderId: number) => void; // Add optional prop for view details
 }
 
-export const BuffetOrdersTable: React.FC<BuffetOrdersTableProps> = ({ orders, paginationData, onPageChange, onUpdate }) => {
-  const [selectedOrderDetails, setSelectedOrderDetails] = useState<BuffetOrder | null>(null);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+export const BuffetOrdersTable: React.FC<BuffetOrdersTableProps> = ({ orders, paginationData, onPageChange, onUpdate, onViewDetails }) => {
+  const { t } = useTranslation('buffet');
 
   const getStatusVariant = (status: string): "default" | "destructive" | "outline" | "secondary" => {
     switch (status) {
@@ -39,71 +39,71 @@ export const BuffetOrdersTable: React.FC<BuffetOrdersTableProps> = ({ orders, pa
     }
   };
 
-  const handleViewDetails = async (orderId: number) => {
-    try {
-        const response = await axiosClient.get(`/buffet-orders/${orderId}`);
-        setSelectedOrderDetails(response.data);
-        setIsDetailDialogOpen(true);
-    } catch {
-        toast.error("Failed to fetch order details.");
+  const handleViewDetails = (orderId: number) => {
+    if (onViewDetails) {
+        onViewDetails(orderId);
     }
   }
 
   const handleStatusChange = (orderId: number, newStatus: string) => {
     axiosClient.put(`/buffet-orders/${orderId}`, { status: newStatus })
         .then(() => {
-            toast.success("Order status updated.");
+            toast.success(t('ordersManagement.table.statusUpdateSuccess'));
             onUpdate(); // Trigger data refresh in the parent page
         })
-        .catch(() => toast.error("Failed to update status."));
+        .catch(() => toast.error(t('ordersManagement.table.statusUpdateError')));
   }
 
   return (
     <>
         <div className="border rounded-md">
-            <Table>
+            <Table className="mx-auto">
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Order #</TableHead>
-                        <TableHead>Customer</TableHead>
-                        <TableHead>Package</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Delivery Date</TableHead>
-                        <TableHead className="w-[150px]">Status</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
+                        <TableHead className='text-center'>{t('ordersManagement.table.orderNumber')}</TableHead>
+                        <TableHead className='text-center'>{t('ordersManagement.table.customer')}</TableHead>
+                        <TableHead className='text-center'>{t('ordersManagement.table.phone')}</TableHead>
+                        <TableHead className='text-center'>{t('ordersManagement.table.address')}</TableHead>
+                        <TableHead className='text-center'>{t('ordersManagement.table.package')}</TableHead>
+                        <TableHead className='text-center'>{t('ordersManagement.table.price')}</TableHead>
+                        <TableHead className='text-center'>{t('ordersManagement.table.deliveryDate')}</TableHead>
+                        <TableHead className="w-[150px] text-center">{t('ordersManagement.table.status')}</TableHead>
+                        <TableHead className="text-center">{t('ordersManagement.table.actions')}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                 {orders.length > 0 ? orders.map((order) => (
                     <TableRow key={order.id}>
-                        <TableCell className="font-medium">{order.order_number}</TableCell>
-                        <TableCell>{order.customer?.name || 'N/A'}</TableCell>
-                        <TableCell>{order.buffetPackage?.name_ar || 'N/A'}</TableCell>
-                        <TableCell>{Number(order.base_price).toFixed(3)}</TableCell>
-                        <TableCell>{dayjs(order.delivery_date).format('DD MMM, YYYY')} @ {dayjs(`1970-01-01 ${order.delivery_time}`).format('h:mm A')}</TableCell>
-                        <TableCell>
+                        <TableCell className="font-medium text-center">{order.order_number}</TableCell>
+                        <TableCell className='text-center'>{order.customer?.name || t('ordersManagement.table.notAvailable')}</TableCell>
+                        <TableCell className='text-center'>{order.customer?.phone || t('ordersManagement.table.notAvailable')}</TableCell>
+                        <TableCell className='text-center'>{order.customer?.address || t('ordersManagement.table.notAvailable')}</TableCell>
+                        <TableCell className='text-center'>{order.buffetPackage?.name_ar || t('ordersManagement.table.notAvailable')}</TableCell>
+                        <TableCell className='text-center'>{Number(order.base_price).toFixed(3)}</TableCell>
+                        <TableCell className='text-center'>{dayjs(order.delivery_date).format('DD MMM, YYYY')} @ {dayjs(`1970-01-01 ${order.delivery_time}`).format('h:mm A')}</TableCell>
+                        <TableCell className='text-center'>
                             <Select defaultValue={order.status} onValueChange={(value) => handleStatusChange(order.id, value)}>
                                 <SelectTrigger>
                                     <SelectValue>
-                                        <Badge variant={getStatusVariant(order.status)}>{order.status}</Badge>
+                                        <Badge variant={getStatusVariant(order.status)}>{t(`orderDetails.status.${order.status}`)}</Badge>
                                     </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="pending">Pending</SelectItem>
-                                    <SelectItem value="confirmed">Confirmed</SelectItem>
-                                    <SelectItem value="delivered">Delivered</SelectItem>
-                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="pending">{t('orderDetails.status.pending')}</SelectItem>
+                                    <SelectItem value="confirmed">{t('orderDetails.status.confirmed')}</SelectItem>
+                                    <SelectItem value="delivered">{t('orderDetails.status.delivered')}</SelectItem>
+                                    <SelectItem value="cancelled">{t('orderDetails.status.cancelled')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-center">
                             <Button variant="ghost" size="icon" onClick={() => handleViewDetails(order.id)}>
                                 <Eye className="h-4 w-4" />
                             </Button>
                         </TableCell>
                     </TableRow>
                 )) : (
-                    <TableRow><TableCell colSpan={7} className="h-24 text-center">No buffet orders found.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={9} className="h-24 text-center">{t('ordersManagement.noOrdersTable')}</TableCell></TableRow>
                 )}
                 </TableBody>
             </Table>
@@ -117,10 +117,10 @@ export const BuffetOrdersTable: React.FC<BuffetOrdersTableProps> = ({ orders, pa
                     onClick={() => paginationData.prev_page_url && onPageChange(paginationData.prev_page_url)} 
                     disabled={!paginationData.prev_page_url}
                 >
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Previous
+                    <ArrowLeft className="mr-2 h-4 w-4" /> {t('ordersManagement.previous')}
                 </Button>
                 <span className="text-sm text-muted-foreground">
-                    Page {paginationData.current_page} of {paginationData.last_page}
+                    {t('ordersManagement.pageOf', { current: paginationData.current_page, total: paginationData.last_page })}
                 </span>
                 <Button 
                     variant="outline" 
@@ -128,16 +128,11 @@ export const BuffetOrdersTable: React.FC<BuffetOrdersTableProps> = ({ orders, pa
                     onClick={() => paginationData.next_page_url && onPageChange(paginationData.next_page_url)} 
                     disabled={!paginationData.next_page_url}
                 >
-                    Next <ArrowRight className="ml-2 h-4 w-4" />
+                    {t('ordersManagement.next')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
             </div>
         )}
 
-        <BuffetOrderDetailsDialog
-            order={selectedOrderDetails}
-            open={isDetailDialogOpen}
-            onOpenChange={setIsDetailDialogOpen}
-        />
     </>
   );
 };

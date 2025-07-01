@@ -22,7 +22,7 @@ interface PopOverDataPropbs {
   }
 export function OrderDetailsPopover({ order }: PopOverDataPropbs) {
     return (
-      <Table size="small">
+      <Table size="small" style={{ margin: "auto" }}>
         <TableHead>
           <TableRow>
             <TableCell>الخدمات</TableCell>

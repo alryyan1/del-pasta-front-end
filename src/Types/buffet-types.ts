@@ -105,7 +105,7 @@ export interface BuffetPackage {
 export interface BuffetOrder {
     id: number;
     order_number: string;
-    customer?: { name: string; phone: string };
+    customer?: { name: string; phone: string; address?: string };
     buffetPackage?: { name_ar: string };
     buffetPersonOption?: { label_ar: string };
     base_price: number;
@@ -115,7 +115,7 @@ export interface BuffetOrder {
     status: string;
     selections?: { // This will be loaded on demand for the dialog
         meal: { name: string };
-        buffetStep: { title_ar: string };
+        buffetStep: { title_ar: string; title_en?: string };
     }[];
 }
 

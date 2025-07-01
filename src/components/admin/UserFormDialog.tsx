@@ -70,7 +70,7 @@ export const UserFormDialog: React.FC<UserFormDialogProps> = ({ open, onOpenChan
     } else {
       form.reset({ name: '', username: '', user_type: 'staff', password: '', password_confirmation: '' });
     }
-  }, [initialData, open, form]);
+  }, [initialData, open]);
 
   const handleSubmit = (data: UserFormValues) => {
     // If password field is empty on edit, don't send it.

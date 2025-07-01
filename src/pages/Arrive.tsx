@@ -1,4 +1,4 @@
-import { useAuthContext } from "@/contexts/stateContext";
+import { useAuthContext } from "@/contexts/AppContext";
 import axiosClient from "@/helpers/axios-client";
 import { Order } from "@/Types/types";
 import { CheckCircleOutline } from "@mui/icons-material";

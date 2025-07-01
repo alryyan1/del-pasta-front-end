@@ -91,7 +91,7 @@ export const CustomersTable: React.FC<CustomersTableProps> = ({ customers, onEdi
     <Card>
         <CardContent className="p-0">
             <div className="overflow-x-auto">
-                <Table>
+                <Table className="mx-auto">
                     <TableHeader>
                         <TableRow>
                             <TableHead>{t('table.name', 'Name')}</TableHead>

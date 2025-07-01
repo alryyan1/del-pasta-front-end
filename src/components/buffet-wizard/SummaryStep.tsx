@@ -87,8 +87,8 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ isSubmitting, handleSu
                     <AlertTitle className="font-semibold text-pink-800 dark:text-pink-300">{t('delivery.title', 'Delivery Fees Notice')}</AlertTitle>
                     <AlertDescription className="text-xs space-y-2 text-slate-700 dark:text-slate-400">
                         <p><strong>{t('delivery.free', 'Free Delivery')}:</strong> {t('delivery.freeAreas', 'Sohar & Saham')}</p>
-                        <p><strong>+10 {t('menu:currency')}:</strong> {t('delivery.tier1Areas', '(Liwa, Shinas, Al Khaburah, As Suwayq, Al-Musannah)')}</p>
-                        <p><strong>+15 {t('menu:currency')}:</strong> {t('delivery.tier2Areas', 'Other areas, or as agreed upon')}</p>
+                        <p><strong>+10 </strong> {t('delivery.tier1Areas', '(Liwa, Shinas, Al Khaburah, As Suwayq, Al-Musannah)')}</p>
+                        <p><strong>+15 </strong> {t('delivery.tier2Areas', 'Other areas, or as agreed upon')}</p>
                     </AlertDescription>
                 </Alert>
 
@@ -97,12 +97,12 @@ export const SummaryStep: React.FC<SummaryStepProps> = ({ isSubmitting, handleSu
                     <div className="text-2xl font-bold text-right">
                         {t('totalPrice', 'Total Price')}:
                         <span className="text-brand-pink-DEFAULT ms-2">
-                            {selectedPersonOption?.price ? Number(selectedPersonOption.price).toFixed(3) : "0.000"} {t('menu:currency')}
+                            {selectedPersonOption?.price ? Number(selectedPersonOption.price).toFixed(3) : "0.000"} 
                         </span>
                         <span className="text-sm font-normal text-muted-foreground block">{t('priceNote', ' (Excluding Delivery Fee)')}</span>
                     </div>
 
-                    <Button onClick={handleSubmitOrder} disabled={isSubmitting} className="w-full bg-brand-pink-DEFAULT hover:bg-brand-pink-dark text-white text-lg py-6">
+                    <Button onClick={handleSubmitOrder} disabled={isSubmitting} className="w-full  text-lg py-6">
                         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         {t('confirmAndSend', "Confirm & Send to WhatsApp")}
                     </Button>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axiosClient from '@/helpers/axios-client';
 import { BuffetStep } from '@/Types/buffet-types';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ interface BuffetStepsManagerProps {
 }
 
 export const BuffetStepsManager: React.FC<BuffetStepsManagerProps> = ({ packageId, initialSteps, onDataChange }) => {
+  const { t } = useTranslation('buffet');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingStep, setEditingStep] = useState<BuffetStep | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,33 +35,54 @@ export const BuffetStepsManager: React.FC<BuffetStepsManagerProps> = ({ packageI
   };
 
   const handleDelete = async (stepId: number) => {
-    if (!window.confirm('Are you sure you want to delete this step?')) return;
+    if (!window.confirm(t('stepsManagement.deleteConfirm'))) return;
     
     setIsLoading(true);
     try {
       await axiosClient.delete(`/admin/buffet-steps/${stepId}`);
-      toast.success('Step deleted successfully.');
+      toast.success(t('stepsManagement.deleteSuccess'));
       onDataChange();
-    } catch (error) {
-      toast.error('Failed to delete step.');
+    } catch {
+      toast.error(t('stepsManagement.deleteError'));
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSave = async (data: any, stepId?: number) => {
+  interface StepFormData {
+    step_number: number;
+    title_ar?: string;
+    title_en?: string;
+    instructions_ar?: string;
+    category_id: number;
+    min_selections: number;
+    max_selections: number;
+    is_active: boolean;
+  }
+
+  const handleSave = async (data: StepFormData, stepId?: number) => {
     setIsLoading(true);
+    
+    // Ensure required fields have default values for the API
+    const apiData = {
+      ...data,
+      title_ar: data.title_ar || "",
+      title_en: data.title_en || "",
+      instructions_ar: data.instructions_ar || "",
+    };
+    
     const apiCall = stepId
-      ? axiosClient.put(`/admin/buffet-steps/${stepId}`, data)
-      : axiosClient.post(`/admin/buffet-packages/${packageId}/steps`, data);
+      ? axiosClient.put(`/admin/buffet-steps/${stepId}`, apiData)
+      : axiosClient.post(`/admin/buffet-packages/${packageId}/steps`, apiData);
 
     try {
       await apiCall;
-      toast.success(`Step ${stepId ? 'updated' : 'created'} successfully.`);
+      toast.success(stepId ? t('stepsManagement.updateSuccess') : t('stepsManagement.createSuccess'));
       setIsDialogOpen(false);
       onDataChange();
-    } catch (error: any) {
-      const errorMsg = error.response?.data?.message || `Failed to ${stepId ? 'update' : 'create'} step.`;
+    } catch (error: unknown) {
+      const errorResponse = error as { response?: { data?: { message?: string } } };
+      const errorMsg = errorResponse?.response?.data?.message || (stepId ? t('stepsManagement.updateError') : t('stepsManagement.createError'));
       toast.error(errorMsg);
     } finally {
       setIsLoading(false);
@@ -72,40 +95,40 @@ export const BuffetStepsManager: React.FC<BuffetStepsManagerProps> = ({ packageI
         <CardHeader>
           <div className="flex justify-between items-center">
             <div>
-              <CardTitle>Buffet Customization Steps</CardTitle>
-              <CardDescription>Define the sequence of choices for the customer.</CardDescription>
+              <CardTitle>{t('stepsManagement.title')}</CardTitle>
+              <CardDescription>{t('stepsManagement.description')}</CardDescription>
             </div>
             <Button onClick={handleCreateNew}>
-              <PlusCircle className="mr-2 h-4 w-4" /> Add Step
+              <PlusCircle className="mr-2 h-4 w-4" /> {t('stepsManagement.addStep')}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <Table>
+          <Table className="mx-auto">
             <TableHeader>
               <TableRow>
-                <TableHead>Step#</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Selections (Min/Max)</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text-center">{t('stepsManagement.table.stepNumber')}</TableHead>
+                <TableHead className="text-center">{t('stepsManagement.table.title')}</TableHead>
+                <TableHead className="text-center">{t('stepsManagement.table.category')}</TableHead>
+                <TableHead className="text-center">{t('stepsManagement.table.selections')}</TableHead>
+                <TableHead className="text-center">{t('stepsManagement.table.status')}</TableHead>
+                <TableHead className="text-center">{t('stepsManagement.table.actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {initialSteps?.length > 0 ? (
                 initialSteps.map((step) => (
                   <TableRow key={step.id}>
-                    <TableCell>{step.step_number}</TableCell>
-                    <TableCell className="font-medium">{step.title_ar}</TableCell>
-                    <TableCell>{step.category?.name}</TableCell>
-                    <TableCell>{step.min_selections} / {step.max_selections}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-center">{step.step_number}</TableCell>
+                    <TableCell className="font-medium text-center">{step.title_ar}</TableCell>
+                    <TableCell className="text-center">{step.category?.name}</TableCell>
+                    <TableCell className="text-center">{step.min_selections} / {step.max_selections}</TableCell>
+                    <TableCell className="text-center">
                       <Badge variant={step.is_active ? 'default' : 'outline'}>
-                        {step.is_active ? 'Active' : 'Inactive'}
+                        {step.is_active ? t('stepsManagement.table.active') : t('stepsManagement.table.inactive')}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right space-x-1">
+                    <TableCell className="text-center space-x-1">
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(step)}>
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -118,7 +141,7 @@ export const BuffetStepsManager: React.FC<BuffetStepsManagerProps> = ({ packageI
               ) : (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground">
-                    No steps have been configured for this package yet.
+                    {t('stepsManagement.noSteps')}
                   </TableCell>
                 </TableRow>
               )}
@@ -133,6 +156,7 @@ export const BuffetStepsManager: React.FC<BuffetStepsManagerProps> = ({ packageI
         onSave={handleSave}
         initialData={editingStep}
         isLoading={isLoading}
+        existingSteps={initialSteps}
       />
     </>
   );

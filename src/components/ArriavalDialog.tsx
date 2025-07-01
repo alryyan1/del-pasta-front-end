@@ -20,11 +20,11 @@ import axiosClient from "@/helpers/axios-client";
 interface ArriavalDialogProbs {
   open: boolean;
   handleClose: () => void;
-  selectedOrder: Order;
-  setSelectedOrder: Dispatch<SetStateAction<Order>>;
+  selectedOrder: Order | null;
+  setSelectedOrder: Dispatch<SetStateAction<Order | null>>;
   orders: Order[];
   setOrders: Dispatch<SetStateAction<Order[]>>;
-  pauseAlarm 
+  pauseAlarm: () => void;
 }
 
 const ArriavalDialog = ({ handleClose, open, orders ,setOrders,setSelectedOrder,pauseAlarm}: ArriavalDialogProbs) => {

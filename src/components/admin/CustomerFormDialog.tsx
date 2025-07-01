@@ -73,7 +73,7 @@ export const CustomerFormDialog: React.FC<CustomerFormDialogProps> = ({
         form.reset({ name: '', phone: '', state: '', area: '' });
       }
     }
-  }, [initialData, open, form]);
+  }, [initialData, open]);
 
   const handleSubmit = (data: CustomerFormValues) => {
     onSave(data, initialData?.id);

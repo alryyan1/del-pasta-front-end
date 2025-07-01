@@ -5,7 +5,7 @@ import { Users } from "lucide-react";
 import React from "react";
 import LogoutIcon from '@mui/icons-material/Logout';
 import axiosClient from "@/helpers/axios-client";
-import { useAuthContext } from "@/contexts/stateContext";
+import { useAuthContext } from "@/contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import LanguageSwitcher from "./LanguageSwither";
 

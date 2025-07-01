@@ -1,4 +1,4 @@
-import { useAuthContext } from '@/contexts/stateContext'
+import { useAuthContext } from '@/contexts/AppContext'
 import React, { useEffect, startTransition, Suspense } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 

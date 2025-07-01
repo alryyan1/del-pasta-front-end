@@ -141,17 +141,17 @@ export const PersonOptionsManager: React.FC<PersonOptionsManagerProps> = ({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
+                  <TableHead className="text-center">
                     {t("common:arabicLabel", "Arabic Label")}
                   </TableHead>
-                  <TableHead className="hidden md:table-cell">
+                  <TableHead className="hidden md:table-cell text-center">
                     {t("common:englishLabel", "English Label")}
                   </TableHead>
-                  <TableHead>{t("common:price", "Price")} (OMR)</TableHead>
+                  <TableHead className="text-center">{t("common:price", "Price")} (OMR)</TableHead>
                   <TableHead className="hidden sm:table-cell">
                     {t("common:status", "Status")}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-center">
                     {t("common:actions", "Actions")}
                   </TableHead>
                 </TableRow>
@@ -160,14 +160,14 @@ export const PersonOptionsManager: React.FC<PersonOptionsManagerProps> = ({
                 {initialOptions?.length > 0 ? (
                   initialOptions.map((opt) => (
                     <TableRow key={opt.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium text-center">
                         {opt.label_ar}
                       </TableCell>
-                      <TableCell className="hidden md:table-cell">
+                      <TableCell className="hidden md:table-cell text-center">
                         {opt.label_en || "N/A"}
                       </TableCell>
-                      <TableCell>{Number(opt.price).toFixed(3)}</TableCell>
-                      <TableCell className="hidden sm:table-cell">
+                      <TableCell className="text-center">{Number(opt.price).toFixed(3)}</TableCell>
+                      <TableCell className="hidden sm:table-cell text-center">
                         <Badge
                           variant={opt.is_active ? "default" : "destructive"}
                         >
@@ -176,7 +176,7 @@ export const PersonOptionsManager: React.FC<PersonOptionsManagerProps> = ({
                             : t("common:inactive", "Inactive")}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right space-x-1">
+                      <TableCell className="text-center space-x-1">
                         <Button
                           variant="ghost"
                           size="icon"

@@ -38,7 +38,7 @@ export const JuiceRuleFormDialog: React.FC<JuiceRuleFormDialogProps> = ({ open, 
         description_en: personOption.juiceRule?.description_en || '',
       });
     }
-  }, [personOption, open, form]);
+  }, [personOption, open]);
 
   const handleSubmit = (data: JuiceRuleFormValues) => {
     if (personOption) {

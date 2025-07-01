@@ -1,9 +1,6 @@
 // src/components/admin/BuffetStepFormDialog.tsx
 
 import React, { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { BuffetStep } from "@/Types/buffet-types";
 import axiosClient from "@/helpers/axios-client";
 import { toast } from "sonner";
@@ -39,36 +36,16 @@ interface SimpleCategory {
   name: string;
 }
 
-// Zod schema for robust form validation
-const stepSchema = z
-  .object({
-    step_number: z.preprocess(
-      (val) => parseInt(String(val || "1"), 10),
-      z.number().min(1, "Step number must be at least 1.")
-    ),
-    title_ar: z.string().min(3, { message: "Arabic title is required." }),
-    title_en: z.string().optional(),
-    instructions_ar: z.string().optional(),
-    category_id: z.preprocess(
-      (val) => parseInt(String(val), 10),
-      z.number({ required_error: "Please select a category." })
-    ),
-    min_selections: z.preprocess(
-      (val) => parseInt(String(val || "0"), 10),
-      z.number().min(0, "Min selections cannot be negative.")
-    ),
-    max_selections: z.preprocess(
-      (val) => parseInt(String(val || "1"), 10),
-      z.number().min(1, "Max selections must be at least 1.")
-    ),
-    is_active: z.boolean().default(true),
-  })
-  .refine((data) => data.min_selections <= data.max_selections, {
-    message: "Min selections cannot be greater than max selections.",
-    path: ["min_selections"],
-  });
-
-type StepFormValues = z.infer<typeof stepSchema>;
+interface StepFormValues {
+  step_number: number;
+  title_ar?: string;
+  title_en?: string;
+  instructions_ar?: string;
+  category_id: number;
+  min_selections: number;
+  max_selections: number;
+  is_active: boolean;
+}
 
 interface BuffetStepFormDialogProps {
   open: boolean;
@@ -76,6 +53,7 @@ interface BuffetStepFormDialogProps {
   onSave: (data: StepFormValues, stepId?: number) => void;
   initialData?: BuffetStep | null;
   isLoading: boolean;
+  existingSteps?: BuffetStep[];
 }
 
 export const BuffetStepFormDialog: React.FC<BuffetStepFormDialogProps> = ({
@@ -84,21 +62,29 @@ export const BuffetStepFormDialog: React.FC<BuffetStepFormDialogProps> = ({
   onSave,
   initialData,
   isLoading,
+  existingSteps = [],
 }) => {
-  const { t } = useTranslation(["admin", "common"]);
+  const { t } = useTranslation(["buffet", "admin", "common"]);
   const [categories, setCategories] = useState<SimpleCategory[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const form = useForm<StepFormValues>({
-    resolver: zodResolver(stepSchema),
-    defaultValues: {
-      is_active: true,
-      min_selections: 1,
-      max_selections: 1,
-      step_number: 1,
-      title_ar: "",
-      title_en: "",
-      instructions_ar: "",
-    },
+  // Calculate next available step number
+  const getNextStepNumber = () => {
+    if (existingSteps.length === 0) return 1;
+    const maxStepNumber = Math.max(...existingSteps.map(step => step.step_number));
+    return maxStepNumber + 1;
+  };
+
+  // Form state
+  const [formData, setFormData] = useState<StepFormValues>({
+    step_number: getNextStepNumber(),
+    title_ar: "",
+    title_en: "",
+    instructions_ar: "",
+    category_id: 1,
+    min_selections: 1,
+    max_selections: 1,
+    is_active: true,
   });
 
   // Fetch meal categories when the dialog is opened
@@ -114,9 +100,7 @@ export const BuffetStepFormDialog: React.FC<BuffetStepFormDialogProps> = ({
           setCategories(simplifiedCategories);
         })
         .catch(() =>
-          toast.error(
-            t("error.fetchCategories", "Could not load meal categories.")
-          )
+          toast.error(t("stepForm.fetchCategoriesError"))
         );
     }
   }, [open, categories.length, t]);
@@ -125,45 +109,96 @@ export const BuffetStepFormDialog: React.FC<BuffetStepFormDialogProps> = ({
   useEffect(() => {
     if (open) {
       if (initialData) {
-        // We're editing: prepare the data for form reset
-        const formData: StepFormValues = {
+        // We're editing: populate with existing data
+        setFormData({
           step_number: initialData.step_number,
-          title_ar: initialData.title_ar,
+          title_ar: initialData.title_ar || "",
           title_en: initialData.title_en || "",
           instructions_ar: initialData.instructions_ar || "",
-          category_id: initialData.category_id || initialData.category?.id || 0,
+          category_id: initialData.category_id || initialData.category?.id || 1,
           min_selections: initialData.min_selections,
           max_selections: initialData.max_selections,
           is_active: initialData.is_active,
-        };
-        form.reset(formData);
+        });
       } else {
-        // We're creating: reset to default values
-        form.reset({
-          step_number: 1,
+        // We're creating: reset to default values with next step number
+        setFormData({
+          step_number: getNextStepNumber(),
           title_ar: "",
           title_en: "",
           instructions_ar: "",
-          is_active: true,
+          category_id: categories.length > 0 ? categories[0].id : 1,
           min_selections: 1,
           max_selections: 1,
+          is_active: true,
         });
       }
+      setErrors({});
     }
-  }, [initialData, open, form]);
+  }, [initialData, open, categories, existingSteps]);
 
-  // Form submission handler
-  const handleSubmit = (data: StepFormValues) => {
-    console.log("Form data being submitted:", data); // Debug log
-    onSave(data, initialData?.id);
+  // Handle input changes
+  const handleInputChange = (field: keyof StepFormValues, value: string | number | boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: ""
+      }));
+    }
   };
 
-  // Debug form errors
-  useEffect(() => {
-    if (Object.keys(form.formState.errors).length > 0) {
-      console.log("Form validation errors:", form.formState.errors);
+  // Simple validation
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.step_number || formData.step_number < 1) {
+      newErrors.step_number = t('stepForm.stepNumberRequired');
     }
-  }, [form.formState.errors]);
+
+    if (!formData.category_id || formData.category_id < 1) {
+      newErrors.category_id = t('stepForm.categoryRequired');
+    }
+
+    if (formData.min_selections < 0) {
+      newErrors.min_selections = t('stepForm.minSelectionsInvalid');
+    }
+
+    if (formData.max_selections < 1) {
+      newErrors.max_selections = t('stepForm.maxSelectionsInvalid');
+    }
+
+    if (formData.min_selections > formData.max_selections) {
+      newErrors.min_selections = t('stepForm.selectionRangeInvalid');
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Form submission handler
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    console.log("Form data being submitted:", formData);
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    // Check if categories are loaded
+    if (categories.length === 0) {
+      toast.error(t("stepForm.fetchCategoriesError"));
+      return;
+    }
+    
+    onSave(formData, initialData?.id);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -171,92 +206,105 @@ export const BuffetStepFormDialog: React.FC<BuffetStepFormDialogProps> = ({
         <DialogHeader>
           <DialogTitle>
             {initialData
-              ? t("buffetSteps.editTitle", "Edit Step")
-              : t("buffetSteps.createTitle", "Create New Step")}
+              ? t("stepForm.editTitle")
+              : t("stepForm.createTitle")}
           </DialogTitle>
           <DialogDescription>
-            {t("buffetSteps.description", "Define a choice for the customer to make during buffet selection.")}
+            {t("stepForm.description")}
           </DialogDescription>
         </DialogHeader>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="space-y-4 pt-4"
-        >
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="step_number">
-                {t("buffetSteps.stepNumber", "Step Number")}
+                {t("stepForm.stepNumber")}
               </Label>
               <Input
                 id="step_number"
                 type="number"
-                {...form.register("step_number")}
+                value={formData.step_number}
+                onChange={(e) => handleInputChange('step_number', parseInt(e.target.value) || 1)}
                 disabled={isLoading}
               />
-              {form.formState.errors.step_number && (
+              {errors.step_number && (
                 <p className="text-sm font-medium text-destructive">
-                  {form.formState.errors.step_number.message}
+                  {errors.step_number}
                 </p>
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="category_id">
-                {t("buffetSteps.mealCategory", "Meal Category")}
+              <Label htmlFor="category_id" className="flex items-center">
+                {t("stepForm.mealCategory")} <span className="text-red-500 ml-1">*</span>
               </Label>
-              <Controller
-                name="category_id"
-                control={form.control}
-                render={({ field }) => (
-                  <Select
-                    value={field.value?.toString()}
-                    onValueChange={field.onChange}
-                    disabled={isLoading || categories.length === 0}
-                  >
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={t("buffetSteps.selectCategory", "Select a category...")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id.toString()}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {form.formState.errors.category_id && (
+              <Select
+                value={formData.category_id ? formData.category_id.toString() : ""}
+                onValueChange={(value) => handleInputChange('category_id', parseInt(value, 10))}
+                disabled={isLoading || categories.length === 0}
+              >
+                <SelectTrigger className={errors.category_id ? "border-red-500" : ""}>
+                  <SelectValue placeholder={t("stepForm.selectCategory")} />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.category_id && (
                 <p className="text-sm font-medium text-destructive">
-                  {form.formState.errors.category_id.message}
+                  {errors.category_id}
                 </p>
               )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="title_ar">{t("common:arabicTitle", "Arabic Title")}</Label>
+            <Label htmlFor="title_ar">
+              {t("stepForm.arabicTitle")}
+            </Label>
             <Input
               id="title_ar"
-              {...form.register("title_ar")}
+              value={formData.title_ar}
+              onChange={(e) => handleInputChange('title_ar', e.target.value)}
               disabled={isLoading}
+              placeholder={t("stepForm.arabicTitlePlaceholder")}
             />
-            {form.formState.errors.title_ar && (
+            {errors.title_ar && (
               <p className="text-sm font-medium text-destructive">
-                {form.formState.errors.title_ar.message}
+                {errors.title_ar}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="title_en">
+              {t("stepForm.englishTitle")}
+            </Label>
+            <Input
+              id="title_en"
+              value={formData.title_en}
+              onChange={(e) => handleInputChange('title_en', e.target.value)}
+              disabled={isLoading}
+              placeholder={t("stepForm.englishTitlePlaceholder")}
+            />
+            {errors.title_en && (
+              <p className="text-sm font-medium text-destructive">
+                {errors.title_en}
               </p>
             )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="instructions_ar">
-              {t("buffetSteps.arabicInstructions", "Arabic Instructions")}
+              {t("stepForm.arabicInstructions")}
             </Label>
             <Textarea
               id="instructions_ar"
-              placeholder={t("buffetSteps.instructionsPlaceholder", "Enter instructions for this step...")}
-              {...form.register("instructions_ar")}
+              placeholder={t("stepForm.instructionsPlaceholder")}
+              value={formData.instructions_ar}
+              onChange={(e) => handleInputChange('instructions_ar', e.target.value)}
               disabled={isLoading}
             />
           </div>
@@ -264,33 +312,35 @@ export const BuffetStepFormDialog: React.FC<BuffetStepFormDialogProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="min_selections">
-                {t("buffetSteps.minSelections", "Min Selections")}
+                {t("stepForm.minSelections")}
               </Label>
               <Input
                 id="min_selections"
                 type="number"
-                {...form.register("min_selections")}
+                value={formData.min_selections}
+                onChange={(e) => handleInputChange('min_selections', parseInt(e.target.value) || 0)}
                 disabled={isLoading}
               />
-              {form.formState.errors.min_selections && (
+              {errors.min_selections && (
                 <p className="text-sm font-medium text-destructive">
-                  {form.formState.errors.min_selections.message}
+                  {errors.min_selections}
                 </p>
               )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="max_selections">
-                {t("buffetSteps.maxSelections", "Max Selections")}
+                {t("stepForm.maxSelections")}
               </Label>
               <Input
                 id="max_selections"
                 type="number"
-                {...form.register("max_selections")}
+                value={formData.max_selections}
+                onChange={(e) => handleInputChange('max_selections', parseInt(e.target.value) || 1)}
                 disabled={isLoading}
               />
-              {form.formState.errors.max_selections && (
+              {errors.max_selections && (
                 <p className="text-sm font-medium text-destructive">
-                  {form.formState.errors.max_selections.message}
+                  {errors.max_selections}
                 </p>
               )}
             </div>
@@ -299,22 +349,22 @@ export const BuffetStepFormDialog: React.FC<BuffetStepFormDialogProps> = ({
           <div className="flex items-center space-x-2 pt-2">
             <Switch
               id="is_active"
-              checked={form.watch("is_active")}
-              onCheckedChange={(checked) => form.setValue("is_active", checked)}
+              checked={formData.is_active}
+              onCheckedChange={(checked) => handleInputChange('is_active', checked)}
               disabled={isLoading}
             />
-            <Label htmlFor="is_active">{t("common:activeStep", "Active Step")}</Label>
+            <Label htmlFor="is_active">{t("stepForm.activeStep")}</Label>
           </div>
 
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline" disabled={isLoading}>
-                {t("common:cancel", "Cancel")}
+                {t("stepForm.cancel")}
               </Button>
             </DialogClose>
             <Button type="submit" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {t("common:save", "Save Step")}
+              {t("stepForm.save")}
             </Button>
           </DialogFooter>
         </form>

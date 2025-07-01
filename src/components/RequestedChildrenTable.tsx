@@ -62,7 +62,7 @@ const RequestedChildrenTable: React.FC<RequestedChildrenTableProps> = ({ mealOrd
 
   return (
     <div className="border rounded-md">
-      <Table>
+      <Table className="mx-auto">
         <TableHeader>
           <TableRow>
             <TableHead className="w-[50px]">

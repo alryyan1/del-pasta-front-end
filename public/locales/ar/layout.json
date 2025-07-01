@@ -14,5 +14,13 @@
   "Customers": "الزبائن",
   "Users": "المستخدمين",
   "Sub Services": "الاصناف ",
-  "Other": "اخري"
+  "Other": "اخري",
+  "Buffet Orders": "طلبات البوفيه",
+  "Buffet Orders Table": "جدول طلبات البوفيه",
+  "Buffet Orders Table Description": "يعرض جدول طلبات البوفيه",
+  "Buffet Orders Management": "إدارة طلبات البوفيه",
+  "Buffet Order": "طلب بوفيه",
+  "Buffet Order Description": "يعرض طلب بوفيه"
+
+
 }

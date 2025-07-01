@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import MyCustomControlledAutocomplete from "../CostAutocomplete";
 import axiosClient from "@/helpers/axios-client";
-import { useAuthContext } from "@/contexts/stateContext";
+import { useDataContext } from "@/contexts/AppContext";
 import { Cost } from "@/Types/types";
 import { useTranslation } from "react-i18next";
 
@@ -12,7 +12,7 @@ function AddCostForm() {
   const { t } = useTranslation('costForm'); // Use translation hook
   const [loading, setLoading] = useState(false);
   const [costCategories, setCostCategories] = useState([]);
-  const { add } = useAuthContext();
+  const { add } = useDataContext();
 
   useEffect(() => {
     axiosClient.get(`CostCategories`).then(({ data }) => {

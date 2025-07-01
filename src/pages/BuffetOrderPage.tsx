@@ -156,7 +156,7 @@ const BuffetOrderPage: React.FC = () => {
     } = useBuffetStore.getState();
 
     const orderData = {
-      customer: { name: customer.name, phone: customer.phone },
+      customer: { name: customer.name, phone: customer.phone, address: customer.address },
       delivery_date: deliveryDate,
       delivery_time: deliveryTime,
       notes,

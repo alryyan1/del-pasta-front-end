@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthContext } from '@/contexts/stateContext';
+import { useAuthContext } from '@/contexts/AppContext';
 import axiosClient from '@/helpers/axios-client';
 import { useState } from 'react';
 import { LoadingButton } from '@mui/lab';

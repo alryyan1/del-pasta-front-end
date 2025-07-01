@@ -12,13 +12,13 @@ import {
 import { LoadingButton } from "@mui/lab";
 import AddCostForm from "@/components/forms/cost";
 import axiosClient from "@/helpers/axios-client";
-import { useAuthContext } from "@/contexts/stateContext";
+import { useDataContext } from "@/contexts/AppContext";
 import { Cost } from "@/Types/types";
 import { useTranslation } from "react-i18next";
 
 function CashDenos() {
   const { t } = useTranslation('cost'); // Use the translation hook for dynamic text
-  const { data, setData, deleteItem } = useAuthContext();
+  const { data, setData, deleteItem } = useDataContext();
 
   useEffect(() => {
     document.title = t("cash_denominations"); // Dynamic page title
@@ -41,7 +41,7 @@ function CashDenos() {
             <Typography variant="h6" textAlign={"center"}>
               {t("expenses")} {/* Translated 'المصروفات' */}
             </Typography>
-            <Table size="small" style={{ direction: "rtl" }}>
+            <Table size="small" style={{ direction: "rtl", margin: "auto" }}>
               <TableHead>
                 <TableRow>
                   <TableCell>{t("description")}</TableCell>

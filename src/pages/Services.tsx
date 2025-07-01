@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
-import { useAuthContext } from "@/contexts/stateContext";
+import { useAuthContext } from "@/contexts/AppContext";
 import { Cost, Service } from "@/Types/types";
 import { useBeforeUnload } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -73,7 +73,7 @@ function Services() {
             <Typography variant="h6" textAlign={"center"}>
               الاصناف
             </Typography>
-            <Table size="small" style={{ direction: "rtl" }}>
+            <Table size="small" style={{ direction: "rtl", margin: "auto" }}>
               <TableHead>
                 <TableRow>
                   <TableCell>اسم  </TableCell>

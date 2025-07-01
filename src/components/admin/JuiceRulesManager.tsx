@@ -99,13 +99,13 @@ export const JuiceRulesManager: React.FC<JuiceRulesManagerProps> = ({
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
+                  <TableHead className="text-center">
                     {t("common:pricingTier", "Pricing Tier")}
                   </TableHead>
-                  <TableHead>
+                  <TableHead className="text-center">
                     {t("juiceConfig.juiceDescription", "Juice Description")}
                   </TableHead>
-                  <TableHead className="text-right">
+                  <TableHead className="text-center">
                     {t("common:actions", "Actions")}
                   </TableHead>
                 </TableRow>
@@ -114,14 +114,14 @@ export const JuiceRulesManager: React.FC<JuiceRulesManagerProps> = ({
                 {personOptions && personOptions.length > 0 ? (
                   personOptions.map((opt) => (
                     <TableRow key={opt.id}>
-                      <TableCell className="font-medium">
+                      <TableCell className="font-medium text-center">
                         {opt.label_ar}
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="text-muted-foreground text-center">
                         {opt.juiceRule?.description_ar ||
                           t("common:notSet", "Not set")}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-center">
                         <Button
                           variant="outline"
                           size="sm"

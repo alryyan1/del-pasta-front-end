@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { LogOutIcon } from "lucide-react";
 import { LoadingButton } from "@mui/lab";
 import { Typography } from "@mui/material";
-import { useAuthContext } from "@/contexts/stateContext";
+import { useAuthContext } from "@/contexts/AppContext";
 import axiosClient from "@/helpers/axios-client";
 
 const Header = () => {

@@ -1,0 +1,46 @@
+{
+  "title": "Complete Your Order",
+  "description": "Please provide your details below. Your order will be sent to the restaurant via WhatsApp.",
+  "orderSummary": "Order Summary",
+  "total": "Total",
+  "currency_OMR": "OMR",
+  "form": {
+    "name": "Your Name",
+    "namePlaceholder": "e.g., Ali Al-Habsi",
+    "phone": "Phone Number",
+    "phonePlaceholder": "e.g., 9xxxxxxx",
+    "address": "Address (for delivery)",
+    "addressPlaceholder": "Enter your full address if you require delivery...",
+    "notes": "General Order Notes",
+    "notesPlaceholder": "Any special requests for your whole order?"
+  },
+  "submit": "Send Order to Restaurant",
+  "cancel": "Cancel",
+  "success": {
+    "title": "Order Confirmed!",
+    "description": "Thank you! Your order has been received and is being processed."
+  },
+  "error": {
+    "title": "Submission Failed",
+    "description": "There was a problem sending your order. Please try again.",
+    "invalidOrder": "Invalid order ID",
+    "fetchOrder": "Failed to load order details"
+  },
+  "validation": {
+    "nameRequired": "Name must be at least 2 characters.",
+    "phoneRequired": "A valid phone number is required."
+  },
+  "orderDetails": "Order Details",
+  "orderNumber": "Order #",
+  "customerInfo": "Customer Information",
+  "orderItems": "Order Items",
+  "quantity": "Quantity",
+  "orderStatus": "Order Status",
+  "statusDescription": "The restaurant will contact you shortly to confirm your order.",
+  "whatsappStatus": "WhatsApp Notification",
+  "whatsappSent": "Message Sent Successfully",
+  "whatsappDescription": "Your order has been sent to the restaurant via WhatsApp.",
+  "whatsappPending": "Message Pending",
+  "whatsappPendingDescription": "We're sending your order to the restaurant. Please wait a moment.",
+  "backToMenu": "Back to Menu"
+} 

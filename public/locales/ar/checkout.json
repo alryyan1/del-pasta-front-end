@@ -1,0 +1,46 @@
+{
+  "title": "إكمال طلبك",
+  "description": "يرجى تقديم التفاصيل الخاصة بك أدناه. سيتم إرسال طلبك إلى المطعم عبر واتساب.",
+  "orderSummary": "ملخص الطلب",
+  "total": "المجموع",
+  "currency_OMR": "ريال عماني",
+  "form": {
+    "name": "اسمك",
+    "namePlaceholder": "مثال: علي الحبسي",
+    "phone": "رقم الهاتف",
+    "phonePlaceholder": "مثال: 9xxxxxxx",
+    "address": "العنوان (للتوصيل)",
+    "addressPlaceholder": "أدخل عنوانك الكامل إذا كنت تريد خدمة التوصيل...",
+    "notes": "ملاحظات عامة على الطلب",
+    "notesPlaceholder": "أي طلبات خاصة لطلبك بالكامل؟"
+  },
+  "submit": "إرسال الطلب إلى المطعم",
+  "cancel": "إلغاء",
+  "success": {
+    "title": "تم تأكيد الطلب!",
+    "description": "شكراً لك! تم استلام طلبك وجاري معالجته."
+  },
+  "error": {
+    "title": "فشل الإرسال",
+    "description": "حدثت مشكلة في إرسال طلبك. يرجى المحاولة مرة أخرى.",
+    "invalidOrder": "رقم طلب غير صحيح",
+    "fetchOrder": "فشل في تحميل تفاصيل الطلب"
+  },
+  "validation": {
+    "nameRequired": "يجب أن يتكون الاسم من حرفين على الأقل.",
+    "phoneRequired": "مطلوب رقم هاتف صحيح."
+  },
+  "orderDetails": "تفاصيل الطلب",
+  "orderNumber": "رقم الطلب #",
+  "customerInfo": "معلومات العميل",
+  "orderItems": "عناصر الطلب",
+  "quantity": "الكمية",
+  "orderStatus": "حالة الطلب",
+  "statusDescription": "سيتصل بك المطعم قريباً لتأكيد طلبك.",
+  "whatsappStatus": "إشعار واتساب",
+  "whatsappSent": "تم إرسال الرسالة بنجاح",
+  "whatsappDescription": "تم إرسال طلبك إلى المطعم عبر واتساب.",
+  "whatsappPending": "الرسالة قيد الإرسال",
+  "whatsappPendingDescription": "نحن نرسل طلبك إلى المطعم. يرجى الانتظار قليلاً.",
+  "backToMenu": "العودة إلى القائمة"
+} 

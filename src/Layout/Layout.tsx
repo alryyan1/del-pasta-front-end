@@ -22,6 +22,7 @@ import {
   List,
   Scale,
   Users,
+  MessageCircle,
 } from "lucide-react";
 import del from "./../assets/logo.png";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
@@ -185,7 +186,11 @@ export default function DashboardLayoutBasic() {
       title: t("Buffet Order"), // Use translation key for "Buffet Order"
       icon: <AddShoppingCartIcon />,
     },
-    
+    {
+      segment: "online-order",
+      title: t("Online Order"), // Use translation key for "Online Order"
+      icon: <AddShoppingCartIcon />,
+    },
 
     {
       segment: "stats",
@@ -255,6 +260,13 @@ export default function DashboardLayoutBasic() {
           title: t("Other"), // Use translation key for "Other"
           icon: <Users />,
         },
+        {
+          segment: "whatsapp-test",
+          title: t("WhatsApp Test"), // Use translation key for "WhatsApp Test"
+          icon: <MessageCircle />,
+        },
+
+
       ],
     },
   ];

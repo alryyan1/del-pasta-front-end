@@ -1,4 +1,9 @@
-import { createHashRouter, Navigate, Outlet, RouteObject } from "react-router-dom";
+import {
+  createHashRouter,
+  Navigate,
+  Outlet,
+  RouteObject,
+} from "react-router-dom";
 
 // Layouts
 import GuestLayout from "./components/GuestLayout";
@@ -28,12 +33,16 @@ import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import BuffetPackagesPage from "./pages/config/BuffetPackagesPage";
 import ManagePackageDetailsPage from "./pages/config/ManagePackageDetailsPage";
+import WhatsAppTestPage from "./pages/WhatsAppTestPage";
 
 // Helper components
 import ProtectedRoute from "./pages/Protected";
 import FoodMenu from "./pages/Reservation/FoodMenu";
 import BuffetOrdersListPage from "./pages/BuffetOrdersListPage";
 import BuffetOrderSuccessPage from "./pages/BuffetOrderSuccessPage";
+import { Suspense } from "react";
+import OnlineOrderPage from "./pages/OnlineOrderPage";
+import OnlineOrderSuccessPage from "./pages/OnlineOrderSuccessPage";
 
 // --- Route Definitions ---
 
@@ -50,11 +59,7 @@ const guestRoutes: RouteObject = {
       path: "/signup", // If you have a signup page
       element: <Signup />,
     },
-    {
-      path: "/menu", // General food menu
-      element: <FoodMenu />,
-    },
-  
+
     {
       path: "/buffet-order/success/:orderId", // Notice the :orderId parameter
       element: <BuffetOrderSuccessPage />,
@@ -84,6 +89,7 @@ const authorizedRoutes: RouteObject = {
       path: "/dashboard",
       element: <Dashboard />,
     },
+
     {
       path: "/makeOrder",
       element: <NewOrder />,
@@ -98,7 +104,7 @@ const authorizedRoutes: RouteObject = {
       path: "/buffet-orders-management", // <-- Add new route
       element: <BuffetOrdersListPage />,
     },
-  
+
     {
       path: "/buffet-order-success", // Buffet ordering page
       element: <BuffetOrderSuccessPage />,
@@ -118,42 +124,51 @@ const authorizedRoutes: RouteObject = {
     // Configuration Section
     {
       path: "/config",
-      element: <ProtectedRoute><Outlet /></ProtectedRoute>, // Protect the config section
+      element: (
+        <ProtectedRoute>
+          <Outlet />
+        </ProtectedRoute>
+      ), // Protect the config section
       children: [
         {
-            path: "meals",
-            element: <Meals />,
+          path: "meals",
+          element: <Meals />,
         },
         {
-            path: "MealCategories",
-            element: <MealCategoryForm />,
+          path: "MealCategories",
+          element: <MealCategoryForm />,
         },
         {
-            path: "customers",
-            element: <Customers />,
+          path: "customers",
+          element: <Customers />,
         },
         {
-            path: "users",
-            element: <Users />,
+          path: "users",
+          element: <Users />,
         },
         {
-            path: "services",
-            element: <Services />,
+          path: "services",
+          element: <Services />,
         },
         {
-            path: "settings",
-            element: <Settings />,
+          path: "settings",
+          element: <Settings />,
         },
         // Buffet Admin Routes
         {
           path: "buffet-packages",
-          element: <BuffetPackagesPage />
+          element: <BuffetPackagesPage />,
         },
         {
           path: "buffet-packages/:packageId/manage",
-          element: <ManagePackageDetailsPage />
-        }
-      ]
+          element: <ManagePackageDetailsPage />,
+        },
+        // WhatsApp Test Route
+        {
+          path: "whatsapp-test",
+          element: <WhatsAppTestPage />,
+        },
+      ],
     },
     // Redirect root authenticated path to dashboard
     {
@@ -165,25 +180,46 @@ const authorizedRoutes: RouteObject = {
 
 // STANDALONE ROUTES (No main layout)
 const standaloneRoutes: RouteObject[] = [
-    {
+  {
+    path: "/",
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <Outlet />
+      </Suspense>
+    ),
+    children: [
+      {
         path: "/arrive/:id",
         element: <Arrive />,
-    },
-    {
-      path: "/buffet-order", // Buffet ordering page
-      element: <BuffetOrderPage />,
-    },
-    {
+      },
+      {
+        path: "/food-menu",
+        element: <FoodMenu />,
+      },
+      {
+        path: "/buffet-order", // Buffet ordering page
+        element: <BuffetOrderPage />,
+      },
+      {
         path: "/forbidden",
         element: <Foribidden />,
-    },
+      }, 
+      {
+        path: "/online-order",
+        element: <OnlineOrderPage />,
+      },
+      {
+        path: "/online-order/success/:orderId",
+        element: <OnlineOrderSuccessPage />,
+      },
+    ],
+  },
 ];
 
-
 export const router = createHashRouter([
-    guestRoutes,
-    authorizedRoutes,
-    ...standaloneRoutes,
-    // A general "not found" catch-all could be added here if needed,
-    // but the nested structures handle most cases.
+  guestRoutes,
+  authorizedRoutes,
+  ...standaloneRoutes,
+  // A general "not found" catch-all could be added here if needed,
+  // but the nested structures handle most cases.
 ]);

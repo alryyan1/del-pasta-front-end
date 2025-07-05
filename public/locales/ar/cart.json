@@ -5,6 +5,20 @@
     "paid": "المدفوع",
     "delivery_fee": "رسوم التوصيل",
     "currency_OMR": "ريال عماني",
-    "confirm_order": "تاكيد"
+    "confirm_order": "تاكيد",
+    "title": "طلبك",
+    "clearCart": "مسح الكل",
+    "emptyMessage": "سلة التسوق فارغة.",
+    "emptyHint": "أضف عناصر من القائمة للبدء.",
+    "itemNotesPlaceholder": "أضف ملاحظات لهذا العنصر...",
+    "subtotal": "المجموع الفرعي",
+    "items": "عناصر",
+    "total": "المجموع",
+    "checkout": "المتابعة إلى الدفع",
+    "quantity": {
+      "increase": "زيادة الكمية",
+      "decrease": "تقليل الكمية",
+      "remove": "إزالة العنصر"
+    }
   }
   

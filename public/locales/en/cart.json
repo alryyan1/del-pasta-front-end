@@ -5,6 +5,20 @@
     "paid": "Paid",
     "delivery_fee": "Delivery Fee",
     "currency_OMR": "OMR",
-    "confirm_order": "Confirm Order"
+    "confirm_order": "Confirm Order",
+    "title": "Your Order",
+    "clearCart": "Clear All",
+    "emptyMessage": "Your cart is empty.",
+    "emptyHint": "Add items from the menu to get started.",
+    "itemNotesPlaceholder": "Add notes for this item...",
+    "subtotal": "Subtotal",
+    "items": "items",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "quantity": {
+      "increase": "Increase quantity",
+      "decrease": "Decrease quantity",
+      "remove": "Remove item"
+    }
   }
   

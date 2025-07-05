@@ -1,0 +1,39 @@
+{
+  "title": "WhatsApp API Test",
+  "description": "Test WhatsApp API connectivity and message sending functionality",
+  "form": {
+    "title": "Send Test Message",
+    "description": "Enter phone number and message to test the WhatsApp API",
+    "phone": "Phone Number",
+    "phoneHint": "Enter Omani phone number without country code",
+    "message": "Message",
+    "messagePlaceholder": "Enter your test message...",
+    "send": "Send Test Message",
+    "sending": "Sending..."
+  },
+  "response": {
+    "title": "API Response",
+    "loading": "Sending message...",
+    "error": "Error",
+    "success": "Success",
+    "successMessage": "Message sent successfully!",
+    "viewFull": "View Full Response",
+    "empty": "No response yet. Send a test message to see the API response."
+  },
+  "history": {
+    "title": "Test History",
+    "description": "Recent WhatsApp API test results",
+    "success": "Success",
+    "failed": "Failed",
+    "error": "Error"
+  },
+  "validation": {
+    "required": "Phone number and message are required"
+  },
+  "success": {
+    "sent": "Message sent successfully!"
+  },
+  "error": {
+    "failed": "Failed to send message"
+  }
+} 

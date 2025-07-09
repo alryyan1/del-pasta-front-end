@@ -30,21 +30,10 @@ i18n
     lng: "ar", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
     // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
     // if you're using a language detector, do not define the lng option
-    debug: process.env.NODE_ENV === 'development', // Only log in development
+    debug: false, // Disabled debug logging
 
-    // Show missing translation keys in console
-    saveMissing: process.env.NODE_ENV === 'development',
-    missingKeyHandler: (lng, ns, key, fallbackValue) => {
-      if (process.env.NODE_ENV === 'development') {
-        console.group(`🔍 Missing Translation`);
-        console.warn(`Language: ${lng}`);
-        console.warn(`Namespace: ${ns}`);
-        console.warn(`Key: ${key}`);
-        console.warn(`Fallback Value: ${fallbackValue}`);
-        console.warn(`Full Key Path: ${ns}:${key}`);
-        console.groupEnd();
-      }
-    },
+    // Disabled missing translation logging
+    saveMissing: false,
 
     interpolation: {
       escapeValue: false // react already safes from xss
@@ -60,13 +49,6 @@ i18n
     returnDetailsOnMissingTranslation: true
   });
 
-// Helper function to test missing translations (development only)
-if (process.env.NODE_ENV === 'development') {
-  // Add to window for easy testing in browser console
-  (window as any).testMissingTranslation = (key: string, namespace = 'translation') => {
-    console.log(`Testing missing key: ${namespace}:${key}`);
-    return i18n.t(`${namespace}:${key}`);
-  };
-}
+
 
 export default i18n;

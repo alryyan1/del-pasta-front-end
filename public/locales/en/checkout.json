@@ -3,6 +3,7 @@
   "description": "Please provide your details below. Your order will be sent to the restaurant via WhatsApp.",
   "orderSummary": "Order Summary",
   "total": "Total",
+  "submitAndConfirm": "Submit and Confirm",
   "currency_OMR": "OMR",
   "form": {
     "name": "Your Name",

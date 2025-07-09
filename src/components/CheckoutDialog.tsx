@@ -76,13 +76,14 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ open, onOpenChan
     try {
         const response = await axiosClient.post('/online-orders', orderPayload);
         const newOrder = response.data.order;
-        toast.success(t('success.title'));
+        toast.success(t('sent.title'));
         clearCart();
         onOpenChange(false);
         form.reset();
-        navigate(`/order-success/${newOrder.id}`);
+        navigate(`/online-order/success/${newOrder.id}`);
     } catch (error) {
-        toast.error(t('error.title'));
+        console.error('Checkout error:', error);
+        toast.error(t('sent.title'));
     } finally {
         setIsSubmitting(false);
     }
@@ -142,12 +143,24 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ open, onOpenChan
 
                 <div className="space-y-2">
                     <Label htmlFor="name">{t('form.name')}</Label>
-                    <Input id="name" {...form.register('name')} />
+                    <Controller
+                        name="name"
+                        control={form.control}
+                        render={({ field }) => (
+                            <Input id="name" {...field} />
+                        )}
+                    />
                     {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="phone">{t('form.phone')}</Label>
-                    <Input id="phone" type="tel" {...form.register('phone')} />
+                    <Controller
+                        name="phone"
+                        control={form.control}
+                        render={({ field }) => (
+                            <Input id="phone" type="tel" {...field} />
+                        )}
+                    />
                     {form.formState.errors.phone && <p className="text-sm text-destructive">{form.formState.errors.phone.message}</p>}
                 </div>
 
@@ -156,17 +169,35 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ open, onOpenChan
                     <div className="space-y-4 p-4 border rounded-md bg-slate-50">
                         <div className="space-y-2">
                             <Label htmlFor="state">{t('form.state', 'الولاية')}</Label>
-                            <Input id="state" {...form.register('state')} />
+                            <Controller
+                                name="state"
+                                control={form.control}
+                                render={({ field }) => (
+                                    <Input id="state" {...field} />
+                                )}
+                            />
                             {form.formState.errors.state && <p className="text-sm text-destructive">{form.formState.errors.state.message}</p>}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="area">{t('form.area', 'المنطقة')}</Label>
-                            <Input id="area" {...form.register('area')} />
+                            <Controller
+                                name="area"
+                                control={form.control}
+                                render={({ field }) => (
+                                    <Input id="area" {...field} />
+                                )}
+                            />
                             {form.formState.errors.area && <p className="text-sm text-destructive">{form.formState.errors.area.message}</p>}
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="address">{t('form.address', 'Full Address')}</Label>
-                            <Textarea id="address" {...form.register('address')} placeholder={t('form.addressPlaceholder')} />
+                            <Controller
+                                name="address"
+                                control={form.control}
+                                render={({ field }) => (
+                                    <Textarea id="address" {...field} placeholder={t('form.addressPlaceholder')} />
+                                )}
+                            />
                         </div>
                     </div>
                 )}
@@ -177,7 +208,7 @@ export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ open, onOpenChan
             <DialogClose asChild>
                 <Button type="button" variant="outline" disabled={isSubmitting}>{t('common:cancel')}</Button>
             </DialogClose>
-            <Button type="submit" form="checkout-form" disabled={isSubmitting || items.length === 0} className="bg-brand-pink-DEFAULT hover:bg-brand-pink-dark ">
+            <Button type="submit" form="checkout-form" disabled={isSubmitting || items.length === 0} className=" ">
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {t('submitAndConfirm')}
             </Button>

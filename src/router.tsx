@@ -43,6 +43,7 @@ import BuffetOrderSuccessPage from "./pages/BuffetOrderSuccessPage";
 import { Suspense } from "react";
 import OnlineOrderPage from "./pages/OnlineOrderPage";
 import OnlineOrderSuccessPage from "./pages/OnlineOrderSuccessPage";
+import OnlineOrdersListPage from "./pages/OnlineOrdersListPage";
 
 // --- Route Definitions ---
 
@@ -94,7 +95,10 @@ const authorizedRoutes: RouteObject = {
       path: "/makeOrder",
       element: <NewOrder />,
     },
-
+    {
+      path: "/online-orders-management", // New route for the admin page
+      element: <OnlineOrdersListPage />
+    },
     {
       path: "/orders",
       element: <Orders />,

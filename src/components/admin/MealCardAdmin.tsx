@@ -1,15 +1,13 @@
-// src/components/admin/MealCardAdmin.tsx
 import React from 'react';
 import { Meal } from '@/Types/types';
 import { webUrl } from '@/helpers/constants';
 import ph from '@/assets/images/ph.jpg';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { MoreVertical, Pencil, Settings, Trash2 } from 'lucide-react';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface MealCardAdminProps {
   meal: Meal;
@@ -33,14 +31,14 @@ export const MealCardAdmin: React.FC<MealCardAdminProps> = ({ meal, onEdit, onMa
 
       <div className="flex-grow space-y-1">
         <p className="font-semibold text-sm">{meal.name}</p>
-        <p className="text-xs text-muted-foreground">{meal.category?.name || 'No Category'}</p>
-        <p className="text-sm font-bold text-brand-pink-DEFAULT">{Number(meal.price).toFixed(3)} OMR</p>
+        <p className="text-xs text-muted-foreground">Category {meal.category_id}</p>
+        <p className="text-sm font-bold" style={{ color: '#FF1493' }}>{Number(meal.price).toFixed(3)} OMR</p>
       </div>
       
       <div className="flex-shrink-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
               <MoreVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -53,7 +51,7 @@ export const MealCardAdmin: React.FC<MealCardAdminProps> = ({ meal, onEdit, onMa
               <Settings className="mr-2 h-4 w-4" />
               <span>Manage Sub-Items</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onDelete(meal)} className="text-red-500">
+            <DropdownMenuItem onClick={() => onDelete(meal)} className="text-destructive">
               <Trash2 className="mr-2 h-4 w-4" />
               <span>Delete</span>
             </DropdownMenuItem>

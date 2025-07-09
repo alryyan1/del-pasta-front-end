@@ -1,188 +1,143 @@
-import React, { useEffect, useState } from 'react';
+// src/components/MealsTable.tsx
+import React from "react";
+import { useMediaQuery } from "@mui/material";
+import { Meal } from "@/Types/types";
+import { webUrl } from "@/helpers/constants";
+import ph from "@/assets/images/ph.jpg";
+
+// Shadcn UI & Icons
 import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Typography,
-  Button,
-  TextField,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
-import axiosClient from '@/helpers/axios-client';
-import { useAuthContext } from '@/contexts/AppContext';
-import { Meal } from '@/Types/types';
-import MealChildrenDialog from './MealChildrenDialog';
-import placeHolder from './../assets/images/ph.jpg';
-import TdCell from '@/helpers/TdCell';
-import { useMealsStore } from '@/stores/MealsStore';
-import { useTranslation } from 'react-i18next';
-import { webUrl } from '@/helpers/constants';
-import { Plus, Upload } from 'lucide-react';
-import { Stack, textAlign, width } from '@mui/system';
-import ImageGallery from '../pages/gallary';
-import AddItemDialog from './AddItemDialog';
-import ph from './../assets/images/ph.jpg'
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Edit, Settings, Trash2, Upload } from "lucide-react";
 
-const MealTable: React.FC = ({selectedCategory}) => {
-  const { t } = useTranslation('meals'); // i18n hook for translations
-  const [search, setSearch] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [src, setSrc] = useState<string | null>(null);
-  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
-  const [open, setOpen] = useState(false);
-  const [openAddItemDialog, setOpenAddItemDialog] = useState(false);
-  const [showGallary, setShowGallary] = useState(false);
-  const { addMeal, fetchMeals, deleteMeal, meals } = useMealsStore();
+// Local Components
+import { MealCardAdmin } from "./admin/MealCardAdmin";
+import TdCell from "@/helpers/TdCell";
 
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const handleCloseItemDialog =  ()=>{
-    setOpenAddItemDialog(false);
-    // setSelectedMeal(null);
+interface MealsTableProps {
+  meals: Meal[];
+  onEdit: (meal: Meal) => void;
+  onManageSubItems: (meal: Meal) => void;
+  onDelete: (meal: Meal) => void;
+  onImageSelect: (meal: Meal) => void;
+}
 
+export const MealsTable: React.FC<MealsTableProps> = ({
+  meals,
+  onEdit,
+  onManageSubItems,
+  onDelete,
+  onImageSelect,
+}) => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  if (isMobile) {
+    return (
+      <div className="space-y-3">
+        {meals.map((meal) => (
+          <MealCardAdmin
+            key={meal.id}
+            meal={meal}
+            onEdit={onEdit}
+            onManageSubItems={onManageSubItems}
+            onDelete={onDelete}
+          />
+        ))}
+      </div>
+    );
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, meal: Meal) => {
-    if (e.target.files) {
-      encodeImageFileAsURL(e.target.files[0], meal);
-      const url = URL.createObjectURL(e.target.files[0]);
-      setSrc(url);
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const encodeImageFileAsURL = (file: File, meal: Meal) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      saveToDb(reader.result as string, meal);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const saveToDb = (data: string, meal: Meal) => {
-    axiosClient.post(`saveImage/${meal.id}`, { image: data }).then(() => fetchMeals());
-  };
-
-  useEffect(() => {
-    fetchMeals();
-  }, [selectedMeal]);
-
-  const filteredMeals = meals.filter((m) => {
-    return search ? m.name.toLowerCase().includes(search.toLowerCase()) : true;
-  });
-
-
-  return (<>
-    {showGallary ? <ImageGallery fetchMeals={fetchMeals} setShowImageGallary={setShowGallary} selectedMeal={selectedMeal}/> :<TableContainer sx={{ mt: 1, mx: 'auto' }} dir="rtl">
-      <TextField
-        onChange={(e) => setSearch(e.target.value)}
-        size="small"
-        placeholder={t('searchPlaceholder')}
-      />
-       <Tooltip title='Add  New'><IconButton onClick={()=>{
-        setOpenAddItemDialog(true)
-       }} color='primary'><Plus/></IconButton></Tooltip> 
-
-      <Typography variant="h5" textAlign="center">
-        {t('basicServices')} <span className='text-gray-500'> ({selectedCategory?.name})</span>
-      </Typography>
-      <Table size="small" className="text-sm border border-gray-300">
-        <TableHead className="bg-gray-100">
+  return (
+    <div className="border rounded-lg">
+      <Table>
+        <TableHeader>
           <TableRow>
-            <TableCell>{t('code')}</TableCell>
-            <TableCell>{t('name')}</TableCell>
-            <TableCell>{t('price')}</TableCell>
-            <TableCell>{t('category')}</TableCell>
-            <TableCell>{t('image')}</TableCell>
-            <TableCell>{t('uploadImage')}</TableCell>
-            <TableCell>{t('subServices')}</TableCell>
-            <TableCell>{t('delete')}</TableCell>
+            <TableHead className="w-[80px]">Image</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Price (OMR)</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
-        </TableHead>
+        </TableHeader>
         <TableBody>
-          {filteredMeals.filter((m)=>{
-            if (selectedCategory) {
-              return m.category_id == selectedCategory.id
-            }else{
-              return true
-            }
-          }).map((meal: Meal) => (
-            <TableRow
-              key={meal.id}
-              sx={{
-                background: meal.id === selectedMeal?.id ? '#f1f1f1' : 'white',
-              }}
-              className="hover:bg-gray-50"
-            >
-              <TableCell>{meal.id}</TableCell>
-              <TdCell table="meals" colName="name" item={meal}>
-                {meal.name}
-              </TdCell>
-              <TdCell sx={{width:'50px',textAlign:'center'}} table="meals" colName="price" item={meal}>
-                {meal.price}
-              </TdCell>
-              <TableCell>{meal?.category?.name}</TableCell>
+          {meals.map((meal) => (
+            <TableRow key={meal.id}>
               <TableCell>
-                <img
-                  src={meal.image_url  == null ? ph: `${webUrl}/images/${meal.image_url}`}
-                  alt={meal.name}
-                  style={{ width: '100px' }}
-                />
+                <Avatar>
+                  <AvatarImage
+                    src={
+                      meal.image_url ? `${webUrl}/images/${meal.image_url}` : ph
+                    }
+                    alt={meal.name}
+                  />
+                  <AvatarFallback>{meal.name.substring(0, 2)}</AvatarFallback>
+                </Avatar>
               </TableCell>
-              <TableCell>
-                <Stack direction={'row'}>
-      <input
-                  type="file"
-                  onChange={(e) => handleFileChange(e, meal)}
-                />
-                <Tooltip title='choose from gallary'><IconButton onClick={()=>{
-                  setSelectedMeal(meal)
-                  setShowGallary(true)
-                }}><Upload/></IconButton></Tooltip>
-                </Stack>
-          
+              <TableCell className="font-medium">
+                <TdCell
+                  table="meals"
+                  colName="name"
+                  item={meal}
+                  update={null}
+                >
+                  {meal.name}
+                </TdCell>
               </TableCell>
+              <TableCell>Category {meal.category_id}</TableCell>
               <TableCell>
+                <TdCell
+                  isNum
+                  table="meals"
+                  colName="price"
+                  item={meal}
+                  update={null}
+                >
+                  {meal.price}
+                </TdCell>
+              </TableCell>
+              <TableCell className="text-right space-x-1">
                 <Button
-                  onClick={() => {
-                    handleClickOpen();
-                    setSelectedMeal(meal);
-                  }}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onImageSelect(meal)}
                 >
-                  {t('services')}
+                  <Upload className="mr-2 h-4 w-4" /> Image
                 </Button>
-              </TableCell>
-              <TableCell>
-                <button
-                  onClick={() => {
-                    axiosClient.delete(`meals/${meal.id}`).then(() => {
-                      fetchMeals();
-                    });
-                  }}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onManageSubItems(meal)}
                 >
-                  {t('delete')}
-                </button>
+                  <Settings className="mr-2 h-4 w-4" /> Sub-Items
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(meal)}
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onDelete(meal)}
+                  className="text-destructive hover:text-destructive/80"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <AddItemDialog open={openAddItemDialog}  handleClose={handleCloseItemDialog}/>
-      <MealChildrenDialog
-        setSelectedMeal={setSelectedMeal}
-        selectedMeal={selectedMeal}
-        open={open}
-        handleClickOpen={handleClickOpen}
-        handleClose={handleClose}
-      />
-    </TableContainer>}
-  </>
-  
+    </div>
   );
 };
-
-export default MealTable;

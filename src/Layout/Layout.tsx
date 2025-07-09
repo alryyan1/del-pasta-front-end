@@ -191,6 +191,11 @@ export default function DashboardLayoutBasic() {
       title: t("Online Order"), // Use translation key for "Online Order"
       icon: <AddShoppingCartIcon />,
     },
+    {
+      segment: "online-orders-management",
+      title: t("Online Orders Management"), // Use translation key for "Online Orders Management"
+      icon: <List />,
+    },
 
     {
       segment: "stats",

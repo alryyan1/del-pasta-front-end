@@ -1,168 +1,177 @@
 import React, { useEffect, useState } from 'react';
-import { Upload, X, Image as ImageIcon, Plus } from 'lucide-react';
+import { Plus, Loader2, AlertCircle } from 'lucide-react';
 import { Meal } from '@/Types/types';
 import axiosClient from '@/helpers/axios-client';
 import { webUrl } from '@/helpers/constants';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { toast } from 'sonner';
 
-interface GalleryImage {
-  id: number;
-  url: string;
-  title: string;
+interface ImageGalleryProps {
+  selectedMeal: Meal | null;
+  setShowImageGallary: (show: boolean) => void;
+  fetchMeals: () => void;
 }
 
-const defaultImages: GalleryImage[] = [
-  {
-    id: 1,
-    url: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba',
-    title: 'Mountain Landscape'
-  },
-  {
-    id: 2,
-    url: 'https://images.unsplash.com/photo-1682687221038-404670f09439',
-    title: 'Ocean Sunset'
-  },
-  {
-    id: 3,
-    url: 'https://images.unsplash.com/photo-1682687220063-4742bd7fd538',
-    title: 'City Streets'
-  }
-];
+export default function ImageGallery({ selectedMeal, setShowImageGallary, fetchMeals }: ImageGalleryProps) {
+  const [images, setImages] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedImageLoading, setSelectedImageLoading] = useState<string | null>(null);
 
-export default function ImageGallery({selectedMeal,setShowImageGallary,fetchMeals}) {
-  const [selectedImages, setSelectedImages] = useState<GalleryImage[]>(defaultImages);
-  const [isDragging, setIsDragging] = useState(false);
-  const [meals,setMeals] =useState<Meal[]>([])
-  useEffect(()=>{
-    axiosClient.get('fileNames').then(({data})=>setMeals(data))
-  },[])
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+  useEffect(() => {
+    loadImages();
+  }, []);
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    handleFiles(files);
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      handleFiles(files);
+  const loadImages = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const { data } = await axiosClient.get<string[]>('fileNames');
+      setImages(data);
+    } catch (err) {
+      console.error('Error loading images:', err);
+      setError('Failed to load images');
+      toast.error('Failed to load images');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleFiles = (files: File[]) => {
-    files.forEach(file => {
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            const newImage: GalleryImage = {
-              id: Date.now(),
-              url: e.target.result as string,
-              title: file.name
-            };
-            setSelectedImages(prev => [...prev, newImage]);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
+  const handleImageSelect = async (imageName: string) => {
+    if (!selectedMeal) {
+      toast.error('No meal selected');
+      return;
+    }
+
+    try {
+      setSelectedImageLoading(imageName);
+      await axiosClient.patch(`meals/${selectedMeal.id}`, {
+        image_url: imageName
+      });
+      
+      toast.success('Image updated successfully');
+      setShowImageGallary(false);
+      fetchMeals();
+    } catch (err) {
+      console.error('Error updating meal image:', err);
+      toast.error('Failed to update image');
+    } finally {
+      setSelectedImageLoading(null);
+    }
   };
 
-  const removeImage = (id: number) => {
-    setSelectedImages(prev => prev.filter(img => img.id !== id));
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      // Handle file upload logic here if needed
+      console.log('Files selected:', files);
+      toast.info('File upload functionality not implemented yet');
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+        <span className="ml-2 text-gray-500">Loading images...</span>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 text-center">
+        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
+        <p className="text-red-600 mb-4">{error}</p>
+        <Button onClick={loadImages} variant="outline">
+          Try Again
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      {/* <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Media Library</h2>
-        <div 
-          className={`border-2 border-dashed rounded-lg p-8 text-center ${
-            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <div className="flex flex-col items-center">
-            <Upload className="w-12 h-12 text-gray-400 mb-4" />
-            <p className="text-xl font-medium text-gray-700 mb-2">
-              Drop files to upload
-            </p>
-            <p className="text-sm text-gray-500 mb-4">
-              or
-            </p>
-            <label className="cursor-pointer">
-              <span className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors">
-                Select Files
-              </span>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">Select Image</h2>
+        <p className="text-gray-600">
+          Choose an image for <span className="font-semibold">{selectedMeal?.name}</span>
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {images.map((imageName) => (
+          <Card
+            key={imageName}
+            className="group relative aspect-square cursor-pointer overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-colors"
+            onClick={() => handleImageSelect(imageName)}
+          >
+            <CardContent className="p-0 h-full">
+              <div className="relative h-full">
+                <img
+                  src={`${webUrl}/images/${imageName}`}
+                  alt={imageName}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.innerHTML = `
+                        <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                          <div class="text-center">
+                            <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="text-xs text-gray-500">Failed to load</p>
+                          </div>
+                        </div>
+                      `;
+                    }
+                  }}
+                />
+                
+                {/* Loading overlay */}
+                {selectedImageLoading === imageName && (
+                  <div className="absolute inset-0 bg-opacity-50 flex items-center justify-center">
+                    <Loader2 className="w-6 h-6 animate-spin text-white" />
+                  </div>
+                )}
+                
+                {/* Hover overlay */}
+                <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="bg-white rounded-full p-2">
+                      <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+        
+        {/* Add new image button */}
+        <Card className="aspect-square cursor-pointer border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors">
+          <CardContent className="p-0 h-full">
+            <label className="cursor-pointer h-full flex items-center justify-center">
+              <div className="flex flex-col items-center">
+                <Plus className="w-8 h-8 text-gray-400" />
+                <span className="text-sm text-gray-500 mt-2">Add Image</span>
+              </div>
               <input
                 type="file"
                 className="hidden"
                 multiple
                 accept="image/*"
-                onChange={handleFileInput}
+                onChange={handleFileUpload}
               />
             </label>
-          </div>
-        </div>
-      </div> */}
-
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {meals.map((image) => (
-          <div
-            onClick={()=>{
-                axiosClient.patch(`meals/${selectedMeal.id}`,{
-                    image_url:image
-                }).then(({data})=>{
-                    setShowImageGallary(false)
-                    fetchMeals()
-                })
-            }}
-            key={image}
-            className="group relative aspect-square rounded-lg cursor-pointer overflow-hidden border border-gray-200"
-          >
-            <img
-              src={`${webUrl}/images/${image}`}
-              alt={image.name}
-              className="w-full h-full object-cover "
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300">
-              {/* <button
-                onClick={() => removeImage(image.id)}
-                className="absolute top-2 right-2 p-1 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              >
-                <X className="w-4 h-4 text-gray-600" />
-              </button> */}
-            </div>
-          </div>
-        ))}
-        <label className="cursor-pointer">
-          <div className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center hover:border-gray-400 transition-colors">
-            <div className="flex flex-col items-center">
-              <Plus className="w-8 h-8 text-gray-400" />
-              <span className="text-sm text-gray-500 mt-2">Add Media</span>
-            </div>
-            <input
-              type="file"
-              className="hidden"
-              multiple
-              accept="image/*"
-              onChange={handleFileInput}
-            />
-          </div>
-        </label>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

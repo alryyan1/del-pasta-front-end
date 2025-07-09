@@ -1,0 +1,43 @@
+{
+  "title": "Online Food Orders",
+  "description": "View and manage all orders submitted from the website.",
+  "searchPlaceholder": "Search by order #, name, or phone...",
+  "noOrdersFound": "No online orders found.",
+  "orderDetails": "Order Details",
+  "customerDetails": "Customer Details",
+  "orderItems": "Order Items",
+  "orderStatus": "Order Status",
+  "deliveryFee": "Delivery Fee (OMR)",
+  "subtotal": "Subtotal",
+  "totalPayable": "Total Payable",
+  "saveChanges": "Save Changes",
+  "cancel": "Cancel",
+  "orderUpdatedSuccess": "Order updated successfully!",
+  "orderUpdateFailed": "Failed to update order.",
+  "orderDataNotAvailable": "Order data is not available. Please try again.",
+  "receivedOn": "Received on",
+  "name": "Name",
+  "phone": "Phone",
+  "address": "Address",
+  "changeStatus": "Change status...",
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed", 
+    "preparing": "Preparing",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled"
+  },
+  "table": {
+    "orderNumber": "Order #",
+    "customer": "Customer",
+    "phone": "Phone",
+    "date": "Date",
+    "address": "Address",
+    "status": "Status",
+    "total": "Total"
+  },
+  "error": {
+    "fetchFailed": "Failed to fetch online orders.",
+    "fetchSingleFailed": "Could not load order details."
+  }
+} 

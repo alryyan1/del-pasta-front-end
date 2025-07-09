@@ -1,246 +1,187 @@
-// src/components/CheckoutDialog.tsx
-import React, { useState } from "react";
-import { useCartStore } from "@/stores/useCartStore";
-import { useTranslation } from "react-i18next";
-import { useForm, Controller } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import axiosClient from "@/helpers/axios-client";
-import { toast } from "sonner";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCartStore } from '@/stores/useCartStore';
+import { useTranslation } from 'react-i18next';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import axiosClient from '@/helpers/axios-client';
+import { toast } from 'sonner';
 
 // Shadcn UI & Icons
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, ShoppingCart } from "lucide-react";
-import { Separator } from "./ui/separator";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Loader2, ShoppingCart } from 'lucide-react';
+import { Separator } from './ui/separator';
+
+// Zod schema with conditional validation
+const checkoutSchema = z.object({
+  name: z.string().min(2, { message: "Name is required." }),
+  phone: z.string().min(8, { message: "A valid phone number is required." }),
+  order_type: z.enum(['pickup', 'delivery'], { required_error: "Please select an order type." }),
+  address: z.string().optional(),
+  state: z.string().optional(),
+  area: z.string().optional(),
+}).refine(data => {
+    // If order type is delivery, state and area must not be empty
+    if (data.order_type === 'delivery') {
+        return !!data.state && !!data.area;
+    }
+    return true;
+}, {
+    message: "State and Area are required for delivery.",
+    path: ["state"], // Show error on the 'state' field
+});
+
+type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 interface CheckoutDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
-  open,
-  onOpenChange,
-}) => {
-  const { t } = useTranslation(["checkout", "menu"]);
+export const CheckoutDialog: React.FC<CheckoutDialogProps> = ({ open, onOpenChange }) => {
+  const navigate = useNavigate();
+  const { t } = useTranslation(['checkout', 'menu']);
   const { items, totalPrice, clearCart } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate();
-
-  // Zod schema for the checkout form validation
-  const checkoutSchema = z.object({
-    name: z.string().min(2, { message: t("validation.nameRequired", "Name must be at least 2 characters.") }),
-    phone: z.string().min(8, { message: t("validation.phoneRequired", "A valid phone number is required.") }),
-    address: z.string().optional(),
-    notes: z.string().optional(),
-  });
-
-  type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      name: "",
-      phone: "",
-      address: "",
-      notes: "",
+      name: '', phone: '', address: '',
+      order_type: 'pickup', // Default to pickup
+      state: '', area: ''
     },
   });
 
+  const orderType = form.watch('order_type');
+
   const onSubmit = async (data: CheckoutFormValues) => {
     setIsSubmitting(true);
-
+    
     const orderPayload = {
-      customer: {
-        name: data.name,
-        phone: data.phone,
-        address: data.address,
-      },
-      notes: data.notes,
-      items: items.map((item) => ({
-        id: item.id,
-        quantity: item.quantity,
-        price: item.price,
-        notes: item.itemNotes || "",
-      })),
+      customer: { name: data.name, phone: data.phone, address: data.address },
+      order_type: data.order_type,
+      state: data.state,
+      area: data.area,
+      items: items.map(item => ({ id: item.id, quantity: item.quantity, price: item.price })),
     };
 
     try {
-      const response = await axiosClient.post("/online-orders", orderPayload);
-      
-      if (response.data.status && response.data.order) {
-        // Clear cart and close dialog
+        const response = await axiosClient.post('/online-orders', orderPayload);
+        const newOrder = response.data.order;
+        toast.success(t('success.title'));
         clearCart();
         onOpenChange(false);
         form.reset();
-        
-        // Redirect to success page with order ID
-        navigate(`/online-order/success/${response.data.order.id}`);
-      } else {
-        throw new Error("Order creation failed");
-      }
+        navigate(`/order-success/${newOrder.id}`);
     } catch (error) {
-      toast.error(t("error.title", "Submission Failed"), {
-        description: t("error.description", "There was a problem sending your order. Please try again."),
-      });
-      console.error("Order submission failed:", error);
+        toast.error(t('error.title'));
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-2xl">
-            <ShoppingCart className="h-6 w-6" />
-            {t("title", "Complete Your Order")}
-          </DialogTitle>
-          <DialogDescription>
-            {t("description", "Please provide your details below. Your order will be sent to the restaurant via WhatsApp.")}
-          </DialogDescription>
+      <DialogContent className="sm:max-w-lg p-0">
+        <DialogHeader className="p-6 pb-4">
+          <DialogTitle className="flex items-center gap-2 text-2xl"><ShoppingCart className="h-6 w-6" />{t('title')}</DialogTitle>
+          <DialogDescription>{t('description')}</DialogDescription>
         </DialogHeader>
+        
+        {/* Make the content area scrollable */}
+        <ScrollArea className="max-h-[70vh]">
+            <div className="px-6 space-y-4">
+                {/* Order Summary */}
+                <div>
+                    <h4 className="mb-2 font-semibold">{t('orderSummary')}</h4>
+                    <div className="max-h-32 overflow-y-auto space-y-2 rounded-md border p-2 bg-slate-50">
+                        {items.map(item => (
+                            <div key={item.id} className="flex justify-between items-center text-sm">
+                                <p><span className="font-medium">{item.quantity}x</span> {item.name}</p>
+                                <p>{(item.price * item.quantity).toFixed(3)}</p>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t">
+                        <span>{t('total')}</span>
+                        <span>{totalPrice.toFixed(3)} {t('menu:currency')}</span>
+                    </div>
+                </div>
+                <Separator />
+            </div>
 
-        {/* Final Order Summary */}
-        <div className="py-4">
-          <h4 className="mb-2 font-semibold">
-            {t("orderSummary", "Order Summary")}
-          </h4>
-          <div className="max-h-32 overflow-y-auto space-y-2 rounded-md border p-2 bg-slate-50 dark:bg-slate-800/50">
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="flex justify-between items-center text-sm"
-              >
-                <p>
-                  <span className="font-medium">{item.quantity}x</span>{" "}
-                  {item.name}
-                </p>
-                <p>{(item.price * item.quantity).toFixed(3)}</p>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between font-bold text-lg mt-2 pt-2 border-t">
-            <span>{t("total", "Total")}</span>
-            <span>
-              {totalPrice.toFixed(3)} {t('currency_OMR', 'OMR')}
-            </span>
-          </div>
-        </div>
+            {/* Customer Form */}
+            <form id="checkout-form" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-6">
+                <div className="space-y-2 pt-4">
+                    <Label>{t('form.orderType', 'Order Type')}</Label>
+                    <Controller
+                        name="order_type"
+                        control={form.control}
+                        render={({ field }) => (
+                            <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="pickup" id="pickup" />
+                                    <Label htmlFor="pickup">{t('form.pickup', 'استلام من المحل')}</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="delivery" id="delivery" />
+                                    <Label htmlFor="delivery">{t('form.delivery', 'توصيل')}</Label>
+                                </div>
+                            </RadioGroup>
+                        )}
+                    />
+                </div>
 
-        <Separator />
+                <div className="space-y-2">
+                    <Label htmlFor="name">{t('form.name')}</Label>
+                    <Input id="name" {...form.register('name')} />
+                    {form.formState.errors.name && <p className="text-sm text-destructive">{form.formState.errors.name.message}</p>}
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="phone">{t('form.phone')}</Label>
+                    <Input id="phone" type="tel" {...form.register('phone')} />
+                    {form.formState.errors.phone && <p className="text-sm text-destructive">{form.formState.errors.phone.message}</p>}
+                </div>
 
-        {/* Customer Information Form */}
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">{t("form.name", "Your Name")}</Label>
-            <Controller
-              name="name"
-              control={form.control}
-              render={({ field, fieldState: { error } }) => (
-                <>
-                  <Input
-                    id="name"
-                    placeholder={t("form.namePlaceholder", "e.g., Ali Al-Habsi")}
-                    className={error ? "border-destructive" : ""}
-                    {...field}
-                  />
-                  {error && (
-                    <p className="text-sm text-destructive">{error.message}</p>
-                  )}
-                </>
-              )}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="phone">{t("form.phone", "Phone Number")}</Label>
-            <Controller
-              name="phone"
-              control={form.control}
-              render={({ field, fieldState: { error } }) => (
-                <>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder={t("form.phonePlaceholder", "e.g., 9xxxxxxx")}
-                    className={error ? "border-destructive" : ""}
-                    {...field}
-                  />
-                  {error && (
-                    <p className="text-sm text-destructive">{error.message}</p>
-                  )}
-                </>
-              )}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="address">
-              {t("form.address", "Address (for delivery)")}
-            </Label>
-            <Controller
-              name="address"
-              control={form.control}
-              render={({ field }) => (
-                <Textarea
-                  id="address"
-                  placeholder={t("form.addressPlaceholder", "Enter your full address if you require delivery...")}
-                  {...field}
-                />
-              )}
-            />
-          </div>
-          {/* <div className="space-y-2">
-            <Label htmlFor="notes">
-              {t("form.notes", "General Order Notes")}
-            </Label>
-            <Textarea
-              id="notes"
-              {...form.register("notes")}
-              placeholder={t(
-                "form.notesPlaceholder",
-                "Any special requests for your whole order?"
-              )}
-            />
-          </div> */}
+                {/* Conditional Fields for Delivery */}
+                {orderType === 'delivery' && (
+                    <div className="space-y-4 p-4 border rounded-md bg-slate-50">
+                        <div className="space-y-2">
+                            <Label htmlFor="state">{t('form.state', 'الولاية')}</Label>
+                            <Input id="state" {...form.register('state')} />
+                            {form.formState.errors.state && <p className="text-sm text-destructive">{form.formState.errors.state.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="area">{t('form.area', 'المنطقة')}</Label>
+                            <Input id="area" {...form.register('area')} />
+                            {form.formState.errors.area && <p className="text-sm text-destructive">{form.formState.errors.area.message}</p>}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="address">{t('form.address', 'Full Address')}</Label>
+                            <Textarea id="address" {...form.register('address')} placeholder={t('form.addressPlaceholder')} />
+                        </div>
+                    </div>
+                )}
+            </form>
+        </ScrollArea>
 
-          <DialogFooter className="pt-4">
+        <DialogFooter className="p-6 pt-4 border-t">
             <DialogClose asChild>
-              <Button type="button" variant="outline" disabled={isSubmitting}>
-                {t("cancel", "Cancel")}
-              </Button>
+                <Button type="button" variant="outline" disabled={isSubmitting}>{t('common:cancel')}</Button>
             </DialogClose>
-            <Button
-              type="submit"
-              disabled={isSubmitting || items.length === 0}
-              style={{
-                backgroundColor: "#FF1493",
-                color: "white",
-                transition: "colors 0.2s ease",
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#C71585"}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#FF1493"}
-            >
-              {isSubmitting && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              {t("submit", "Send Order to Restaurant")}
+            <Button type="submit" form="checkout-form" disabled={isSubmitting || items.length === 0} className="bg-brand-pink-DEFAULT hover:bg-brand-pink-dark ">
+              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {t('submitAndConfirm')}
             </Button>
-          </DialogFooter>
-        </form>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

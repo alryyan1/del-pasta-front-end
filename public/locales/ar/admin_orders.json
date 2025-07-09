@@ -1,0 +1,43 @@
+{
+  "title": "طلبات الطعام الإلكترونية",
+  "description": "عرض وإدارة جميع الطلبات المرسلة من الموقع الإلكتروني.",
+  "searchPlaceholder": "البحث برقم الطلب أو الاسم أو رقم الهاتف...",
+  "noOrdersFound": "لم يتم العثور على طلبات إلكترونية.",
+  "orderDetails": "تفاصيل الطلب",
+  "customerDetails": "بيانات العميل",
+  "orderItems": "عناصر الطلب",
+  "orderStatus": "حالة الطلب",
+  "deliveryFee": "رسوم التوصيل (ريال عماني)",
+  "subtotal": "المجموع الفرعي",
+  "totalPayable": "إجمالي المبلغ المطلوب",
+  "saveChanges": "حفظ التغييرات",
+  "cancel": "إلغاء",
+  "orderUpdatedSuccess": "تم تحديث الطلب بنجاح!",
+  "orderUpdateFailed": "فشل في تحديث الطلب.",
+  "orderDataNotAvailable": "بيانات الطلب غير متوفرة. يرجى المحاولة مرة أخرى.",
+  "receivedOn": "تم الاستلام في",
+  "name": "الاسم",
+  "phone": "رقم الهاتف", 
+  "address": "العنوان",
+  "changeStatus": "تغيير الحالة...",
+  "status": {
+    "pending": "في الانتظار",
+    "confirmed": "مؤكد",
+    "preparing": "قيد التحضير",
+    "delivered": "تم التوصيل", 
+    "cancelled": "ملغي"
+  },
+  "table": {
+    "orderNumber": "رقم الطلب",
+    "customer": "العميل",
+    "phone": "الهاتف",
+    "date": "التاريخ",
+    "address": "العنوان",
+    "status": "الحالة",
+    "total": "الإجمالي"
+  },
+  "error": {
+    "fetchFailed": "فشل في تحميل الطلبات الإلكترونية.",
+    "fetchSingleFailed": "تعذر تحميل تفاصيل الطلب."
+  }
+} 

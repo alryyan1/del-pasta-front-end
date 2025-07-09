@@ -155,7 +155,30 @@ export interface ChildMeal {
   updated_at: string;
 }
 
+export interface FoodOrderItem {
+  id: number;
+  food_order_id: number;
+  meal_id: number;
+  meal: Meal;
+  quantity: number;
+  price: number;
+  created_at: string;
+  updated_at: string;
+}
 
+export interface FoodOrder {
+  id: number;
+  order_number: string;
+  customer_name: string;
+  customer_phone: string;
+  customer_address: string | null;
+  total_price: number;
+  delivery_fee: number;
+  status: string;
+  items: FoodOrderItem[];
+  created_at: string;
+  updated_at: string;
+}
 
 // src/Types/buffet-types.ts
 

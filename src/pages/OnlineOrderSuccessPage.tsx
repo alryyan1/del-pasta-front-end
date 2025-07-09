@@ -145,10 +145,10 @@ const OnlineOrderSuccessPage: React.FC = () => {
         <div className="text-center mb-8">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-            {t("success.title", "Order Confirmed!")}
+            {t("sent.title", "Order sent!")}
           </h1>
           <p className="text-slate-600 dark:text-slate-400">
-            {t("success.description", "Thank you! Your order has been received and is being processed.")}
+            {t("sent.description", "Thank you! Your order has been sent to the restaurant.")}
           </p>
         </div>
 

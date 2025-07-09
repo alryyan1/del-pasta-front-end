@@ -55,19 +55,11 @@ export const OnlineOrderPage: React.FC = () => {
             <SheetTrigger asChild>
               <Button
                 size="lg"
-                style={{
-                  backgroundColor: "#FF1493",
-                  color: "white",
-                  transition: "colors 0.2s ease",
-                  borderRadius: "9999px",
-                  height: "4rem",
-                  width: "4rem",
-                  boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
-                }}
+           
                 onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#C71585"}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#FF1493"}
               >
-                <ShoppingCart className="h-8 w-8 text-white" />
+                <ShoppingCart className=" " />
                 {totalItems > 0 && (
                   <Badge
                     variant="destructive"

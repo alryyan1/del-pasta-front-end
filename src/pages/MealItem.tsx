@@ -7,15 +7,14 @@ import { webUrl } from '@/helpers/constants';
 import RequestedServiceDialog from '@/components/RequestedServiceDialog';
 interface MealItemProps {
     meal: Meal;
-    setOrders : (meal:Meal)=>void ;
-    selectedOrder : Order|null;
-    setSelectedOrder:(order:Order)=>void;
-    selected:boolean;
-    setMealOrder:(meal:Meal)=>void;
-    setShowRequestedDialog:(isOpen:boolean)=>void;
+    selectedOrder: Order | null;
+    setSelectedOrder: (order: Order) => void;
+    selected: boolean;
+    setMealOrder: (mealOrder: Mealorder) => void;
+    setShowRequestedDialog: (isOpen: boolean) => void;
 }
 
-function MealItem({meal,selectedOrder,setSelectedOrder,selected,setMealOrder,setShowRequestedDialog}:MealItemProps) {
+function MealItem({ meal, selectedOrder, setSelectedOrder, selected, setMealOrder, setShowRequestedDialog }: MealItemProps) {
   const [selectEffect,setSelectEffect] = useState('')
   // const [showRequestedDialog,setShowRequestedDialog] = useState(false)
   // const [mealOrder,setMealOrder] = useState<Mealorder|null>(null)

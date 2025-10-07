@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import axiosClient from "@/helpers/axios-client";
 import { Category, Meal } from "@/Types/types";
 import { useCartStore } from "@/stores/useCartStore";
-import { Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, TextField, Typography } from "@mui/material";
+import { Button, Checkbox, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, IconButton, TextField, Typography, useMediaQuery, Collapse, Badge } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Stack } from "@mui/system";
-import { Plus, Minus, ShoppingCart } from "lucide-react";
+import { Plus, Minus, ShoppingCart, UtensilsCrossed, List as ListIcon } from "lucide-react";
 import placeholderImg from "@/assets/images/ph.jpg";
 import { webUrl } from "@/helpers/constants";
 
@@ -24,28 +24,272 @@ export default function OnlineOrderPage() {
   const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null);
 
   const { items, addItem, updateQuantity, removeItem, totalItems, totalPrice, clear } = useCartStore();
+  const isMobile = useMediaQuery('(max-width:600px)');
+  const [showCategoryList, setShowCategoryList] = useState<boolean>(true);
+  const [cartPulse, setCartPulse] = useState<boolean>(false);
+  const [addedMealId, setAddedMealId] = useState<number | null>(null);
 
   useEffect(() => {
     setLoading(true);
     axiosClient.get<Category[]>(`categories`).then(({ data }) => {
       setCategories(data);
-      if (data.length > 0) setSelectedCategoryId(data[0].id);
+      if (data.length > 0) {
+        setSelectedCategoryId(isMobile ? null : data[0].id);
+        setShowCategoryList(true);
+      }
     }).finally(() => setLoading(false));
-  }, []);
+  }, [isMobile]);
 
   const meals: Meal[] = useMemo(() => {
     const cat = categories.find((c) => c.id === selectedCategoryId);
     return cat?.meals ?? [];
   }, [categories, selectedCategoryId]);
 
+  const [mobileShowMeals, setMobileShowMeals] = useState<boolean>(false);
+  if (isMobile) {
+    const pink = ['#e91e63', '#d81b60'] as [string,string];
+    return (
+      <div className="p-3" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ marginBottom: 12, position: 'sticky', top: 0, zIndex: 10, background: '#fff' }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ py: 1 }}>
+            <IconButton color="primary" onClick={() => setMobileShowMeals(false)} aria-label="toggle categories">
+              <ListIcon />
+            </IconButton>
+            {!mobileShowMeals ? (
+              <Typography variant="h4" sx={{ fontWeight: 800, textAlign: 'center' }}>del pasta</Typography>
+            ) : (
+              <Button variant="text" onClick={() => setMobileShowMeals(false)} sx={{ fontWeight: 800, fontSize: '18px', textTransform: 'none' }}>
+                {categories.find(c => c.id === selectedCategoryId)?.name}
+              </Button>
+            )}
+            <Stack direction="row" alignItems="center" gap={1}>
+              <IconButton color="primary" onClick={() => setCheckoutOpen(true)} aria-label="open cart" sx={{ transform: cartPulse ? 'scale(1.12)' : 'scale(1)', transition: 'transform 200ms' }}>
+                <Badge badgeContent={totalItems()} color="primary">
+                  <ShoppingCart />
+                </Badge>
+              </IconButton>
+            </Stack>
+          </Stack>
+        </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: mobileShowMeals ? 'flex-start' : 'space-evenly', gap: mobileShowMeals ? 8 : 0 }}>
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <CircularProgress />
+            </div>
+          ) : (
+            <Collapse in={!mobileShowMeals} timeout={300} unmountOnExit>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {categories.map((c) => (
+                  <Button
+                    key={c.id}
+                    fullWidth
+                    variant="contained"
+                    onClick={() => {
+                      setSelectedCategoryId(c.id);
+                      setMobileShowMeals(true);
+                    }}
+                    sx={{
+                      height: 64,
+                      borderRadius: 3,
+                      fontSize: '18px',
+                      fontWeight: 800,
+                      textTransform: 'none',
+                      boxShadow: '0 10px 18px rgba(0,0,0,0.12)',
+                      color: '#fff',
+                      backgroundImage: `linear-gradient(135deg, ${pink[0]}, ${pink[1]})`,
+                      '&:hover': {
+                        filter: 'brightness(1.05)',
+                        boxShadow: '0 12px 22px rgba(0,0,0,0.16)'
+                      }
+                    }}
+                  >
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <UtensilsCrossed size={20} />
+                      {c.name}
+                    </span>
+                  </Button>
+                ))}
+              </div>
+            </Collapse>
+          )}
+          <Collapse in={mobileShowMeals && selectedCategoryId != null} timeout={300}>
+            <div className="mt-3 grid grid-cols-1 gap-3">
+              {meals.map((meal) => {
+                const cartItem = items.find((it) => it.meal.id === meal.id);
+                return (
+                  <div key={meal.id} className="p-3 rounded-md shadow bg-white">
+                    <Stack gap={1}>
+                      <img
+                        src={meal.image_url == null ? placeholderImg : `${webUrl}/images/${meal.image_url}`}
+                        alt={meal.name}
+                        className="w-full h-40 object-cover rounded"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (target.src !== placeholderImg) {
+                            target.onerror = null;
+                            target.src = placeholderImg;
+                          }
+                        }}
+                      />
+                      <Typography variant="h6" className="text-gray-700">{meal.name}</Typography>
+                      <Typography sx={{ fontWeight: 800 }} className="text-gray-700">{meal.price?.toFixed(3)} OMR</Typography>
+                      <Stack direction="row" gap={1}>
+                        {!cartItem ? (
+                          <Button 
+                            size="large" 
+                            fullWidth 
+                            variant="contained" 
+                            onClick={() => {
+                              setAddedMealId(meal.id);
+                              addItem(meal);
+                              setCartPulse(true);
+                              setTimeout(() => { setAddedMealId(null); setCartPulse(false); }, 220);
+                            }}
+                            sx={{
+                              height: 44,
+                              borderRadius: 2,
+                              fontWeight: 700,
+                              textTransform: 'none',
+                              transform: addedMealId === meal.id ? 'scale(0.98)' : 'scale(1)',
+                              transition: 'transform 180ms',
+                              backgroundImage: 'linear-gradient(135deg, #f8bbd0, #f48fb1)',
+                              '&:hover': { filter: 'brightness(1.05)' }
+                            }}
+                          >
+                            Add to cart
+                          </Button>
+                        ) : (
+                          <Stack direction="row" gap={1} alignItems="center">
+                            <IconButton onClick={() => updateQuantity(meal.id, cartItem.quantity - 1)} aria-label="decrease">
+                              <Minus />
+                            </IconButton>
+                            <TextField size="small" value={cartItem.quantity} inputProps={{ readOnly: true, className: "text-center w-12" }} />
+                            <IconButton onClick={() => updateQuantity(meal.id, cartItem.quantity + 1)} aria-label="increase">
+                              <Plus />
+                            </IconButton>
+                          </Stack>
+                        )}
+                      </Stack>
+                    </Stack>
+                  </div>
+                );
+              })}
+            </div>
+          </Collapse>
+        </div>
+        {/* Mobile Checkout Dialog */}
+        <Dialog open={checkoutOpen} onClose={() => setCheckoutOpen(false)} fullWidth maxWidth="sm">
+          <DialogTitle>اكمال الطلب</DialogTitle>
+          <DialogContent>
+            <Stack gap={2} sx={{ mt: 1 }}>
+              <TextField
+                label="اسم"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                fullWidth
+              />
+              <TextField
+                label="رقم الهاتف"
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                fullWidth
+              />
+              <FormControlLabel control={<Checkbox checked={delivery} onChange={(e)=> setDelivery(e.target.checked)} />} label="توصيل" />
+              {delivery && (
+                <>
+                  <TextField
+                    label="الولاية"
+                    value={customerState}
+                    onChange={(e) => setCustomerState(e.target.value)}
+                    fullWidth
+                  />
+                  <TextField
+                    label="المنطقة"
+                    value={customerArea}
+                    onChange={(e) => setCustomerArea(e.target.value)}
+                    fullWidth
+                  />
+                </>
+              )}
+              
+              <TextField
+                label="تفاصيل الطلب"
+                value={items.map((it) => `${it.meal.name} x ${it.quantity} = ${(it.quantity * (it.meal.price ?? 0)).toFixed(3)} OMR`).join("\n") + (items.length ? `\n—\nالمجموع: ${totalPrice().toFixed(3)} OMR` : "")}
+                multiline
+                minRows={4}
+                InputProps={{ readOnly: true }}
+                fullWidth
+              />
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setCheckoutOpen(false)}>إلغاء</Button>
+            <LoadingButton
+              variant="contained"
+              loading={submitting}
+              disabled={submitting || !customerName || !customerPhone || items.length === 0}
+              onClick={async () => {
+                setSubmitting(true);
+                setSubmitMessage("");
+                setSubmitSuccess(null);
+                try {
+                  const payload = {
+                    name: customerName,
+                    phone: customerPhone,
+                    address: delivery ? `${customerState} - ${customerArea}` : '',
+                    state: delivery ? customerState : '',
+                    area: delivery ? customerArea : '',
+                    notes: '',
+                    items: items.map((it) => ({ meal_id: it.meal.id, quantity: it.quantity })),
+                  };
+                  const res = await axiosClient.post('online-orders/create', payload);
+                  clear();
+                  const wa = res?.data?.wa_sent ?? res?.data?.whatsapp_sent ?? res?.data?.whatsapp ?? null;
+                  if (wa === true) {
+                    setSubmitSuccess(true);
+                    setSubmitMessage('تم إنشاء الطلب وإرسال رسالة الواتساب بنجاح');
+                  } else if (wa === false) {
+                    setSubmitSuccess(false);
+                    setSubmitMessage('تم إنشاء الطلب ولكن تعذر إرسال رسالة الواتساب');
+                  } else {
+                    setSubmitSuccess(true);
+                    setSubmitMessage('تم إنشاء الطلب');
+                  }
+                  setTimeout(() => {
+                    setCheckoutOpen(false);
+                    setSubmitMessage("");
+                    setSubmitSuccess(null);
+                  }, 1200);
+                } catch {
+                  setSubmitSuccess(false);
+                  setSubmitMessage('تعذر إنشاء الطلب. حاول مرة أخرى');
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
+              اكمال الطلب
+            </LoadingButton>
+          </DialogActions>
+          {submitMessage && (
+            <Typography sx={{ px: 3, pb: 2 }} color={submitSuccess ? 'success.main' : 'error.main'}>
+              {submitMessage}
+            </Typography>
+          )}
+        </Dialog>
+      </div>
+    );
+  }
+
   return (
     <div className="p-2">
       <Stack direction={{ xs: "column", md: "row" }} gap={2}>
         <Stack flex={1} gap={2}>
           <Typography variant="h5">Select Category</Typography>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((c) => (
-              <Button key={c.id} variant={selectedCategoryId === c.id ? "contained" : "outlined"} onClick={() => setSelectedCategoryId(c.id)}>
+          <div className={isMobile ? "flex flex-col gap-2" : "flex flex-wrap gap-2"}>
+            {(!isMobile || showCategoryList) && categories.map((c) => (
+              <Button key={c.id} fullWidth={isMobile} variant={selectedCategoryId === c.id ? "contained" : "outlined"} onClick={() => { setSelectedCategoryId(c.id); if (isMobile) setShowCategoryList(false); }}>
                 {c.name}
               </Button>
             ))}
@@ -76,10 +320,30 @@ export default function OnlineOrderPage() {
                         }}
                       />
                       <Typography variant="h6" className="text-gray-700">{meal.name}</Typography>
-                      <Typography className="text-gray-500">{meal.price?.toFixed(3)} OMR</Typography>
+                      <Typography sx={{ fontWeight: 800 }} className="text-gray-700">{meal.price?.toFixed(3)} OMR</Typography>
                       <Stack direction="row" gap={1}>
                         {!cartItem ? (
-                          <Button size="small" variant="contained" onClick={() => addItem(meal)}>
+                          <Button 
+                            size="large" 
+                            fullWidth 
+                            variant="contained" 
+                            onClick={() => {
+                              setAddedMealId(meal.id);
+                              addItem(meal);
+                              setCartPulse(true);
+                              setTimeout(() => { setAddedMealId(null); setCartPulse(false); }, 220);
+                            }}
+                            sx={{
+                              height: 44,
+                              borderRadius: 2,
+                              fontWeight: 700,
+                              textTransform: 'none',
+                              transform: addedMealId === meal.id ? 'scale(0.98)' : 'scale(1)',
+                              transition: 'transform 180ms',
+                              backgroundImage: 'linear-gradient(135deg, #f8bbd0, #f48fb1)',
+                              '&:hover': { filter: 'brightness(1.05)' }
+                            }}
+                          >
                             Add to cart
                           </Button>
                         ) : (
@@ -138,10 +402,10 @@ export default function OnlineOrderPage() {
         </Stack>
       </Stack>
 
-      <Dialog open={checkoutOpen} onClose={() => setCheckoutOpen(false)} fullWidth maxWidth="sm">
+      <Dialog dir open={checkoutOpen} onClose={() => setCheckoutOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>اكمال الطلب</DialogTitle>
         <DialogContent>
-          <Stack gap={2} sx={{ mt: 1 }}>
+          <Stack gap={2} sx={{ mt: 1 ,direction:'rtl' }}>
             <TextField
               label="اسم"
               value={customerName}

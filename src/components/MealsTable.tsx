@@ -13,11 +13,12 @@ import {
   Tooltip,
   Avatar,
 } from '@mui/material';
-import axiosClient from '@/helpers/axios-client';
+// import axiosClient from '@/helpers/axios-client';
 import { Meal } from '@/Types/types';
 import MealChildrenDialog from './MealChildrenDialog';
 import TdCell from '@/helpers/TdCell';
 import { useMealsStore } from '@/stores/MealsStore';
+import { useCategoryStore } from '@/stores/CategoryStore';
 import { useTranslation } from 'react-i18next';
 import { webUrl } from '@/helpers/constants';
 import { Plus } from 'lucide-react';
@@ -34,7 +35,9 @@ const MealTable: React.FC<Props> = ({selectedCategory}) => {
   const [open, setOpen] = useState(false);
   const [openAddItemDialog, setOpenAddItemDialog] = useState(false);
   const [showGallary, setShowGallary] = useState(false);
+  const [uploadingMealId, setUploadingMealId] = useState<number|null>(null);
   const { fetchMeals, meals } = useMealsStore();
+  const { fetchCategories, categories } = useCategoryStore((state)=>state);
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -48,7 +51,8 @@ const MealTable: React.FC<Props> = ({selectedCategory}) => {
 
   useEffect(() => {
     fetchMeals();
-  }, [fetchMeals, selectedMeal]);
+    fetchCategories();
+  }, [fetchMeals, fetchCategories, selectedMeal]);
 
   const filteredMeals = meals.filter((m) => {
     return search ? m.name.toLowerCase().includes(search.toLowerCase()) : true;
@@ -56,7 +60,7 @@ const MealTable: React.FC<Props> = ({selectedCategory}) => {
 
 
   return (<>
-    {showGallary ? <ImageGallery fetchMeals={fetchMeals} setShowImageGallary={setShowGallary} selectedMeal={selectedMeal}/> :<TableContainer sx={{ mt: 1 }} dir="rtl">
+    {showGallary ? <ImageGallery fetchMeals={fetchMeals} setShowImageGallary={setShowGallary} selectedMeal={selectedMeal} setUploadingMealId={setUploadingMealId}/> :<TableContainer sx={{ mt: 1 }} dir="rtl">
       <TextField
         onChange={(e) => setSearch(e.target.value)}
         size="small"
@@ -70,14 +74,13 @@ const MealTable: React.FC<Props> = ({selectedCategory}) => {
         {t('basicServices')} <span className='text-gray-500'> ({selectedCategory?.name})</span>
       </Typography>
       <Table size="small" className="text-sm border border-gray-300">
-        <TableHead className="bg-gray-100">
+      <TableHead className="bg-gray-100">
           <TableRow>
             <TableCell>{t('image')}</TableCell>
             <TableCell>{t('name')}</TableCell>
             <TableCell>{t('price')}</TableCell>
             <TableCell>{t('category')}</TableCell>
-            <TableCell>{t('subServices')}</TableCell>
-            <TableCell>{t('delete')}</TableCell>
+          <TableCell>{t('subServices')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -97,7 +100,9 @@ const MealTable: React.FC<Props> = ({selectedCategory}) => {
             >
               <TableCell>
                 <IconButton onClick={() => { setSelectedMeal(meal); setShowGallary(true); }}>
-                  {meal.image_url == null ? (
+                  {uploadingMealId === meal.id ? (
+                    <Avatar sx={{ width: 48, height: 48 }}>{t('loading') || '...'}</Avatar>
+                  ) : meal.image_url == null ? (
                     <Avatar sx={{ width: 48, height: 48 }}>{meal.name?.charAt(0) ?? '?'}</Avatar>
                   ) : (
                     <img
@@ -111,10 +116,10 @@ const MealTable: React.FC<Props> = ({selectedCategory}) => {
               <TdCell table="meals" colName="name" item={meal}>
                 {meal.name}
               </TdCell>
-              <TdCell table="meals" colName="price" item={meal}>
+              <TdCell show table="meals" colName="price" item={meal} type="number" sx={{ maxWidth: 120 }}>
                 {meal.price}
               </TdCell>
-              <TableCell>{meal?.category_id}</TableCell>
+              <TableCell>{categories.find(c=>c.id===meal.category_id)?.name ?? meal?.category_id}</TableCell>
               <TableCell>
                 <Button
                   onClick={() => {
@@ -125,17 +130,7 @@ const MealTable: React.FC<Props> = ({selectedCategory}) => {
                   {t('services')}
                 </Button>
               </TableCell>
-              <TableCell>
-                <button
-                  onClick={() => {
-                    axiosClient.delete(`meals/${meal.id}`).then(() => {
-                      fetchMeals();
-                    });
-                  }}
-                >
-                  {t('delete')}
-                </button>
-              </TableCell>
+              
             </TableRow>
           ))}
         </TableBody>

@@ -24,8 +24,8 @@ interface DeductDialogProbs {
   open: boolean;
   handleClose: () => void;
   handleClickOpen: () => void;
-  selectedOrder: Order;
-  setSelectedOrder:()=>void
+  selectedOrder: Order | null;
+  setSelectedOrder: (order: Order) => void;
 }
 
 const DeductDialog = ({
@@ -39,8 +39,9 @@ const DeductDialog = ({
   useEffect(() => {}, []);
   const deductHandler = ()=>{
     // TODO: add this order to deducted_orders
+    if(!selectedOrder) return;
     axiosClient.post(`deducts/${selectedOrder.id}`,{
-        add:selectedOrder.deducts.length == 0 
+        add:(selectedOrder.deducts?.length ?? 0) == 0 
     }).then(({data})=>{
         setSelectedOrder(data.order)
     })
@@ -53,7 +54,7 @@ const DeductDialog = ({
         <DialogTitle></DialogTitle>
         <DialogContent className="">
           <Typography textAlign={'center'}>خصم من المخزون</Typography>
-          {selectedOrder.meal_orders.map((mealOrder: Mealorder) => (
+          {selectedOrder?.meal_orders?.map((mealOrder: Mealorder) => (
             <>
               <Typography variant='h6' sx={{mb:1}} textAlign={'center'}><Chip label={mealOrder.meal.name}></Chip></Typography>
                     <Table size="small">
@@ -66,7 +67,7 @@ const DeductDialog = ({
                     </TableRow>
                     </TableHead>
                       <TableBody>
-              {mealOrder.requested_child_meals.map((r) => (
+              {mealOrder.requested_child_meals?.map((r) => (
                    
                     <TableRow key={r.id}>
                       <TableCell sx={{textAlign:'center'}}>{r.child_meal.service.name}</TableCell>

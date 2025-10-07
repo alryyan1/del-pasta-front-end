@@ -2,19 +2,33 @@ import { TableCell, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import axiosClient from "./axios-client";
 
+interface TdCellProps {
+  children: any;
+  item: { id: number };
+  colName: string;
+  table: string;
+  show?: boolean;
+  type?: string | null;
+  multiline?: boolean;
+  update?: ((updated: any) => void) | null;
+  sx?: any;
+  isNum?: boolean;
+  disabled?: boolean;
+}
+
 function TdCell({
   children,
   item,
   colName,
-  table ,
+  table,
   show = false,
   type = null,
   multiline = false,
-  update=null,
+  update = null,
   sx = null,
   isNum = false,
   disabled = false,
-}) {
+}: TdCellProps) {
   const [edited, setEdited] = useState(show);
   const [intial, setInitialVal] = useState(children);
   const [iniVal, setInitVal] = useState(children);

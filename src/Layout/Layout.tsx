@@ -1,50 +1,40 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import { ConfigProvider, Layout, Menu, theme as antdTheme, Avatar, Dropdown } from "antd";
+import {
+  DashboardOutlined,
+  ShoppingCartOutlined,
+  UnorderedListOutlined,
+  DollarOutlined,
+  AppstoreOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  LogoutOutlined,
+  UserOutlined,
+  SettingOutlined,
+  TeamOutlined,
+  UserSwitchOutlined,
+  ToolOutlined,
+} from "@ant-design/icons";
 import { createTheme } from "@mui/material/styles";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import BarChartIcon from "@mui/icons-material/BarChart";
-import DescriptionIcon from "@mui/icons-material/Description";
-import LayersIcon from "@mui/icons-material/Layers";
-import { AppProvider, type Navigation } from "@toolpad/core/AppProvider";
-import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-import { useDemoRouter } from "@toolpad/core/internal";
-import { PageContainer } from "@toolpad/core/PageContainer";
-import { Outlet, useNavigate, useNavigation } from "react-router-dom";
-import { router } from "@/router";
-import SettingsIcon from "@mui/icons-material/Settings";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { Outlet, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
-import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
-import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import { CacheProvider } from "@emotion/react";
 import { cacheRtl } from "@/helpers/constants";
-import {
-  Beef,
-  Grid2x2PlusIcon,
-  HandPlatter,
-  LayoutPanelTop,
-  List,
-  PersonStanding,
-  Scale,
-  Users,
-} from "lucide-react";
-import logo from "./../assets/images/h2o-logo.png";
-import del from "./../assets/logo.png";
-import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
-import SidebarFooter from "@/components/footer";
-import NavActions from "@/components/NavActions";
+ 
 import "./../i18n";
-import { I18nextProvider, useTranslation } from "react-i18next";
+import { I18nextProvider } from "react-i18next";
 import i18n from "./../i18n";
 import ArriavalDialog from "@/components/ArriavalDialog";
 import alarm from "./../assets/alarm.wav";
-import { Meal } from "@/Types/types";
+import { Meal, Order } from "@/Types/types";
 import LoginDialog from "@/components/LoginDialog";
 import { useAuthStore } from "@/AuthStore";
+// import logo from "./../assets/logo.svg";
 
 const demoTheme = createTheme({
   // direction: "rtl",
@@ -52,6 +42,15 @@ const demoTheme = createTheme({
     primary: {
       main: "#9c27b0",// purple
       // main: "#1976d2",
+    },
+    mode: 'light',
+    background: {
+      default: '#f5f5f7',
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#111827',
+      secondary: '#374151',
     },
   },
   breakpoints: {
@@ -91,17 +90,19 @@ const demoTheme = createTheme({
   cssVariables: {
     colorSchemeSelector: "data-toolpad-color-scheme",
   },
-  colorSchemes: { light: true, dark: true },
+  colorSchemes: { light: true },
 });
 
 
 export default function DashboardLayoutBasic() {
   const [isIpadPro, setIsIpadPro] = React.useState(false);
-  const {openLoginDialog,setCloseLoginDialog,setOpenLoginDialog} =  useAuthStore((state)=>state)
+  const {openLoginDialog,setCloseLoginDialog} =  useAuthStore((state)=>state)
   console.log(openLoginDialog,'openDialog')
   const navigate =  useNavigate()
    const {setUser,setToken,} = useAuthContext()
     const [meals,setMeals] = React.useState<Meal[]>([]);
+  // const screens = Grid.useBreakpoint();
+  const [collapsed, setCollapsed] = React.useState(false);
    React.useEffect(()=>{
       axiosClient.get('meals').then(({data})=>{
         setMeals(data)
@@ -112,7 +113,7 @@ export default function DashboardLayoutBasic() {
   React.useEffect(() => {
     axiosClient.get("/user").then(({ data }) => {
       setUser(data);
-    }).catch((err)=>{
+    }).catch(()=>{
     console.log('error')
     setUser(null);
     setToken(null)
@@ -120,13 +121,16 @@ export default function DashboardLayoutBasic() {
   localStorage.removeItem('ACCESS_TOKEN')
 
   });
-  }, [])
+  }, [navigate, setToken, setUser])
   React.useEffect(() => {
     const mediaQuery = window.matchMedia(
       '(min-width: 768px) and (max-width: 1366px)'
     );
 
-    const handleResize = (e) => setIsIpadPro(e.matches);
+    const handleResize = (e: MediaQueryList | MediaQueryListEvent) => {
+      const isMatch = 'matches' in e ? e.matches : (e as MediaQueryList).matches;
+      setIsIpadPro(isMatch);
+    };
     if (mediaQuery.matches) {
       console.log('The screen width is between 768px and 1366px');
     } else {
@@ -146,107 +150,11 @@ export default function DashboardLayoutBasic() {
       i18n.changeLanguage(lang);
     }
   }, []);
-  const { t } = useTranslation("layout");
-
-  const NAVIGATION: Navigation = [
-    {
-      kind: "header",
-      title: t("Main items"), // Use translation key for "Main items"
-    },
-    {
-      segment: "dashboard",
-      title: t("Dashboard"), // Use translation key for "Dashboard"
-      icon: <DashboardIcon />,
-    },
-    {
-      segment: "makeOrder",
-      title: t("New Order"), // Use translation key for "New Order"
-      icon: <AddShoppingCartIcon />,
-    },
-    {
-      segment: "orders",
-      title: t("Orders"), // Use translation key for "Orders"
-      icon: <List />,
-    },
-
-    {
-      segment: "stats",
-      title: t("Order Quantities"), // Use translation key for "Order Quantities"
-      icon: <Scale />,
-    },
-    {
-      segment: "expenses",
-      title: t("Expenses"), // Use translation key for "Expenses"
-      icon: <AttachMoneyIcon />,
-    },
-    {
-      segment: "menu",
-      title: t("Menu"), // Use translation key for "Menu"
-      icon: <RestaurantMenuIcon />,
-    },
-    {
-      segment: "online-order",
-      title: t("Online Order"),
-      icon: <AddShoppingCartIcon />,
-    },
-    {
-      segment: "reservations2",
-      title: t("Reservations"), // Use translation key for "Reservations"
-      icon: <BookmarkAddedIcon />,
-    },
-    {
-      kind: "divider",
-    },
-    {
-      kind: "header",
-      title: t("Analytics"), // Use translation key for "Analytics"
-    },
-    {
-      segment: "config",
-      title: t("Settings"), // Use translation key for "Settings"
-      icon: <SettingsIcon />,
-      children: [
-        {
-          segment: "meals",
-          title: t("Services"), // Use translation key for "Services"
-          icon: <Grid2x2PlusIcon />,
-        },
-        {
-          segment: "MealCategories",
-          title: t("Categories"), // Use translation key for "Categories"
-          icon: <LayoutPanelTop />,
-        },
-        {
-          segment: "customers",
-          title: t("Customers"), // Use translation key for "Customers"
-          icon: <Users />,
-        },
-        {
-          segment: "users",
-          title: t("Users"), // Use translation key for "Users"
-          icon: <Users />,
-        },
-        {
-          segment: "services",
-          title: t("Sub Services"), // Use translation key for "Sub Services"
-          icon: <HandPlatter />,
-        },
-        {
-          segment: "settings",
-          title: t("Other"), // Use translation key for "Other"
-          icon: <Users />,
-        },
-      ],
-    },
-  ];
-  const [orders, setOrders] = React.useState([]);
+  const [orders, setOrders] = React.useState<Order[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [selectedOrder, setSelectedOrder] = React.useState(null);
+  const [selectedOrder, setSelectedOrder] = React.useState<Order>({} as unknown as Order);
   const [audio] = React.useState(new Audio(alarm));
 
-  const playAlarm = () => {
-    audio.play();
-  };
   const pauseAlarm = () => {
     audio.pause();
   };
@@ -268,17 +176,52 @@ export default function DashboardLayoutBasic() {
   const handleClose = () => {
     setOpen(false);
   };
+  const sidebarItems: { key: string; label: string; icon: React.ReactNode; to: string }[] = [
+    { key: 'dashboard', label: 'Dashboard', icon: <DashboardOutlined />, to: '/dashboard' },
+    { key: 'makeOrder', label: 'New Order', icon: <ShoppingCartOutlined />, to: '/makeOrder' },
+    { key: 'orders', label: 'Orders', icon: <UnorderedListOutlined />, to: '/orders' },
+    { key: 'expenses', label: 'Expenses', icon: <DollarOutlined />, to: '/expenses' },
+    { key: 'menu', label: 'Menu', icon: <AppstoreOutlined />, to: '/menu' },
+    { key: 'online-order', label: 'Online Order', icon: <ShoppingCartOutlined />, to: '/online-order' },
+    { key: 'online-orders-list', label: 'Online Orders', icon: <ShoppingCartOutlined />, to: '/online-orders-list' },
+  ];
+
+  const settingsItems: { key: string; label: string; icon: React.ReactNode; to: string }[] = [
+    { key: 'meals', label: 'Services', icon: <ToolOutlined />, to: '/config/meals' },
+    { key: 'MealCategories', label: 'Categories', icon: <AppstoreOutlined />, to: '/config/MealCategories' },
+    { key: 'customers', label: 'Customers', icon: <TeamOutlined />, to: '/config/customers' },
+    { key: 'users', label: 'Users', icon: <UserSwitchOutlined />, to: '/config/users' },
+    { key: 'services', label: 'Sub Services', icon: <ToolOutlined />, to: '/config/services' },
+    { key: 'settings', label: 'Other', icon: <SettingOutlined />, to: '/config/settings' },
+  ];
+
+  const { user } = useAuthContext() as { user: { name?: string } | null };
+  
+  const handleLogout = () => {
+    localStorage.removeItem('ACCESS_TOKEN');
+    localStorage.removeItem('user_type');
+    setUser(null);
+    setToken(null);
+    navigate('/login');
+  };
+
+  const userMenuItems = [
+    {
+      key: 'profile',
+      icon: <UserOutlined />,
+      label: 'Profile',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: 'Logout',
+      onClick: handleLogout,
+    },
+  ];
   return (
     // preview-start
-    <AppProvider
-      navigation={NAVIGATION}
-      router={router}
-      theme={demoTheme}
-      branding={{
-        title: "Del Pasta ",
-        logo: <img src={del} />,
-      }}
-    >
+    <ThemeProvider theme={demoTheme}>
+      <CssBaseline />
       <React.Suspense
         fallback={
           <Box
@@ -298,27 +241,84 @@ export default function DashboardLayoutBasic() {
         <I18nextProvider i18n={i18n}>
           <CacheProvider value={cacheRtl}>
             <AuthProvider>
-              {/* sx={{height:'90vh'}}  */}
-              <DashboardLayout
-                slots={{
-                  sidebarFooter: SidebarFooter,
-                  toolbarActions: NavActions,
+              <ConfigProvider
+                theme={{
+                  algorithm: antdTheme.defaultAlgorithm,
+                  token: {
+                    colorPrimary: '#9c27b0',
+                    colorBgLayout: '#f5f5f7',
+                    colorText: '#111827',
+                  },
                 }}
-                sx={{ minHeight: '100vh', display: 'flex' }}
               >
-                <PageContainer
-                  className="root-container"
-                  sx={{ margin: 0, p: 1, height: '100%', display: 'flex' }}
-                >
-                  <Outlet
-                    context={{
-                      selectedOrder,
-                      setSelectedOrder,
-                      isIpadPro, setIsIpadPro,meals
+              <Layout style={{ minHeight: '100vh' }}>
+                <Layout.Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} breakpoint="lg">
+                  <div style={{ height: 64, margin: 16, background: 'rgba(255,255,255,0.2)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
+                    {/* <img src={logo} alt="logo" style={{ width: 100, height: 100 }} /> */}
+                    <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 'bold' }}>Del-pasta</h1>
+
+                  </div>
+                  <Menu
+                    theme="dark"
+                    mode="inline"
+                    selectedKeys={[]}
+                    onClick={({ key }) => {
+                      const item = [...sidebarItems, ...settingsItems].find(i => i.key === key);
+                      if (item) navigate(item.to);
                     }}
+                    items={[
+                      {
+                        key: 'main',
+                        label: 'Main Items',
+                        type: 'group',
+                        children: sidebarItems.map(i => ({ key: i.key, icon: i.icon, label: i.label }))
+                      },
+                      {
+                        key: 'settings',
+                        label: 'Settings',
+                        type: 'group',
+                        children: settingsItems.map(i => ({ key: i.key, icon: i.icon, label: i.label }))
+                      }
+                    ]}
                   />
-                </PageContainer>{" "}
-              </DashboardLayout>
+                </Layout.Sider>
+                <Layout>
+                  <Layout.Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
+                    <Box sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 2 }}>
+                      {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+                        onClick: () => setCollapsed(!collapsed),
+                        style: { fontSize: 18, cursor: 'pointer' ,color:'#fff'}
+                      })}
+                      del-pasta
+                    </Box>
+                    <Box sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <span>{user?.name || 'User'}</span>
+                      <Dropdown
+                        menu={{ items: userMenuItems }}
+                        placement="bottomRight"
+                        arrow
+                      >
+                        <Avatar 
+                          style={{ backgroundColor: '#9c27b0', cursor: 'pointer' }}
+                          icon={<UserOutlined />}
+                        />
+                      </Dropdown>
+                    </Box>
+                  </Layout.Header>
+                  <Layout.Content style={{ margin: 16 }}>
+                    <Box sx={{ p: 1, minHeight: 'calc(100vh - 64px - 32px)' }}>
+                      <Outlet
+                        context={{
+                          selectedOrder,
+                          setSelectedOrder,
+                          isIpadPro, setIsIpadPro,meals
+                        }}
+                      />
+                    </Box>
+                  </Layout.Content>
+                </Layout>
+              </Layout>
+              </ConfigProvider>
             </AuthProvider>
           </CacheProvider>
         </I18nextProvider>
@@ -330,6 +330,7 @@ export default function DashboardLayoutBasic() {
         handleClose={handleClose}
         open={open}
         orders={orders}
+        setOrders={setOrders}
       />
       <React.Suspense>
       <LoginDialog open={openLoginDialog} handleClose={()=>{
@@ -337,7 +338,7 @@ export default function DashboardLayoutBasic() {
       }}/>
       </React.Suspense>
     
-    </AppProvider>
+    </ThemeProvider>
     // preview-end
   );
 }

@@ -1,4 +1,4 @@
-import { createBrowserRouter, createHashRouter, Navigate, RouteObject } from "react-router-dom";
+import { createHashRouter, RouteObject } from "react-router-dom";
 import Error from "./Error";
 import GuestLayout from "./components/GuestLayout";
 import NewOrder from "./pages/NewOrder";
@@ -10,10 +10,9 @@ import MealCategoryForm from "./components/forms/meal_category_form";
 import Orders from "./pages/Orders";
 import DashboardLayoutBasic from "./Layout/Layout";
 import { AuthProvider } from "./contexts/stateContext";
-import { CustomerList } from "./pages/Customer/CustomerList";
+ 
 import Dashboard from "./pages/dashboard";
 import Customers from "./pages/Customer/Customers";
-import Reservations from "./pages/Reservation/FoodMenu";
 import FoodMenu from "./pages/Reservation/FoodMenu";
 import ReservationCalendar from "./chatgpt/Calender";
 import Foribidden from "./pages/Foribidden";
@@ -25,8 +24,9 @@ import Users from "./pages/Users";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import Arrive from "./pages/Arrive";
-import ImageGallery from "./pages/gallary";
+ 
 import OnlineOrderPage from "./pages/OnlineOrderPage";
+import OnlineOrders from "./pages/OnlineOrders";
 
 const login: RouteObject = {
   path: "login",
@@ -82,6 +82,10 @@ const orders: RouteObject = {
   path: "/orders",
   element: <ProtectedRoute><Orders /></ProtectedRoute> ,
 };
+const onlineOrdersAdmin: RouteObject = {
+  path: "/online-orders-list",
+  element: <ProtectedRoute><OnlineOrders /></ProtectedRoute>,
+};
 
 const stats: RouteObject = {
   path: "/stats",
@@ -109,10 +113,7 @@ const onlineOrder: RouteObject = {
   path: "/online-order",
   element: <OnlineOrderPage />,
 };
-const gallary: RouteObject = {
-  path: "/gallary",
-  element: <ImageGallery />,
-};
+ 
 const authoroized: RouteObject = {
   path: "/",
   errorElement: <Error />,
@@ -122,14 +123,13 @@ const authoroized: RouteObject = {
     makeOrder,
     config,
     orders,
+    onlineOrdersAdmin,
     customers,
     expenses,
     reservation,
     menu,
-    onlineOrder,
     reservation2,
-    stats,
-    gallary
+    stats
 
   ],
 };
@@ -145,5 +145,5 @@ const guest: RouteObject = {
   children: [login, signup],
 };
 
-export const router = createHashRouter([authoroized, guest,forbidden,arrive]);
+export const router = createHashRouter([authoroized, guest, forbidden, arrive, onlineOrder]);
 

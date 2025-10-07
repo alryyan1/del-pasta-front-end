@@ -143,7 +143,7 @@ useEffect(() => {
               }}
             >
               {showCategories ? (
-                <Badge badgeContent={selectedOrder?.meal_orders.length} color="primary">
+              <Badge badgeContent={selectedOrder?.meal_orders?.length ?? 0} color="primary">
                   <ShoppingCart />
                 </Badge>
               ) : (
@@ -211,7 +211,7 @@ useEffect(() => {
                   />
                 )}
 
-                {selectedOrder?.meal_orders.length === 0 && showCart && (
+                {((selectedOrder?.meal_orders?.length ?? 0) === 0) && showCart && (
                   <div className="bg-white rounded-lg shadow-md p-6 ">
                     <div className="flex flex-col items-center justify-center text-gray-500">
                       <ShoppingCart size={48} className="mb-4" />

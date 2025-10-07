@@ -28,7 +28,7 @@ const defaultImages: GalleryImage[] = [
   }
 ];
 
-export default function ImageGallery({selectedMeal,setShowImageGallary,fetchMeals}) {
+export default function ImageGallery({selectedMeal,setShowImageGallary,fetchMeals,setUploadingMealId}:{selectedMeal:any,setShowImageGallary:(v:boolean)=>void,fetchMeals:()=>void,setUploadingMealId?:(id:number|null)=>void}) {
   const [selectedImages, setSelectedImages] = useState<GalleryImage[]>(defaultImages);
   const [isDragging, setIsDragging] = useState(false);
   const [meals,setMeals] =useState<Meal[]>([])
@@ -123,12 +123,13 @@ export default function ImageGallery({selectedMeal,setShowImageGallary,fetchMeal
         {meals.map((image) => (
           <div
             onClick={()=>{
+                if(setUploadingMealId){ setUploadingMealId(selectedMeal.id) }
                 axiosClient.patch(`meals/${selectedMeal.id}`,{
                     image_url:image
                 }).then(({data})=>{
                     setShowImageGallary(false)
                     fetchMeals()
-                })
+                }).finally(()=>{ if(setUploadingMealId){ setUploadingMealId(null) } })
             }}
             key={image}
             className="group relative aspect-square rounded-lg cursor-pointer overflow-hidden border border-gray-200"

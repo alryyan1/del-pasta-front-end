@@ -26,6 +26,7 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "./i18n";
 import Arrive from "./pages/Arrive";
 import ImageGallery from "./pages/gallary";
+import OnlineOrderPage from "./pages/OnlineOrderPage";
 
 const login: RouteObject = {
   path: "login",
@@ -104,6 +105,10 @@ const menu: RouteObject = {
   path: "/menu",
   element: <FoodMenu />,
 };
+const onlineOrder: RouteObject = {
+  path: "/online-order",
+  element: <OnlineOrderPage />,
+};
 const gallary: RouteObject = {
   path: "/gallary",
   element: <ImageGallery />,
@@ -121,6 +126,7 @@ const authoroized: RouteObject = {
     expenses,
     reservation,
     menu,
+    onlineOrder,
     reservation2,
     stats,
     gallary

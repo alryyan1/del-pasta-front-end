@@ -11,32 +11,30 @@ import {
   TextField,
   IconButton,
   Tooltip,
+  Avatar,
 } from '@mui/material';
 import axiosClient from '@/helpers/axios-client';
-import { useAuthContext } from '@/contexts/stateContext';
 import { Meal } from '@/Types/types';
 import MealChildrenDialog from './MealChildrenDialog';
-import placeHolder from './../assets/images/ph.jpg';
 import TdCell from '@/helpers/TdCell';
 import { useMealsStore } from '@/stores/MealsStore';
 import { useTranslation } from 'react-i18next';
 import { webUrl } from '@/helpers/constants';
-import { Plus, Upload } from 'lucide-react';
-import { Stack, textAlign, width } from '@mui/system';
+import { Plus } from 'lucide-react';
 import ImageGallery from '../pages/gallary';
 import AddItemDialog from './AddItemDialog';
 import ph from './../assets/images/ph.jpg'
 
-const MealTable: React.FC = ({selectedCategory}) => {
+type Props = { selectedCategory?: { id: number; name?: string } };
+
+const MealTable: React.FC<Props> = ({selectedCategory}) => {
   const { t } = useTranslation('meals'); // i18n hook for translations
   const [search, setSearch] = useState<string | null>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [src, setSrc] = useState<string | null>(null);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [open, setOpen] = useState(false);
   const [openAddItemDialog, setOpenAddItemDialog] = useState(false);
   const [showGallary, setShowGallary] = useState(false);
-  const { addMeal, fetchMeals, deleteMeal, meals } = useMealsStore();
+  const { fetchMeals, meals } = useMealsStore();
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -46,30 +44,11 @@ const MealTable: React.FC = ({selectedCategory}) => {
 
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, meal: Meal) => {
-    if (e.target.files) {
-      encodeImageFileAsURL(e.target.files[0], meal);
-      const url = URL.createObjectURL(e.target.files[0]);
-      setSrc(url);
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const encodeImageFileAsURL = (file: File, meal: Meal) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      saveToDb(reader.result as string, meal);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const saveToDb = (data: string, meal: Meal) => {
-    axiosClient.post(`saveImage/${meal.id}`, { image: data }).then(() => fetchMeals());
-  };
+  // Upload column removed; images updated via gallery
 
   useEffect(() => {
     fetchMeals();
-  }, [selectedMeal]);
+  }, [fetchMeals, selectedMeal]);
 
   const filteredMeals = meals.filter((m) => {
     return search ? m.name.toLowerCase().includes(search.toLowerCase()) : true;
@@ -93,12 +72,10 @@ const MealTable: React.FC = ({selectedCategory}) => {
       <Table size="small" className="text-sm border border-gray-300">
         <TableHead className="bg-gray-100">
           <TableRow>
-            <TableCell>{t('code')}</TableCell>
+            <TableCell>{t('image')}</TableCell>
             <TableCell>{t('name')}</TableCell>
             <TableCell>{t('price')}</TableCell>
             <TableCell>{t('category')}</TableCell>
-            <TableCell>{t('image')}</TableCell>
-            <TableCell>{t('uploadImage')}</TableCell>
             <TableCell>{t('subServices')}</TableCell>
             <TableCell>{t('delete')}</TableCell>
           </TableRow>
@@ -118,34 +95,26 @@ const MealTable: React.FC = ({selectedCategory}) => {
               }}
               className="hover:bg-gray-50"
             >
-              <TableCell>{meal.id}</TableCell>
+              <TableCell>
+                <IconButton onClick={() => { setSelectedMeal(meal); setShowGallary(true); }}>
+                  {meal.image_url == null ? (
+                    <Avatar sx={{ width: 48, height: 48 }}>{meal.name?.charAt(0) ?? '?'}</Avatar>
+                  ) : (
+                    <img
+                      src={meal.image_url  == null ? ph: `${webUrl}/images/${meal.image_url}`}
+                      alt={meal.name}
+                      style={{ width: '48px', height: '48px', objectFit: 'cover', borderRadius: '6px' }}
+                    />
+                  )}
+                </IconButton>
+              </TableCell>
               <TdCell table="meals" colName="name" item={meal}>
                 {meal.name}
               </TdCell>
-              <TdCell sx={{width:'50px',textAlign:'center'}} table="meals" colName="price" item={meal}>
+              <TdCell table="meals" colName="price" item={meal}>
                 {meal.price}
               </TdCell>
-              <TableCell>{meal?.category?.name}</TableCell>
-              <TableCell>
-                <img
-                  src={meal.image_url  == null ? ph: `${webUrl}/images/${meal.image_url}`}
-                  alt={meal.name}
-                  style={{ width: '100px' }}
-                />
-              </TableCell>
-              <TableCell>
-                <Stack direction={'row'}>
-      <input
-                  type="file"
-                  onChange={(e) => handleFileChange(e, meal)}
-                />
-                <Tooltip title='choose from gallary'><IconButton onClick={()=>{
-                  setSelectedMeal(meal)
-                  setShowGallary(true)
-                }}><Upload/></IconButton></Tooltip>
-                </Stack>
-          
-              </TableCell>
+              <TableCell>{meal?.category_id}</TableCell>
               <TableCell>
                 <Button
                   onClick={() => {

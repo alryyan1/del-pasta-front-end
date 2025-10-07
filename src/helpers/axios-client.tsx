@@ -3,10 +3,10 @@ import { host, schema } from "./constants";
 import { toast } from "react-toastify";
 import { AxiosResponse } from "axios";
 import { useAuthStore } from "@/AuthStore";
-const axiosClient = axios.create({
+const   axiosClient = axios.create({
   // baseURL : `https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api`
   // baseURL: `${schema}://${host}/mylaundry/del-pasta/public/api`,
-  baseURL: `${schema}://${host}/kitchen-laravel/public/api`,
+  baseURL: `${schema}://${host}/del-pasta/public/api`,
   //  baseURL : `http://192.168.1.5/laravel-react-app/public/api`
   // baseURL : `https://om-pharmacy.com/laravel-react-app/public/api`
 });
@@ -36,7 +36,7 @@ axiosClient.interceptors.response.use(
     console.log(response.data);
     console.log(response.status);
     if (response.status == 200) {
-     
+      
     }
     if (response.status == 401) {
       console.log("removing access token");

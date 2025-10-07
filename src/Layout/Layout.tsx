@@ -185,6 +185,11 @@ export default function DashboardLayoutBasic() {
       icon: <RestaurantMenuIcon />,
     },
     {
+      segment: "online-order",
+      title: t("Online Order"),
+      icon: <AddShoppingCartIcon />,
+    },
+    {
       segment: "reservations2",
       title: t("Reservations"), // Use translation key for "Reservations"
       icon: <BookmarkAddedIcon />,
@@ -299,10 +304,11 @@ export default function DashboardLayoutBasic() {
                   sidebarFooter: SidebarFooter,
                   toolbarActions: NavActions,
                 }}
+                sx={{ minHeight: '100vh', display: 'flex' }}
               >
                 <PageContainer
                   className="root-container"
-                  sx={{ margin: 0, p: 1 }}
+                  sx={{ margin: 0, p: 1, height: '100%', display: 'flex' }}
                 >
                   <Outlet
                     context={{

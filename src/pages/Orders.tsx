@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   TextField,
   Button,
@@ -7,11 +7,16 @@ import {
   Chip,
   Tooltip,
   IconButton,
+  Paper,
+  Divider,
+  InputAdornment,
+  MenuItem,
+  useMediaQuery,
+  Stack as MuiStack,
 } from "@mui/material";
-import { useTranslation } from "react-i18next"; // Import i18n hook
+import { useTranslation } from "react-i18next";
 import { OrderTable } from "./orders/OrderTable";
 import axiosClient from "@/helpers/axios-client";
-import { Box, Stack, useMediaQuery } from "@mui/system";
 import { Filter, Search } from "lucide-react";
 import dayjs from "dayjs";
 import { webUrl } from "@/helpers/constants";
@@ -19,22 +24,10 @@ import MyLoadingButton from "@/components/MyLoadingButton";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { useOutletContext } from "react-router-dom";
 import { Order } from "@/Types/types";
-import MyDateField2 from "@/components/MYDate";
-import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
-type Status = [
-  "Pending",
-  "Confirmed",
-  "Completed",
-  "In Preparation",
-  "Delivered",
-  "Cancelled",
-];
 
 function Orders() {
   const { t } = useTranslation("orders"); // Initialize t function for translations
-  const statuses: Status = [
+  const statuses = [
     "Pending",
     "Confirmed",
     "Completed",
@@ -45,29 +38,19 @@ function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [orders2, setOrders2] = useState<Order[]>([]);
   const [update, setUpdate] = useState(0);
-  const [width, setWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-  const [search, setSearch] = useState(null);
-  const [searchByState, setSearchByState] = useState(null);
-  const [searchByCity, setSearchByCity] = useState(null);
-  const [searchById, setSearchById] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState<null | string>(null);
-  const [createdAt, setCreatedAt] = useState(null);
-  const [page, setPage] = useState(20);
-  const [links, setLinks] = useState([]);
+  const [search, setSearch] = useState<string>("");
+  const [searchByState, setSearchByState] = useState<string>("");
+  const [searchByCity, setSearchByCity] = useState<string>("");
+  const [searchById, setSearchById] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [createdAt, setCreatedAt] = useState<dayjs.Dayjs | null>(null);
+  const [page, setPage] = useState<number>(20);
+  const [links, setLinks] = useState<any[]>([]);
   const { selectedOrder, setSelectedOrder } = useOutletContext();
 
   const updateItemsTable = (link, setLoading) => {
     setLoading(true);
-    axiosClient(`${link.url}&word=${search}`)
+    axiosClient(`${link.url}&word=${search || ""}`)
       .then(({ data }) => {
         setOrders(data.data);
         setLinks(data.links);
@@ -93,10 +76,10 @@ function Orders() {
         .post(`orders/pagination/${page}`, {
           status: selectedStatus,
           date: createdAt?.format("YYYY-MM-DD") ?? null,
-          name: search,
-          city: searchByCity,
-          state: searchByState,
-          id: searchById,
+          name: search || null,
+          city: searchByCity || null,
+          state: searchByState || null,
+          id: searchById || null,
 
         })
         .then(({ data: { data, links } }) => {
@@ -112,9 +95,9 @@ function Orders() {
         .post(`orders/pagination/10000`, {
           status: selectedStatus,
           date: createdAt?.format("YYYY-MM-DD") ?? null,
-          name: search,
-          city: searchByCity,
-          state: searchByState,
+          name: search || null,
+          city: searchByCity || null,
+          state: searchByState || null,
         })
         .then(({ data: { data, links } }) => {
           setOrders2(data);
@@ -126,209 +109,196 @@ function Orders() {
 
   const isMobile = useMediaQuery("(max-width:600px)");
 
+  const currencyFormatter = useMemo(() => new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 3,
+    maximumFractionDigits: 3,
+  }), []);
+
+  const summary = useMemo(() => {
+    const total = orders2.reduce((prev, curr) => prev + curr.totalPrice, 0);
+    const paid = orders2.reduce((prev, curr) => prev + curr.amount_paid, 0);
+    const remaining = total - paid;
+    const handed = orders2.filter((o) => o.status === "delivered").length;
+    const notHanded = orders2.filter((o) => o.status !== "delivered").length;
+    return { total, paid, remaining, handed, notHanded };
+  }, [orders2]);
+
+  const filters = [
+    {
+      placeholder: t("searchOrders"),
+      value: search,
+      onChange: (val: string) => {
+        setCreatedAt(null);
+        setSearch(val);
+      },
+    },
+    {
+      placeholder: "بحث بالمحافظه",
+      value: searchByState,
+      onChange: (val: string) => {
+        setCreatedAt(null);
+        setSearchByState(val);
+      },
+    },
+    {
+      placeholder: "بحث بالمنطقه",
+      value: searchByCity,
+      onChange: (val: string) => {
+        setCreatedAt(null);
+        setSearchByCity(val);
+      },
+    },
+    {
+      placeholder: "بحث برقم الطلب",
+      value: searchById,
+      onChange: (val: string) => {
+        setCreatedAt(null);
+        setSearchById(val);
+      },
+    },
+  ];
+
   return (
-    <div>
-      <Stack
-        alignItems="center"
-        gap={1}
-        direction={isMobile ? "column" : "row"}
-        justifyContent="space-around"
-        sx={{ m: 2 }}
-        className="!my-1"
+    <MuiStack spacing={2} sx={{ p: { xs: 1, sm: 2 } }}>
+      {/* Filters */}
+      <Paper
+        elevation={0}
+        sx={{
+          p: 2,
+          borderRadius: 2,
+          border: "1px solid",
+          borderColor: "divider",
+          bgcolor: "background.paper",
+          display: "flex",
+          flexDirection: "column",
+          gap: 1.5,
+        }}
       >
-        <TextField
-          size="small"
-          variant="outlined"
-          placeholder={t("searchOrders")}
-          value={search}
-          onChange={(e) => {
-            setCreatedAt(null);
-            setSearch(e.target.value);
-          }}
-          InputProps={{
-            startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
-          }}
-        />
-        <TextField
-          size="small"
-          variant="outlined"
-          placeholder={"بحث بالمحافظه"}
-          value={searchByState}
-          onChange={(e) => {
-            setCreatedAt(null);
-            setSearchByState(e.target.value);
-          }}
-          InputProps={{
-            startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
-          }}
-        />
-        <TextField
-          size="small"
-          variant="outlined"
-          placeholder={"بحث بالمنطقه"}
-          value={searchByCity}
-          onChange={(e) => {
-            setCreatedAt(null);
-            setSearchByCity(e.target.value);
-          }}
-          InputProps={{
-            startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
-          }}
-        />
-        {/* <input
-          onChange={(e) => setDeliveryDate(e.target.value)}
-          type="date"
-        /> */}
-
-<TextField
-          size="small"
-          variant="outlined"
-          placeholder={'بحث برقم الطلب'}
-          value={searchById}
-          onChange={(e) => {
-            setCreatedAt(null)
-            setSearchById(e.target.value)
-
-          }}
-          InputProps={{
-            startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
-          }}
-        />
-
-        {/* <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateField
-            onDoubleClick={() => {
-              setCreatedAt(dayjs());
-            }}
-            label={"تاريخ"}
-            format="DD-MM-YYYY"
-            sx={{ width: "125px" }}
-            size="small"
-            defaultValue={createdAt}
-            value={dayjs(createdAt)}
-            onChange={(val) => {
-              const dayJsObj = dayjs(val);
-
-              setCreatedAt(dayJsObj);
-
-              // axiosClient.post(`orders/pagination/20`,{date:createdAt.format('YYYY-MM-DD')}).then(({data})=>{
-              //    setOrders(data.data)
-              //    setLinks(data.links)
-              // })
-            }}
-          />
-        </LocalizationProvider> */}
-        <select onChange={(val) => setPage(val.target.value)}>
-          <option value="5">5</option>
-          <option selected value="10">
-            10
-          </option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-        <Button
-          variant="contained"
-          href={`${webUrl}ordersAi?state=${searchByState}&searchByCity=${searchByCity}`}
-        >
-          {t("report")}
-        </Button>
-        <Stack
-          textAlign="center"
-          alignItems="center"
+        <MuiStack
+          alignItems="flex-start"
+          gap={isMobile ? 1 : 2}
           direction={isMobile ? "column" : "row"}
+          sx={{ width: "100%" }}
         >
-          <Box>
+          {filters.map((filter) => (
+            <TextField
+              key={filter.placeholder}
+              size="small"
+              variant="outlined"
+              placeholder={filter.placeholder}
+              value={filter.value}
+              onChange={(e) => filter.onChange(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search size={18} className="text-gray-500" />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ minWidth: isMobile ? "100%" : 200 }}
+            />
+          ))}
+
+          <TextField
+            select
+            size="small"
+            label={t("rows") || "Rows"}
+            value={page}
+            onChange={(e) => setPage(Number(e.target.value))}
+            sx={{ minWidth: 110 }}
+          >
+            {[5, 10, 20, 30, 50, 100].map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <Button
+            variant="contained"
+            href={`${webUrl}ordersAi?state=${searchByState}&searchByCity=${searchByCity}`}
+            sx={{ textTransform: "none" }}
+          >
+            {t("report")}
+          </Button>
+        </MuiStack>
+
+        <Divider />
+
+        <MuiStack
+          textAlign="center"
+          alignItems="flex-start"
+          direction={isMobile ? "column" : "row"}
+          gap={1}
+          justifyContent="space-between"
+        >
+          <MuiStack direction="row" alignItems="center" gap={1}>
             <Tooltip title={t("filter")}>
-              <IconButton>
-                <Filter onClick={() => setSelectedStatus(null)} />
+              <IconButton onClick={() => setSelectedStatus(null)}>
+                <Filter />
               </IconButton>
             </Tooltip>
-          </Box>
-          <Stack gap={1} direction={isMobile ? "column" : "row"}>
+            <Typography variant="subtitle2" color="text.secondary">
+              {t("status_filter")}
+            </Typography>
+          </MuiStack>
+
+          <MuiStack
+            gap={1}
+            direction="row"
+            flexWrap="wrap"
+            sx={{ width: "100%" }}
+          >
             {statuses.map((s) => (
               <Chip
+                key={s}
                 color={s === selectedStatus ? "primary" : "default"}
                 variant={s === selectedStatus ? "filled" : "outlined"}
-                key={s}
                 onClick={() => setSelectedStatus(s)}
-                label={t(`${s}`)} // Translate statuses
+                label={t(`${s}`)}
+                sx={{
+                  borderRadius: 1.5,
+                  fontWeight: 600,
+                  textTransform: "capitalize",
+                }}
               />
             ))}
-          </Stack>
-        </Stack>
-      </Stack>
-      <Stack
-        sx={{ m: 2 }}
-        direction={isMobile ? "column" : "row"}
-        gap={1}
-        justifyContent="space-around"
-        alignItems="center"
-      >
-        <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          className="shadow-lg text-center border-rounded-full w-[150px] items-center bg-[var(--primary)] rounded-full p-1"
-        >
-          <Typography variant="h6">{t("total")}</Typography>
-          <Typography variant="h6">
-            {orders2
-              .reduce((prev, curr) => prev + curr.totalPrice, 0)
-              .toFixed(3)}
-          </Typography>
-        </Stack>
-        <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
-        >
-          <Typography variant="h6">{t("paid")}</Typography>
-          <Typography variant="h6">
-            {orders2
-              .reduce((prev, curr) => prev + curr.amount_paid, 0)
-              .toFixed(3)}
-          </Typography>
-        </Stack>
-        <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
-        >
-          <Typography variant="h6">{t("remaining")}</Typography>
-          <Typography variant="h6">
-            {(
-              orders2.reduce((prev, curr) => prev + curr.totalPrice, 0) -
-              orders2.reduce((prev, curr) => prev + curr.amount_paid, 0)
-            ).toFixed(3)}
-          </Typography>
-        </Stack>
-        <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
-        >
-          <Typography variant="h6"> {t("handed")} </Typography>
-          <Typography variant="h6">
-            {orders2.filter((o) => o.status == "delivered").length}
-          </Typography>
-        </Stack>
-        <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent="center"
-          className="shadow-lg text-center items-center w-[150px] bg-[var(--primary)] p-1 rounded-full"
-        >
-          <Typography variant="h6"> {t("notHanded")} </Typography>
-          <Typography variant="h6">
-            {orders2.filter((o) => o.status != "delivered").length}
-          </Typography>
-        </Stack>
-      </Stack>
+          </MuiStack>
+        </MuiStack>
+      </Paper>
+
+      {/* Summary */}
+      <Grid container spacing={2}>
+        {[
+          { label: t("total"), value: currencyFormatter.format(summary.total) },
+          { label: t("paid"), value: currencyFormatter.format(summary.paid) },
+          { label: t("remaining"), value: currencyFormatter.format(summary.remaining) },
+          { label: t("handed"), value: summary.handed },
+          { label: t("notHanded"), value: summary.notHanded },
+        ].map((item, idx) => (
+          <Grid key={item.label} item xs={12} sm={6} md={2.4}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2,
+                borderRadius: 2,
+                border: "1px solid",
+                borderColor: "divider",
+                bgcolor: idx === 0 ? "rgba(156, 39, 176, 0.08)" : "background.paper",
+                height: "100%",
+              }}
+            >
+              <Typography variant="subtitle2" color="text.secondary">
+                {item.label}
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 700, mt: 0.5 }}>
+                {item.value}
+              </Typography>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+
       <OrderTable setUpdate={setUpdate} setOrders={setOrders} orders={orders} />
       {links.length > 0 && (
         <Grid sx={{ gap: "4px", mt: 1 }} style={{ direction: "ltr" }} container>
@@ -370,7 +340,7 @@ function Orders() {
           })}
         </Grid>
       )}
-    </div>
+    </MuiStack>
   );
 }
 

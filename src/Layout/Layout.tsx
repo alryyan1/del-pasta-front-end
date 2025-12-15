@@ -1,30 +1,41 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { ConfigProvider, Layout, Menu, theme as antdTheme, Avatar, Dropdown } from "antd";
 import {
-  DashboardOutlined,
-  ShoppingCartOutlined,
-  UnorderedListOutlined,
-  DollarOutlined,
-  AppstoreOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  LogoutOutlined,
-  UserOutlined,
-  SettingOutlined,
-  TeamOutlined,
-  UserSwitchOutlined,
-  ToolOutlined,
-} from "@ant-design/icons";
+  Dashboard as DashboardIcon,
+  ShoppingCart,
+  List,
+  AttachMoney,
+  Apps,
+  Settings,
+  People,
+  PersonAdd,
+  Build,
+  Menu as MenuIcon,
+} from "@mui/icons-material";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
-import { CircularProgress } from "@mui/material";
+import {
+  CircularProgress,
+  Avatar,
+  Menu,
+  MenuItem,
+  IconButton,
+  Typography,
+  Drawer,
+  List as MuiList,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  AppBar,
+  Toolbar,
+} from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
 import { CacheProvider } from "@emotion/react";
-import { cacheRtl } from "@/helpers/constants";
+import { cacheLtr } from "@/helpers/constants";
  
 import "./../i18n";
 import { I18nextProvider } from "react-i18next";
@@ -34,10 +45,9 @@ import alarm from "./../assets/alarm.wav";
 import { Meal, Order } from "@/Types/types";
 import LoginDialog from "@/components/LoginDialog";
 import { useAuthStore } from "@/AuthStore";
-// import logo from "./../assets/logo.svg";
 
 const demoTheme = createTheme({
-  // direction: "rtl",
+  direction: "ltr",
   palette: {
     primary: {
       main: "#9c27b0",// purple
@@ -64,16 +74,16 @@ const demoTheme = createTheme({
   },
   typography: {
     fontFamily: [
-      "Cairo", // Add your default font here
+      "Tajawal", // Add your default font here
       "Arial",
       "sans-serif",
     ].join(","),
     // You can customize other typography settings here
     h1: {
-      fontFamily: "Cairo", // Custom font for h1
+      fontFamily: "Tajawal", // Custom font for h1
     },
     h2: {
-      fontFamily: "Cairo", // Custom font for h2
+      fontFamily: "Tajawal", // Custom font for h2
     },
     // Add other styles as needed
   },
@@ -93,16 +103,15 @@ const demoTheme = createTheme({
   colorSchemes: { light: true },
 });
 
-
 export default function DashboardLayoutBasic() {
   const [isIpadPro, setIsIpadPro] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = React.useState(true);
   const {openLoginDialog,setCloseLoginDialog} =  useAuthStore((state)=>state)
   console.log(openLoginDialog,'openDialog')
   const navigate =  useNavigate()
+  const location = useLocation()
    const {setUser,setToken,} = useAuthContext()
     const [meals,setMeals] = React.useState<Meal[]>([]);
-  // const screens = Grid.useBreakpoint();
-  const [collapsed, setCollapsed] = React.useState(false);
    React.useEffect(()=>{
       axiosClient.get('meals').then(({data})=>{
         setMeals(data)
@@ -176,149 +185,340 @@ export default function DashboardLayoutBasic() {
   const handleClose = () => {
     setOpen(false);
   };
-  const sidebarItems: { key: string; label: string; icon: React.ReactNode; to: string }[] = [
-    { key: 'dashboard', label: 'Dashboard', icon: <DashboardOutlined />, to: '/dashboard' },
-    { key: 'makeOrder', label: 'New Order', icon: <ShoppingCartOutlined />, to: '/makeOrder' },
-    { key: 'orders', label: 'Orders', icon: <UnorderedListOutlined />, to: '/orders' },
-    { key: 'expenses', label: 'Expenses', icon: <DollarOutlined />, to: '/expenses' },
-    { key: 'menu', label: 'Menu', icon: <AppstoreOutlined />, to: '/menu' },
-    { key: 'online-order', label: 'Online Order', icon: <ShoppingCartOutlined />, to: '/online-order' },
-    { key: 'online-orders-list', label: 'Online Orders', icon: <ShoppingCartOutlined />, to: '/online-orders-list' },
+  const sidebarItems = [
+    { path: '/dashboard', title: 'Dashboard', icon: <DashboardIcon /> },
+    { path: '/makeOrder', title: 'New Order', icon: <ShoppingCart /> },
+    { path: '/orders', title: 'Orders', icon: <List /> },
+    { path: '/expenses', title: 'Expenses', icon: <AttachMoney /> },
+    { path: '/stats', title: 'Stats', icon: <Apps /> },
+    // { path: '/menu', title: 'Menu', icon: <Apps /> },
+    { path: '/online-order', title: 'Online Order', icon: <ShoppingCart /> },
+    { path: '/online-orders-list', title: 'MOC', icon: <ShoppingCart /> },
   ];
 
-  const settingsItems: { key: string; label: string; icon: React.ReactNode; to: string }[] = [
-    { key: 'meals', label: 'Services', icon: <ToolOutlined />, to: '/config/meals' },
-    { key: 'MealCategories', label: 'Categories', icon: <AppstoreOutlined />, to: '/config/MealCategories' },
-    { key: 'customers', label: 'Customers', icon: <TeamOutlined />, to: '/config/customers' },
-    { key: 'users', label: 'Users', icon: <UserSwitchOutlined />, to: '/config/users' },
-    { key: 'services', label: 'Sub Services', icon: <ToolOutlined />, to: '/config/services' },
-    { key: 'settings', label: 'Other', icon: <SettingOutlined />, to: '/config/settings' },
+  const settingsItems = [
+    { path: '/config/meals', title: 'Services', icon: <Build /> },
+    { path: '/config/MealCategories', title: 'Categories', icon: <Apps /> },
+    { path: '/config/customers', title: 'Customers', icon: <People /> },
+    { path: '/config/users', title: 'Users', icon: <PersonAdd /> },
+    { path: '/config/services', title: 'Sub Services', icon: <Build /> },
+    { path: '/config/settings', title: 'Other', icon: <Settings /> },
   ];
 
-  const { user } = useAuthContext() as { user: { name?: string } | null };
+  const { user } = useAuthContext() as { user: { name?: string; user_type?: string } | null };
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  
+  // Get user type from user object or localStorage
+  const userType = user?.user_type || localStorage.getItem('user_type');
+  
+  // Filter navigation items based on user type
+  // All users (including staff) should see main items
+  const getFilteredSidebarItems = () => {
+    // Ensure all users can see main navigation items
+    return sidebarItems;
+  };
+  
+  const getFilteredSettingsItems = () => {
+    // Only admin users can see settings, staff users cannot
+    if (userType === 'staff') {
+      return [];
+    }
+    return settingsItems;
+  };
   
   const handleLogout = () => {
-    localStorage.removeItem('ACCESS_TOKEN');
-    localStorage.removeItem('user_type');
-    setUser(null);
-    setToken(null);
-    navigate('/login');
+    // Call logout API endpoint
+    axiosClient
+      .post("logout")
+      .then(() => {
+        // Clear local storage
+        localStorage.removeItem('ACCESS_TOKEN');
+        localStorage.removeItem('user_type');
+        // Clear auth state
+        setUser(null);
+        setToken(null);
+        // Close menu
+        setAnchorEl(null);
+        // Navigate to login
+        navigate('/login');
+      })
+      .catch(() => {
+        // Even if API call fails, clear local data and logout
+        localStorage.removeItem('ACCESS_TOKEN');
+        localStorage.removeItem('user_type');
+        setUser(null);
+        setToken(null);
+        setAnchorEl(null);
+        navigate('/login');
+      });
   };
 
-  const userMenuItems = [
-    {
-      key: 'profile',
-      icon: <UserOutlined />,
-      label: 'Profile',
-    },
-    {
-      key: 'logout',
-      icon: <LogoutOutlined />,
-      label: 'Logout',
-      onClick: handleLogout,
-    },
-  ];
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
   return (
-    // preview-start
     <ThemeProvider theme={demoTheme}>
       <CssBaseline />
       <React.Suspense
         fallback={
           <Box
             sx={{
-              userSelect:'none',
-              // height: "100vh",
+              userSelect: 'none',
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              height: "100vh",
             }}
           >
-            {" "}
-            <CircularProgress />{" "}
+            <CircularProgress />
           </Box>
         }
       >
         <I18nextProvider i18n={i18n}>
-          <CacheProvider value={cacheRtl}>
+          <CacheProvider value={cacheLtr}>
             <AuthProvider>
-              <ConfigProvider
-                theme={{
-                  algorithm: antdTheme.defaultAlgorithm,
-                  token: {
-                    colorPrimary: '#9c27b0',
-                    colorBgLayout: '#f5f5f7',
-                    colorText: '#111827',
-                  },
-                }}
-              >
-              <Layout style={{ minHeight: '100vh' }}>
-                <Layout.Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} breakpoint="lg">
-                  <div style={{ height: 64, margin: 16, background: 'rgba(255,255,255,0.2)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }} >
-                    {/* <img src={logo} alt="logo" style={{ width: 100, height: 100 }} /> */}
-                    <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 'bold' }}>Del-pasta</h1>
-
-                  </div>
-                  <Menu
-                    theme="dark"
-                    mode="inline"
-                    selectedKeys={[]}
-                    onClick={({ key }) => {
-                      const item = [...sidebarItems, ...settingsItems].find(i => i.key === key);
-                      if (item) navigate(item.to);
-                    }}
-                    items={[
-                      {
-                        key: 'main',
-                        label: 'Main Items',
-                        type: 'group',
-                        children: sidebarItems.map(i => ({ key: i.key, icon: i.icon, label: i.label }))
-                      },
-                      {
-                        key: 'settings',
-                        label: 'Settings',
-                        type: 'group',
-                        children: settingsItems.map(i => ({ key: i.key, icon: i.icon, label: i.label }))
-                      }
-                    ]}
-                  />
-                </Layout.Sider>
-                <Layout>
-                  <Layout.Header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
-                    <Box sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 2 }}>
-                      {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-                        onClick: () => setCollapsed(!collapsed),
-                        style: { fontSize: 18, cursor: 'pointer' ,color:'#fff'}
-                      })}
-                      del-pasta
-                    </Box>
-                    <Box sx={{ color: '#fff', display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <span>{user?.name || 'User'}</span>
-                      <Dropdown
-                        menu={{ items: userMenuItems }}
-                        placement="bottomRight"
-                        arrow
+              <Box sx={{ display: 'flex', height: '100vh', direction: 'ltr' }}>
+                {/* AppBar */}
+                <AppBar 
+                  position="fixed" 
+                  elevation={1}
+                  sx={{ 
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                    direction: 'ltr',
+                    left: 0,
+                    right: 'auto',
+                    bgcolor: 'background.paper',
+                    color: 'text.primary',
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
+                    <IconButton
+                      color="inherit"
+                      edge="start"
+                      onClick={() => setDrawerOpen(!drawerOpen)}
+                      sx={{ mr: 2 }}
+                      aria-label="toggle drawer"
+                    >
+                      <MenuIcon />
+                    </IconButton>
+                    <Typography 
+                      variant="h6" 
+                      component="div" 
+                      sx={{ 
+                        flexGrow: 1,
+                        fontWeight: 600,
+                        fontSize: { xs: '1rem', sm: '1.25rem' },
+                      }}
+                    >
+                      Del-pasta
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          color: 'inherit',
+                          display: { xs: 'none', sm: 'block' },
+                        }}
+                      >
+                        {user?.name || 'User'}
+                      </Typography>
+                      <IconButton 
+                        onClick={handleMenuOpen} 
+                        size="small" 
+                        sx={{ color: 'inherit' }}
+                        aria-label="user menu"
                       >
                         <Avatar 
-                          style={{ backgroundColor: '#9c27b0', cursor: 'pointer' }}
-                          icon={<UserOutlined />}
-                        />
-                      </Dropdown>
-                    </Box>
-                  </Layout.Header>
-                  <Layout.Content style={{ margin: 16 }}>
-                    <Box sx={{ p: 1, minHeight: 'calc(100vh - 64px - 32px)' }}>
-                      <Outlet
-                        context={{
-                          selectedOrder,
-                          setSelectedOrder,
-                          isIpadPro, setIsIpadPro,meals
+                          sx={{ 
+                            bgcolor: 'primary.main', 
+                            width: 36, 
+                            height: 36,
+                            fontSize: '0.875rem',
+                          }}
+                        >
+                          {user?.name?.[0]?.toUpperCase() || 'U'}
+                        </Avatar>
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
                         }}
-                      />
+                        transformOrigin={{
+                          vertical: 'top',
+                          horizontal: 'right',
+                        }}
+                      >
+                        <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                      </Menu>
                     </Box>
-                  </Layout.Content>
-                </Layout>
-              </Layout>
-              </ConfigProvider>
+                  </Toolbar>
+                </AppBar>
+
+                {/* Drawer Sidebar - LEFT */}
+                <Drawer
+                  variant="persistent"
+                  open={drawerOpen}
+                  anchor="left"
+                  sx={{
+                    width: { xs: drawerOpen ? 240 : 0, sm: drawerOpen ? 240 : 0 },
+                    flexShrink: 0,
+                    display: { xs: drawerOpen ? 'block' : 'none', sm: 'block' },
+                    '& .MuiDrawer-paper': {
+                      width: 240,
+                      boxSizing: 'border-box',
+                      mt: 8,
+                      left: 0,
+                      right: 'auto',
+                      position: 'fixed',
+                      borderRight: '1px solid',
+                      borderColor: 'divider',
+                    },
+                  }}
+                >
+                  <Toolbar />
+                  <Box sx={{ overflow: 'auto', pt: 2, pb: 2, direction: 'ltr', height: '100%' }}>
+                    {/* Main Items */}
+                    <Typography 
+                      variant="overline" 
+                      sx={{ 
+                        px: 2, 
+                        py: 1,
+                        fontWeight: 600, 
+                        textAlign: 'left',
+                        color: 'text.secondary',
+                        display: 'block',
+                      }}
+                    >
+                      Main Items
+                    </Typography>
+                    <MuiList sx={{ px: 1 }}>
+                      {getFilteredSidebarItems().map((item) => (
+                        <ListItem key={item.path} disablePadding>
+                          <ListItemButton
+                            selected={location.pathname === item.path}
+                            onClick={() => navigate(item.path)}
+                            sx={{ 
+                              direction: 'ltr',
+                              borderRadius: 1,
+                              mb: 0.5,
+                              '&.Mui-selected': {
+                                bgcolor: 'primary.main',
+                                color: 'primary.contrastText',
+                                '&:hover': {
+                                  bgcolor: 'primary.dark',
+                                },
+                                '& .MuiListItemIcon-root': {
+                                  color: 'primary.contrastText',
+                                },
+                              },
+                            }}
+                          >
+                            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>{item.icon}</ListItemIcon>
+                            <ListItemText 
+                              primary={item.title} 
+                              sx={{ textAlign: 'left' }}
+                              primaryTypographyProps={{
+                                fontWeight: location.pathname === item.path ? 600 : 400,
+                              }}
+                            />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </MuiList>
+
+                    {/* Settings Items (only for non-staff) */}
+                    {getFilteredSettingsItems().length > 0 && (
+                      <>
+                        <Typography 
+                          variant="overline" 
+                          sx={{ 
+                            px: 2, 
+                            py: 1,
+                            fontWeight: 600, 
+                            mt: 3,
+                            display: 'block', 
+                            textAlign: 'left',
+                            color: 'text.secondary',
+                          }}
+                        >
+                          Settings
+                        </Typography>
+                        <MuiList sx={{ px: 1 }}>
+                          {getFilteredSettingsItems().map((item) => (
+                            <ListItem key={item.path} disablePadding>
+                              <ListItemButton
+                                selected={location.pathname === item.path}
+                                onClick={() => navigate(item.path)}
+                                sx={{ 
+                                  direction: 'ltr',
+                                  borderRadius: 1,
+                                  mb: 0.5,
+                                  '&.Mui-selected': {
+                                    bgcolor: 'primary.main',
+                                    color: 'primary.contrastText',
+                                    '&:hover': {
+                                      bgcolor: 'primary.dark',
+                                    },
+                                    '& .MuiListItemIcon-root': {
+                                      color: 'primary.contrastText',
+                                    },
+                                  },
+                                }}
+                              >
+                                <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>{item.icon}</ListItemIcon>
+                                <ListItemText 
+                                  primary={item.title} 
+                                  sx={{ textAlign: 'left' }}
+                                  primaryTypographyProps={{
+                                    fontWeight: location.pathname === item.path ? 600 : 400,
+                                  }}
+                                />
+                              </ListItemButton>
+                            </ListItem>
+                          ))}
+                        </MuiList>
+                      </>
+                    )}
+                  </Box>
+                </Drawer>
+
+                {/* Main Content */}
+                <Box
+                  component="main"
+                  sx={{
+                    flexGrow: 1,
+                    p: { xs: 2, sm: 3 },
+                    mt: 8,
+                    ml: { xs: 0, sm: drawerOpen ? '240px' : 0 },
+                    width: { xs: '100%', sm: drawerOpen ? 'calc(100% - 240px)' : '100%' },
+                    maxWidth: { xl: '1920px' },
+                    mx: { xl: 'auto' },
+                    transition: 'margin-left 0.3s, width 0.3s',
+                    minHeight: 'calc(100vh - 64px)',
+                  }}
+                >
+                  <Outlet
+                    context={{
+                      selectedOrder,
+                      setSelectedOrder,
+                      isIpadPro,
+                      setIsIpadPro,
+                      meals
+                    }}
+                  />
+                </Box>
+              </Box>
             </AuthProvider>
           </CacheProvider>
         </I18nextProvider>
@@ -333,12 +533,13 @@ export default function DashboardLayoutBasic() {
         setOrders={setOrders}
       />
       <React.Suspense>
-      <LoginDialog open={openLoginDialog} handleClose={()=>{
-        setCloseLoginDialog()
-      }}/>
+        <LoginDialog
+          open={openLoginDialog}
+          handleClose={() => {
+            setCloseLoginDialog()
+          }}
+        />
       </React.Suspense>
-    
     </ThemeProvider>
-    // preview-end
   );
 }

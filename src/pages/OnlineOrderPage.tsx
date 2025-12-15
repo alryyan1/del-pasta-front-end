@@ -19,9 +19,16 @@ export default function OnlineOrderPage() {
   const [delivery, setDelivery] = useState<boolean>(false);
   const [customerState, setCustomerState] = useState<string>("");
   const [customerArea, setCustomerArea] = useState<string>("");
+  const [orderDate, setOrderDate] = useState<string>(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
+  const [orderTime, setOrderTime] = useState<string>("12:00");
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [submitMessage, setSubmitMessage] = useState<string>("");
   const [submitSuccess, setSubmitSuccess] = useState<boolean | null>(null);
+  const [showSuccessPage, setShowSuccessPage] = useState<boolean>(false);
+  const [orderNumber, setOrderNumber] = useState<string>("");
 
   const { items, addItem, updateQuantity, removeItem, totalItems, totalPrice, clear } = useCartStore();
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -32,9 +39,11 @@ export default function OnlineOrderPage() {
   useEffect(() => {
     setLoading(true);
     axiosClient.get<Category[]>(`categories`).then(({ data }) => {
-      setCategories(data);
-      if (data.length > 0) {
-        setSelectedCategoryId(isMobile ? null : data[0].id);
+      // Filter out categories where is_visible is false
+      const visibleCategories = data.filter(category => category.is_visible  == 1);
+      setCategories(visibleCategories);
+      if (visibleCategories.length > 0) {
+        setSelectedCategoryId(isMobile ? null : visibleCategories[0].id);
         setShowCategoryList(true);
       }
     }).finally(() => setLoading(false));
@@ -212,6 +221,22 @@ export default function OnlineOrderPage() {
                   />
                 </>
               )}
+              <TextField
+                label="تاريخ الطلب"
+                type="date"
+                value={orderDate}
+                onChange={(e) => setOrderDate(e.target.value)}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                label="وقت الطلب"
+                type="time"
+                value={orderTime}
+                onChange={(e) => setOrderTime(e.target.value)}
+                fullWidth
+                InputLabelProps={{ shrink: true }}
+              />
               
               <TextField
                 label="تفاصيل الطلب"
@@ -241,26 +266,23 @@ export default function OnlineOrderPage() {
                     state: delivery ? customerState : '',
                     area: delivery ? customerArea : '',
                     notes: '',
+                    order_date: orderDate || null,
+                    order_time: orderTime || null,
                     items: items.map((it) => ({ meal_id: it.meal.id, quantity: it.quantity })),
                   };
                   const res = await axiosClient.post('online-orders/create', payload);
                   clear();
-                  const wa = res?.data?.wa_sent ?? res?.data?.whatsapp_sent ?? res?.data?.whatsapp ?? null;
-                  if (wa === true) {
-                    setSubmitSuccess(true);
-                    setSubmitMessage('تم إنشاء الطلب وإرسال رسالة الواتساب بنجاح');
-                  } else if (wa === false) {
-                    setSubmitSuccess(false);
-                    setSubmitMessage('تم إنشاء الطلب ولكن تعذر إرسال رسالة الواتساب');
-                  } else {
-                    setSubmitSuccess(true);
-                    setSubmitMessage('تم إنشاء الطلب');
+                  
+                  // Set order number from response
+                  if (res?.data?.data?.order_number) {
+                    setOrderNumber(res.data.data.order_number);
+                  } else if (res?.data?.data?.id) {
+                    setOrderNumber(`#${res.data.data.id}`);
                   }
-                  setTimeout(() => {
-                    setCheckoutOpen(false);
-                    setSubmitMessage("");
-                    setSubmitSuccess(null);
-                  }, 1200);
+                  
+                  // Show success page
+                  setCheckoutOpen(false);
+                  setShowSuccessPage(true);
                 } catch {
                   setSubmitSuccess(false);
                   setSubmitMessage('تعذر إنشاء الطلب. حاول مرة أخرى');
@@ -278,6 +300,59 @@ export default function OnlineOrderPage() {
             </Typography>
           )}
         </Dialog>
+
+        {/* Success Page */}
+        {showSuccessPage && (
+          <div className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
+            <div className="max-w-md w-full text-center">
+              <div className="mb-6">
+                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">تم إنشاء الطلب بنجاح!</h2>
+                <p className="text-gray-600 mb-4">
+                  شكراً لطلبك من Del Pasta. تم استلام طلبك وسيتم التواصل معك قريباً.
+                </p>
+                {orderNumber && (
+                  <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                    <p className="text-sm text-gray-600 mb-1">رقم الطلب</p>
+                    <p className="text-lg font-semibold text-gray-900">{orderNumber}</p>
+                  </div>
+                )}
+              </div>
+              <Button
+                variant="contained"
+                fullWidth
+                size="large"
+                onClick={() => {
+                  setShowSuccessPage(false);
+                  setCheckoutOpen(false);
+                  clear();
+                  setCustomerName("");
+                  setCustomerPhone("");
+                  setCustomerState("");
+                  setCustomerArea("");
+                  setOrderDate(new Date().toISOString().split('T')[0]);
+                  setOrderTime("12:00");
+                  setDelivery(false);
+                }}
+                sx={{
+                  height: 48,
+                  borderRadius: 2,
+                  fontWeight: 700,
+                  textTransform: 'none',
+                  fontSize: '16px',
+                  backgroundImage: 'linear-gradient(135deg, #f8bbd0, #f48fb1)',
+                  '&:hover': { filter: 'brightness(1.05)' }
+                }}
+              >
+                طلب جديد
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -435,6 +510,22 @@ export default function OnlineOrderPage() {
                 />
               </>
             )}
+            <TextField
+              label="تاريخ الطلب"
+              type="date"
+              value={orderDate}
+              onChange={(e) => setOrderDate(e.target.value)}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="وقت الطلب"
+              type="time"
+              value={orderTime}
+              onChange={(e) => setOrderTime(e.target.value)}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+            />
          
             <TextField
               label="تفاصيل الطلب"
@@ -464,28 +555,23 @@ export default function OnlineOrderPage() {
                   state: delivery ? customerState : '',
                   area: delivery ? customerArea : '',
                   notes: '',
+                  order_date: orderDate || null,
+                  order_time: orderTime || null,
                   items: items.map((it) => ({ meal_id: it.meal.id, quantity: it.quantity })),
                 };
                 const res = await axiosClient.post('online-orders/create', payload);
                 clear();
-                // Try to read whatsapp send result if backend provides it
-                const wa = res?.data?.wa_sent ?? res?.data?.whatsapp_sent ?? res?.data?.whatsapp ?? null;
-                if (wa === true) {
-                  setSubmitSuccess(true);
-                  setSubmitMessage('تم إنشاء الطلب وإرسال رسالة الواتساب بنجاح');
-                } else if (wa === false) {
-                  setSubmitSuccess(false);
-                  setSubmitMessage('تم إنشاء الطلب ولكن تعذر إرسال رسالة الواتساب');
-                } else {
-                  setSubmitSuccess(true);
-                  setSubmitMessage('تم إنشاء الطلب');
+                
+                // Set order number from response
+                if (res?.data?.data?.order_number) {
+                  setOrderNumber(res.data.data.order_number);
+                } else if (res?.data?.data?.id) {
+                  setOrderNumber(`#${res.data.data.id}`);
                 }
-                // Optionally close dialog after short delay
-                setTimeout(() => {
-                  setCheckoutOpen(false);
-                  setSubmitMessage("");
-                  setSubmitSuccess(null);
-                }, 1200);
+                
+                // Show success page
+                setCheckoutOpen(false);
+                setShowSuccessPage(true);
               } catch {
                 setSubmitSuccess(false);
                 setSubmitMessage('تعذر إنشاء الطلب. حاول مرة أخرى');
@@ -503,6 +589,59 @@ export default function OnlineOrderPage() {
           </Typography>
         )}
       </Dialog>
+
+      {/* Success Page */}
+      {showSuccessPage && (
+        <div className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
+          <div className="max-w-md w-full text-center">
+            <div className="mb-6">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">تم إنشاء الطلب بنجاح!</h2>
+              <p className="text-gray-600 mb-4">
+                شكراً لطلبك من Del Pasta. تم استلام طلبك وسيتم التواصل معك قريباً.
+              </p>
+              {orderNumber && (
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-gray-600 mb-1">رقم الطلب</p>
+                  <p className="text-lg font-semibold text-gray-900">{orderNumber}</p>
+                </div>
+              )}
+            </div>
+            <Button
+              variant="contained"
+              fullWidth
+              size="large"
+              onClick={() => {
+                setShowSuccessPage(false);
+                setCheckoutOpen(false);
+                clear();
+                setCustomerName("");
+                setCustomerPhone("");
+                setCustomerState("");
+                setCustomerArea("");
+                setOrderDate(new Date().toISOString().split('T')[0]);
+                setOrderTime("12:00");
+                setDelivery(false);
+              }}
+              sx={{
+                height: 48,
+                borderRadius: 2,
+                fontWeight: 700,
+                textTransform: 'none',
+                fontSize: '16px',
+                backgroundImage: 'linear-gradient(135deg, #f8bbd0, #f48fb1)',
+                '&:hover': { filter: 'brightness(1.05)' }
+              }}
+            >
+              طلب جديد
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

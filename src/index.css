@@ -2,8 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Define the Almarai font face */
-
-.bg-primary {
-  background-color: #2980b9;
-}

@@ -73,7 +73,7 @@ function Stats() {
           <Stack direction={'row'} gap={1}>
                    {categories.map((s) => (
                 <Chip
-                  sx={{fontFamily:'cairo'}}
+                  sx={{fontFamily:'Tajawal'}}
                   color={s.id === selectedCategory?.id ? "primary" : "default"}
                   variant={s.id === selectedCategory?.id ? "filled" : "outlined"}
                   key={s.id}

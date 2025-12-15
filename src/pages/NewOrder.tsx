@@ -1,27 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axiosClient from "@/helpers/axios-client";
 import { useAuthContext } from "@/contexts/stateContext";
-import { Category, Customer, Order } from "@/Types/types";
-import MealItem from "./MealItem";
-import { Badge, Box, Button, IconButton, Slide, Tooltip } from "@mui/material";
+import { Customer, Order } from "@/Types/types";
+import { Badge, Box, IconButton, Paper, Slide, Tooltip, Typography } from "@mui/material";
 import Cart from "@/components/Cart";
 import MealCategoryPanel from "@/components/MealCategoryPanel";
 import OrderList from "@/components/OrderList";
 import OrderHeader from "./OrderrHeader";
-import { Plus, Settings, ShoppingBag, ShoppingCart } from "lucide-react";
-import HoverPopover from "@/components/Mypopover";
+import { Settings, ShoppingBag, ShoppingCart } from "lucide-react";
 import { CustomerForm } from "./Customer/CutomerForm";
 import { useCustomerStore } from "./Customer/useCustomer";
-import { Stack } from "@mui/system";
-import { webUrl } from "@/helpers/constants";
-import "./../App.css";
 import OrderHeaderMobile from "@/components/OrderHeaderMobile";
 import { useTranslation } from "react-i18next";
-import Language from "./language";
-import { useOutlet, useOutletContext } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import NoteDialog from "@/components/NoteDialog";
+import printJS from "print-js";
 
 const NewOrder = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -29,12 +24,12 @@ const NewOrder = () => {
   const [showOrderSettings, setOrderSettings] = useState(false);
   const [showCart, setShowCart] = useState(window.innerWidth > 700);
   const [showCategories, setShowCategories] = useState(window.innerWidth > 700);
-  const { customers, addCustomer, updateCustomer, fetchData } =
-  useCustomerStore();
+  const { customers, fetchData } = useCustomerStore();
 
-useEffect(() => {
-  fetchData();
-}, []);
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [selectedCustomer, setSelectedCustomer] = useState<
     Customer | undefined
@@ -64,27 +59,36 @@ useEffect(() => {
   const handleNoteClose = ()=>{
     setOpen(false);
   }
-  const {selectedOrder, setSelectedOrder} =useOutletContext()
-  const { data, setData, add, deleteItem } = useAuthContext();
+  const outletContext = useOutletContext() as {
+    selectedOrder: Order | null;
+    setSelectedOrder: (order: Order | null) => void;
+  };
+  const { selectedOrder, setSelectedOrder: setSelectedOrderFromContext } = outletContext;
+  const { add } = useAuthContext();
+  
+  // Wrapper function to match NoteDialog's expected type
+  const setSelectedOrder = useCallback((order: Order | ((prev: Order) => Order)) => {
+    if (typeof order === 'function') {
+      // Handle function case
+      const currentOrder = selectedOrder;
+      if (currentOrder) {
+        setSelectedOrderFromContext(order(currentOrder));
+      }
+    } else {
+      setSelectedOrderFromContext(order);
+    }
+  }, [selectedOrder, setSelectedOrderFromContext]);
   const [orders, setOrders] = useState<Order[]>([]);
   const printHandler = () => {
-    const form = new URLSearchParams();
     axiosClient
       .get(`printSale?order_id=${selectedOrder?.id}&base64=1`)
       .then(({ data }) => {
-        form.append("data", data);
-        form.append("node_direct", "0");
-
         printJS({
           printable: data.slice(data.indexOf("JVB")),
           base64: true,
           type: "pdf",
         });
       });
-  };
-  const handleEdit = (customer: Customer) => {
-    setSelectedCustomer(customer);
-    setIsFormOpen(true);
   };
 
   const handleClose = () => {
@@ -103,9 +107,6 @@ useEffect(() => {
     });
   }, [selectedOrder]);
 
-  const confirmOrder = () => {
-    console.log(t("order_confirmed"), order); // Example of translation usage
-  };
 
   const newOrderHandler = () => {
     axiosClient.post("orders").then(({ data }) => {
@@ -125,8 +126,17 @@ useEffect(() => {
   return (
     <>
       {width < 830 && (
-        <Box sx={{ mb: 1 }}>
-          <div className="order-header">
+        <Box
+          sx={{
+            mb: 2,
+            bgcolor: 'rgba(233, 30, 99, 0.07)',
+            p: 1.5,
+            borderRadius: 2,
+            border: '1px dashed',
+            borderColor: 'divider',
+          }}
+        >
+          <Box sx={{ display: 'flex', gap: 1 }}>
             <IconButton
               onClick={() => {
                 setOrderSettings(!showOrderSettings);
@@ -150,32 +160,32 @@ useEffect(() => {
                 <ShoppingBag />
               )}
             </IconButton>
-          </div>
+          </Box>
         </Box>
       )}
 
       {showOrderSettings && (
         <Slide direction="up" in={true} mountOnEnter unmountOnExit>
-          <div>
+          <Box>
             <OrderHeaderMobile
-             
               showOrderSettings={showOrderSettings}
+              showNewOrderBtn={true}
               setIsFormOpen={setIsFormOpen}
               key={selectedOrder?.id}
               selectedOrder={selectedOrder}
               setSelectedOrder={setSelectedOrder}
+              setOrders={setOrders}
               newOrderHandler={newOrderHandler}
             />
-          </div>
+          </Box>
         </Slide>
       )}
 
       {width > 830 && (
         <OrderHeader
-        customers={customers}
+          customers={customers}
           setOpen={setOpen}
           handleClose={handleNoteClose}
-          showOrderSettings={showOrderSettings}
           setIsFormOpen={setIsFormOpen}
           key={selectedOrder?.id}
           selectedOrder={selectedOrder}
@@ -184,57 +194,103 @@ useEffect(() => {
         />
       )}
 
-      <div className="layout">
+      <Box
+        sx={{
+          display: { xs: 'block', md: 'grid' },
+          gridTemplateColumns: { md: '1fr 1fr' },
+          mt: { xs: 2, md: 3 },
+          gap: { xs: 2, md: 3 },
+          maxWidth: '100%',
+        }}
+      >
         {showCategories && (
-          <div className="right-section">
+          <Box sx={{ minHeight: { md: 'calc(100vh - 200px)' } }}>
             {selectedOrder ? (
               <MealCategoryPanel
                 selectedOrder={selectedOrder}
-                setOrders={setOrders}
-                setSelectedOrder={setSelectedOrder}
+                setSelectedOrder={(order: Order) => setSelectedOrderFromContext(order)}
               />
             ) : (
-              <div></div>
+              <Paper 
+                elevation={1}
+                sx={{ 
+                  p: 3, 
+                  textAlign: 'center',
+                  color: 'text.secondary',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Typography variant="body1">Select an order to view categories</Typography>
+              </Paper>
             )}
-          </div>
+          </Box>
         )}
 
-        <Box dir="rtl">
-          <div className="orders-cart h-[calc(100vh-200px)]  ">
+        <Box sx={{ direction: 'ltr' }}>
+          <Box
+            sx={{
+              display: { xs: 'block', md: 'grid' },
+              gap: { xs: 2, md: 2 },
+              gridTemplateColumns: { md: 'minmax(285px, 1fr) 80px' },
+              minHeight: { md: 'calc(100vh - 200px)' },
+            }}
+          >
             {showCart && (
-              <div className="flex justify-center items-center">
-                {selectedOrder?.meal_orders?.length > 0 && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {(selectedOrder?.meal_orders?.length ?? 0) > 0 && selectedOrder && (
                   <Cart
                     printHandler={printHandler}
-                    setSelectedOrder={setSelectedOrder}
+                    setSelectedOrder={(order: Order) => setSelectedOrderFromContext(order)}
                     selectedOrder={selectedOrder}
                   />
                 )}
 
                 {((selectedOrder?.meal_orders?.length ?? 0) === 0) && showCart && (
-                  <div className="bg-white rounded-lg shadow-md p-6 ">
-                    <div className="flex flex-col items-center justify-center text-gray-500">
-                      <ShoppingCart size={48} className="mb-4" />
-                      <p>{t("empty_cart")}</p> {/* Empty cart message */}
-                    </div>
-                  </div>
+                  <Paper
+                    elevation={3}
+                    sx={{
+                      p: 3,
+                      borderRadius: 2,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'text.secondary',
+                      }}
+                    >
+                      <ShoppingCart size={48} style={{ marginBottom: 16 }} />
+                      <Typography>{t("empty_cart")}</Typography>
+                    </Box>
+                  </Paper>
                 )}
-              </div>
+              </Box>
             )}
             <OrderList
               orders={orders}
               selectedOrder={selectedOrder}
-              setSelectedOrder={setSelectedOrder}
+              setSelectedOrder={setSelectedOrderFromContext}
             />
-          </div>
+          </Box>
         </Box>
         <CustomerForm
           key={selectedCustomer?.id}
           open={isFormOpen}
           onClose={handleClose}
+          selectedCustomer={selectedCustomer || ({} as Customer)}
+          onSubmit={() => {
+            // Handle customer submission if needed
+            handleClose();
+          }}
         />
-       {selectedOrder &&  <NoteDialog handleClose={handleNoteClose} open={open} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder}/>}
-      </div>
+       {selectedOrder &&  <NoteDialog handleClose={handleNoteClose} open={open} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder as React.Dispatch<React.SetStateAction<Order>>}/>}
+      </Box>
     </>
   );
 };

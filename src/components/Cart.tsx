@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Meal, Mealorder, Order, Requestedchildmeal } from "@/Types/types";
 import axiosClient from "@/helpers/axios-client";
 import { LoadingButton } from "@mui/lab";
-import "./../magicCard.css";
 import { Box, Stack } from "@mui/system";
 import CartItem from "./CartItem";
 import { Plus, ShoppingCart } from "lucide-react";
@@ -94,13 +93,14 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
    }
    const {meals} = useOutletContext()
   return (
-    <div className="cart-items-div flex justify-center  ">
+    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Stack
-        className="shadow-lg overflow-auto h-[calc(100vh-200px)]"
         direction={"column"}
-        // justifyContent={"space-between"}
         sx={{
           p: 2,
+          boxShadow: 3,
+          overflow: 'auto',
+          height: 'calc(100vh - 200px)',
         }}
         gap={1}
       >
@@ -116,7 +116,7 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
         </Stack>
         
         <Typography variant="h4" textAlign={'center'}>الطلبات</Typography>
-        <div className="space-y-4 mb-6 grid">
+        <Box sx={{ display: 'grid', gap: 2, mb: 1.5 }}>
           {selectedOrder.meal_orders.map((item) => {
             const isMultible = item.quantity > 1 ? "" : "";
             return (
@@ -130,9 +130,10 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
               />
             );
           })}
-        </div>
+        </Box>
 
-       {selectedOrder.meal_orders.length > 0 &&  <div>
+       {selectedOrder.meal_orders.length > 0 && (
+        <Box>
           <Box>
             <TextField
               autoComplete="off"
@@ -163,26 +164,26 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
               defaultValue={selectedOrder.delivery_address}
             ></TextField>
           </Box>
-          <div className="space-y-2 text-sm mb-6 mt-4">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5, mt: 2 }}>
             <Stack direction={"row"} gap={2} justifyContent={'space-around'}>
               <Stack direction={"column"} gap={1}>
-                <span className="text-gray-600">{t("total_amount")}</span>
-                <span className="text-gray-900">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t("total_amount")}</Typography>
+                <Typography variant="body1" sx={{ color: 'text.primary' }}>
                   {selectedOrder.totalPrice.toFixed(3)}
-                </span>
+                </Typography>
               </Stack>
 
 
 
               <Stack direction={'column'}>
-                <span className="text-gray-600">{t("paid")}</span>
-                <span className="text-gray-900">
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t("paid")}</Typography>
+                <Typography variant="body1" sx={{ color: 'text.primary' }}>
                   {selectedOrder.amount_paid.toFixed(3)}
-                </span>
+                </Typography>
               </Stack >
               <Stack direction={'column'}>
-              <span className="text-gray-600">{t("delivery_fee")}</span>
-              <span className="text-gray-900">
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t("delivery_fee")}</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                 <TextField
                  onFocus={(event) => {
                   event.target.select();
@@ -196,14 +197,14 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
                   }}
                   defaultValue={selectedOrder.delivery_fee}
                 ></TextField>
-                <span>{t("currency_OMR")}</span>
-              </span>
+                <Typography variant="body2">{t("currency_OMR")}</Typography>
+              </Box>
               </Stack >
             </Stack>
 
           
-          </div>
-          <Box className="flex justify-center">
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <LoadingButton
               disabled={selectedOrder.order_confirmed}
               onClick={orderUpdateHandler}
@@ -213,9 +214,10 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
               {t("confirm_order")}
             </LoadingButton>
           </Box>
-        </div>}
+        </Box>
+      )}
       </Stack>
-    </div>
+    </Box>
   );
 }
 

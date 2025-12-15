@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Container,
   Paper,
@@ -7,19 +7,44 @@ import {
   TextField,
   Stack,
   Box,
-} from '@mui/material';
-import { FileText, Plus, Search } from 'lucide-react';
-import { Customer } from '@/Types/types';
-import { CustomerList } from './CustomerList';
-import { CustomerForm } from './CutomerForm';
-import { useCustomerStore } from './useCustomer';
-import { generateCustomerReport } from './generatePdf';
+  Divider,
+  Chip,
+  InputAdornment,
+} from "@mui/material";
+import { Plus, Search } from "lucide-react";
+import { Customer } from "@/Types/types";
+import { CustomerList } from "./CustomerList";
+import { CustomerForm } from "./CutomerForm";
+import { useCustomerStore } from "./useCustomer";
 
 function Customers() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>();
-  const { customers, addCustomer, updateCustomer, deleteCustomer, searchQuery, setSearchQuery ,fetchData} = useCustomerStore();
-  console.log(customers,'customers')
+  const {
+    customers,
+    addCustomer,
+    updateCustomer,
+    deleteCustomer,
+    searchQuery,
+    setSearchQuery,
+    fetchData,
+  } = useCustomerStore();
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const filteredCustomers = useMemo(
+    () =>
+      customers.filter(
+        (customer) =>
+          customer?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          customer?.phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          customer?.address?.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    [customers, searchQuery]
+  );
+
   const handleSubmit = (customer: Customer) => {
     if (selectedCustomer) {
       updateCustomer(customer);
@@ -30,7 +55,6 @@ function Customers() {
 
   const handleEdit = (customer: Customer) => {
     setSelectedCustomer(customer);
-    console.log(customer)
     setIsFormOpen(true);
   };
 
@@ -39,41 +63,48 @@ function Customers() {
     setSelectedCustomer(undefined);
   };
 
-
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer?.phone?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer?.address?.toLowerCase().includes(searchQuery.toLowerCase()) 
-  );
-  useEffect(()=>{
-    fetchData()
-  },[])
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Paper sx={{ p: 4 }}>
-        <Stack spacing={4}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
-            <Typography variant="h4" component="h1" gutterBottom>
-              Customer Management
-            </Typography>
-            <Stack direction="row" spacing={2}>
-              <Button
-                variant="contained"
-                startIcon={<Plus size={18} />}
-                onClick={() => setIsFormOpen(true)}
-              >
-                Add Customer
-              </Button>
-              {/* <Button
-                variant="outlined"
-                startIcon={<FileText size={18} />}
-                onClick={() => generateCustomerReport(customers)}
-              >
-                Generate Report
-              </Button> */}
-            </Stack>
-          </Box>
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2, sm: 3 },
+          borderRadius: 2,
+          border: "1px solid",
+          borderColor: "divider",
+          bgcolor: "background.paper",
+        }}
+      >
+        <Stack spacing={3}>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={2}
+            justifyContent="space-between"
+            alignItems={{ xs: "flex-start", sm: "center" }}
+          >
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                Customer Management
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Manage customers, search, and edit records.
+              </Typography>
+            </Box>
+            <Chip
+              label={`Total: ${customers.length}`}
+              color="primary"
+              variant="outlined"
+              sx={{ fontWeight: 600 }}
+            />
+            <Button
+              variant="contained"
+              startIcon={<Plus size={18} />}
+              onClick={() => setIsFormOpen(true)}
+              sx={{ textTransform: "none" }}
+            >
+              Add Customer
+            </Button>
+          </Stack>
 
           <TextField
             fullWidth
@@ -82,18 +113,21 @@ function Customers() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             InputProps={{
-              startAdornment: <Search size={20} className="mr-2 text-gray-500" />,
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search size={18} className="text-gray-500" />
+                </InputAdornment>
+              ),
             }}
           />
 
-          <CustomerList
-            customers={filteredCustomers}
-            onEdit={handleEdit}
-            onDelete={deleteCustomer}
-          />
+          <Divider />
+
+          <CustomerList customers={filteredCustomers} onEdit={handleEdit} onDelete={deleteCustomer} />
         </Stack>
 
-        <CustomerForm key={selectedCustomer?.id}
+        <CustomerForm
+          key={selectedCustomer?.id}
           open={isFormOpen}
           onClose={handleClose}
           selectedCustomer={selectedCustomer}

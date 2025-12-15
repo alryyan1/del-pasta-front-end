@@ -6,6 +6,7 @@ import axiosClient from '@/helpers/axios-client';
 import { useAuthContext } from '@/contexts/stateContext';
 import { useTranslation } from 'react-i18next';
 import RequestedServiceDialog from './RequestedServiceDialog';
+import { Box } from '@mui/material';
 
 interface MealCategoryPanelProps {
     setSelectedOrder: (order: Order) => void;
@@ -62,7 +63,19 @@ function MealCategoryPanel({ setSelectedOrder, selectedOrder }: MealCategoryPane
     {/* Meals Display */}
     <div className=" w-full meals sm:w-2/3 md:w-3/4 p-1 overflow-y-auto  md:mt-0">
    
-      <div className="meal-container  h-[calc(100vh-200px)] overflow-auto">
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 2,
+          p: 2,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          textAlign: 'center',
+          alignContent: 'start',
+          alignItems: 'center',
+          height: 'calc(100vh - 200px)',
+          overflow: 'auto',
+        }}
+      >
         
         {selectedCategory ? (
           selectedCategory?.meals?.map((meal) => (
@@ -81,7 +94,7 @@ function MealCategoryPanel({ setSelectedOrder, selectedOrder }: MealCategoryPane
             {t('select_category')}
           </p>
         )}
-      </div>
+      </Box>
 
       {/* Order Summary */}
       {/* <div className="mt-10 p-4 bg-white rounded-lg shadow-md">

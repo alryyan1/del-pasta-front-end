@@ -1,8 +1,5 @@
 import { Paper, styled } from "@mui/material";
 import { createTheme, Theme } from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
-import rtlPlugin from 'stylis-plugin-rtl';
-import { prefixer } from 'stylis';
 import createCache from '@emotion/cache';
 
 // Consuming the outer theme is only required with coexisting themes, like in this documentation.
@@ -14,17 +11,17 @@ export const theme = () =>
    
   });
 
-export const cacheRtl = createCache({
-  key: 'muirtl',
-  stylisPlugins: [prefixer, rtlPlugin],
+export const cacheLtr = createCache({
+  key: 'muiltr',
+  prepend: true,
 });
 // export const host = 'intaj-starstechnology.com'
 
 // export const url = "https://intaj-starstechnology.com/jawda1/laravel-react-app/public/api/"
-export const schema = "http";
+export const schema = "https";
 // export const host = "intaj-starstechnology.com";
-// export const host = "del-pasta-om.com";
-export const host = "127.0.0.1";
+export const host = "del-pasta-om.com";
+// export const host = "127.0.0.1";
 // export const host = "rain-laundry.com";
 // export const host = 'server1'مركز النعيم
 

@@ -15,6 +15,8 @@ export interface Category {
   name: string;
   image:string;
   image_url:string;
+  is_visible?: boolean;
+  order_id?: number;
   meals:Meal[];
 }
 export interface Service {

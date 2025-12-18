@@ -11,6 +11,7 @@ import {
   IconButton,
   Tooltip,
   Button,
+  alpha,
 } from "@mui/material";
 import { Order } from "@/Types/types";
 import { StatusChip } from "./StatusShip";
@@ -65,14 +66,51 @@ export const OrderTable = ({ orders, setOrders,setUpdate }: OrderTableProps) => 
 
   return (
     <>
-      <Paper>
+      <Paper
+        elevation={0}
+        sx={{
+          width: "100%",
+          overflow: "hidden",
+          borderRadius: 3,
+          border: "1px solid",
+          borderColor: "divider",
+          bgcolor: "background.paper",
+          boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette.common.black, 0.05)}`,
+        }}
+      >
         <TableContainer
           sx={{
+            width: "100%",
             overflowX: "auto",
-            width: isMobile ? "500px" : "auto",
+            maxHeight: isMobile ? "calc(100vh - 250px)" : "calc(100vh - 400px)",
+            '&::-webkit-scrollbar': {
+              height: 8,
+              width: 8,
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.02),
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.1),
+              borderRadius: 4,
+              '&:hover': {
+                backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.2),
+              },
+            },
           }}
         >
-          <Table className=" border border-collapse order-table" stickyHeader>
+          <Table 
+            className="border border-collapse order-table" 
+            stickyHeader 
+            sx={{ 
+              minWidth: isMobile ? 1200 : 'auto',
+              '& .MuiTableCell-root': {
+                whiteSpace: 'nowrap',
+                px: 2,
+                py: 1.5,
+              }
+            }}
+          >
             <TableHead>
               <TableRow>
                 <TableCell sx={{ width: "30px" }}>
@@ -145,6 +183,7 @@ export const OrderTable = ({ orders, setOrders,setUpdate }: OrderTableProps) => 
                       table={"orders"}
                       item={order}
                       colName={"amount_paid"}
+                      val={order.amount_paid}
                     >
                       {order.amount_paid.toFixed(3)}
                     </TdCell>

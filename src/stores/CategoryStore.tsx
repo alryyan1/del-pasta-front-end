@@ -5,25 +5,31 @@ import { create } from "zustand";
 export interface CategoryStoreProps {
     categories: Category[];
     selectedCategory: Category | null;
+    loading: boolean;
     fetchCategories: () => void;
-    add: (name:string,img:string) => void;
+    add: (name: string, img: string) => void;
     updateVisibility: (categoryId: number, isVisible: boolean) => void;
     updateOrder: (categoryId: number, orderId: number) => void;
     delete: () => void;
-  
 }
-export  const useCategoryStore = create<CategoryStoreProps>((set) => {
+
+export const useCategoryStore = create<CategoryStoreProps>((set) => {
     return {
       categories: [],
       selectedCategory: null,
+      loading: false,
       fetchCategories: async () => {
+        set({ loading: true });
         axiosClient.get<Category[]>(`categories`).then(({ data }) => {
           set({
             categories: data,
+            loading: false,
           });
+        }).catch(() => {
+          set({ loading: false });
         });
       },
-      add: (name,image) => {
+      add: (name, image) => {
         axiosClient
         .post("categories", {
           name: name,
@@ -64,5 +70,3 @@ export  const useCategoryStore = create<CategoryStoreProps>((set) => {
       delete: () => {},
     };
   });
-
-

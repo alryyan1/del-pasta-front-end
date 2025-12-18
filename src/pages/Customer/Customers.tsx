@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Container,
   Paper,
   Typography,
   Button,
@@ -10,12 +9,15 @@ import {
   Divider,
   Chip,
   InputAdornment,
+  alpha,
+  Fade,
 } from "@mui/material";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Users } from "lucide-react";
 import { Customer } from "@/Types/types";
 import { CustomerList } from "./CustomerList";
 import { CustomerForm } from "./CutomerForm";
 import { useCustomerStore } from "./useCustomer";
+import PageHeader from "@/components/PageHeader";
 
 function Customers() {
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -64,67 +66,89 @@ function Customers() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 3 }}>
-      <Paper
-        elevation={0}
-        sx={{
-          p: { xs: 2, sm: 3 },
-          borderRadius: 2,
-          border: "1px solid",
-          borderColor: "divider",
-          bgcolor: "background.paper",
-        }}
-      >
-        <Stack spacing={3}>
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            justifyContent="space-between"
-            alignItems={{ xs: "flex-start", sm: "center" }}
-          >
-            <Box>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                Customer Management
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Manage customers, search, and edit records.
-              </Typography>
-            </Box>
-            <Chip
-              label={`Total: ${customers.length}`}
-              color="primary"
-              variant="outlined"
-              sx={{ fontWeight: 600 }}
-            />
-            <Button
-              variant="contained"
-              startIcon={<Plus size={18} />}
-              onClick={() => setIsFormOpen(true)}
-              sx={{ textTransform: "none" }}
-            >
-              Add Customer
-            </Button>
-          </Stack>
+    <Fade in timeout={300}>
+      <Box sx={{ maxWidth: 1200, mx: "auto" }}>
+        <PageHeader
+          title="Customers"
+          subtitle="Manage your customer database"
+          icon={<Users size={24} />}
+          badge={customers.length}
+          action={{
+            label: "Add Customer",
+            icon: <Plus size={18} />,
+            onClick: () => setIsFormOpen(true),
+          }}
+        />
 
+        {/* Search Bar */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2.5,
+            mb: 3,
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            bgcolor: "background.paper",
+          }}
+        >
           <TextField
             fullWidth
-            variant="outlined"
-            placeholder="Search customers..."
+            size="small"
+            placeholder="Search customers by name, phone, or address..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": { borderRadius: 2 },
+            }}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Search size={18} className="text-gray-500" />
+                  <Search size={18} />
                 </InputAdornment>
               ),
             }}
           />
+        </Paper>
 
-          <Divider />
+        {/* Customer List */}
+        <Paper
+          elevation={0}
+          sx={{
+            borderRadius: 3,
+            border: "1px solid",
+            borderColor: "divider",
+            bgcolor: "background.paper",
+            overflow: "hidden",
+          }}
+        >
+          <Box
+            sx={{
+              p: 2.5,
+              borderBottom: "1px solid",
+              borderColor: "divider",
+            }}
+          >
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                All Customers
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {filteredCustomers.length} of {customers.length} customers
+              </Typography>
+            </Stack>
+          </Box>
 
-          <CustomerList customers={filteredCustomers} onEdit={handleEdit} onDelete={deleteCustomer} />
-        </Stack>
+          <CustomerList
+            customers={filteredCustomers}
+            onEdit={handleEdit}
+            onDelete={deleteCustomer}
+          />
+        </Paper>
 
         <CustomerForm
           key={selectedCustomer?.id}
@@ -134,8 +158,8 @@ function Customers() {
           onSubmit={handleSubmit}
           initialData={selectedCustomer}
         />
-      </Paper>
-    </Container>
+      </Box>
+    </Fade>
   );
 }
 

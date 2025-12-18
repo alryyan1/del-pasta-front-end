@@ -3,26 +3,24 @@ import {
   Autocomplete,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogTitle,
-  Divider,
+  IconButton,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   TextField,
   Typography,
+  Box,
+  alpha,
+  Chip,
+  Divider,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import axiosClient from "@/helpers/axios-client";
-import { AxiosResponseProps, Meal } from "@/Types/types";
-import MealChildrenTable, {
-  MealChildrenTableMobile,
-} from "./MealChildrenTable";
+import { AxiosResponseProps, Meal, Service } from "@/Types/types";
+import MealChildrenTable, { MealChildrenTableMobile } from "./MealChildrenTable";
 import { useServiceStore } from "@/pages/ServiceStore";
+import { X, Plus, Package } from "lucide-react";
 
 interface MealChildrenDialogProps {
   open: boolean;
@@ -33,132 +31,285 @@ interface MealChildrenDialogProps {
 }
 
 const MealChildrenDialog = ({
-  handleClickOpen,
   handleClose,
   open,
   selectedMeal,
   setSelectedMeal,
 }: MealChildrenDialogProps) => {
-  const [width, setWidth] = useState(window.innerWidth);
-  const [selectedService,setSelectedService] = useState()
-const {serviceList,addService,fetchData} = useServiceStore()
-  useEffect(() => {
-    fetchData()
-  }, []);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const { serviceList, fetchData } = useServiceStore();
 
-  const { handleSubmit, register } = useForm();
-  const submitHandler = (data) => {
-    console.log(data, "data");
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const { handleSubmit, reset } = useForm();
+
+  const submitHandler = () => {
+    if (!selectedService) return;
+    
     axiosClient
       .post<AxiosResponseProps<Meal>>(`childMeals`, {
-        ...data,
         meal_id: selectedMeal?.id,
         service_id: selectedService?.id,
       })
       .then(({ data }) => {
-        console.log(data, "child meals add");
         if (data.status) {
           setSelectedMeal(data.data);
+          setSelectedService(null);
+          reset();
         }
       });
   };
+
   return (
-    <div className="">
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>
-          <Typography className=" text-center  bg-red-300 p-1 border rounded-lg " variant="h6">{selectedMeal?.name}</Typography>{" "}
-        </DialogTitle>
-        <DialogContent className="">
-          <Typography>اضافه صنف</Typography>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      maxWidth="md"
+      fullWidth
+      fullScreen={isMobile}
+      PaperProps={{
+        sx: {
+          borderRadius: isMobile ? 0 : 3,
+          overflow: 'hidden',
+        },
+      }}
+    >
+      {/* Header */}
+      <Box
+        sx={{
+          px: 3,
+          py: 2.5,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.03),
+        }}
+      >
+        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+          <Box>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                color: 'text.primary',
+              }}
+            >
+              Manage Sub-Services
+            </Typography>
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
+              <Typography variant="body2" color="text.secondary">
+                For:
+              </Typography>
+              <Chip
+                label={selectedMeal?.name || 'Unknown'}
+                size="small"
+                sx={{
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  fontWeight: 600,
+                }}
+              />
+              {selectedMeal?.child_meals && (
+                <Typography variant="body2" color="text.secondary">
+                  • {selectedMeal.child_meals.length} services
+                </Typography>
+              )}
+            </Stack>
+          </Box>
+          <IconButton
+            onClick={handleClose}
+            size="small"
+            sx={{
+              color: 'text.secondary',
+              '&:hover': {
+                bgcolor: (theme) => alpha(theme.palette.error.main, 0.1),
+                color: 'error.main',
+              },
+            }}
+          >
+            <X size={20} />
+          </IconButton>
+        </Stack>
+      </Box>
+
+      <DialogContent sx={{ p: 0 }}>
+        {/* Add Service Form */}
+        <Box
+          sx={{
+            p: 3,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'background.paper',
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: 1.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                color: 'primary.main',
+              }}
+            >
+              <Plus size={18} />
+            </Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              Add New Service
+            </Typography>
+          </Stack>
 
           <form onSubmit={handleSubmit(submitHandler)}>
-            <Stack gap={2} sx={{mb:1}} direction={"row"}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <Autocomplete
-              fullWidth
-              getOptionLabel={(op)=>op.name}
-              options={serviceList}
-              value={selectedService}
-              onChange={(e,val)=>{
-                setSelectedService(val)
-              }}
-              renderInput={(props)=>{
-                return (
+                fullWidth
+                options={serviceList}
+                getOptionLabel={(option) => option.name}
+                value={selectedService}
+                onChange={(_, val) => setSelectedService(val)}
+                renderInput={(params) => (
                   <TextField
-                  {...props}
+                    {...params}
+                    placeholder="Select a service to add..."
                     size="small"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                      },
+                    }}
                   />
-                );
-              }}
+                )}
+                renderOption={(props, option) => (
+                  <Box component="li" {...props}>
+                    <Stack direction="row" alignItems="center" spacing={1.5}>
+                      <Box
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          bgcolor: 'primary.main',
+                        }}
+                      />
+                      <Typography variant="body2">{option.name}</Typography>
+                    </Stack>
+                  </Box>
+                )}
               />
-              {" "}
-              {/* <TextField
-                label="الاسم"
-                {...register("name", {
-                  required: {
-                    value: true,
-                    message: "الحقل مطلوب",
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={!selectedService}
+                startIcon={<Plus size={18} />}
+                sx={{
+                  minWidth: 140,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  boxShadow: 'none',
+                  '&:hover': {
+                    boxShadow: 'none',
                   },
-                })}
-                size="small"
-              ></TextField> */}
-              {/* <TextField
-                  label="العدد"
-                  {...register("quantity", {
-                    required: {
-                      value: true,
-                      message: "الحقل مطلوب",
-                    },
-                  })}
-                  size="small"
-                ></TextField> */}
-              {/* <TextField
-                label="السعر"
-                {...register("price")}
-                size="small"
-              ></TextField> */}
-               <Button sx={{ width: "100px" }} type="submit" variant="contained">
-                {" "}
-                +
+                }}
+              >
+                Add Service
               </Button>
-              {/* <Stack direction={"row"} gap={1}>
-                {" "}
-                <TextField
-                  label="عدد الاشخاص"
-                  {...register("people_count")}
-                  size="small"
-                ></TextField>
-                <TextField
-                  label="الوزن"
-                  {...register("weight")}
-                  size="small"
-                ></TextField>
-              </Stack> */}
-             
             </Stack>
           </form>
-          <div>
-            {width > 700 ? (
-              <MealChildrenTable
-                selectedMeal={selectedMeal}
-                setSelectedMeal={setSelectedMeal}
-                data={selectedMeal?.child_meals}
+        </Box>
+
+        {/* Services List */}
+        <Box sx={{ p: 3 }}>
+          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+            <Box
+              sx={{
+                width: 32,
+                height: 32,
+                borderRadius: 1.5,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: (theme) => alpha(theme.palette.info.main, 0.1),
+                color: 'info.main',
+              }}
+            >
+              <Package size={18} />
+            </Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              Current Services
+            </Typography>
+          </Stack>
+
+          {!selectedMeal?.child_meals || selectedMeal.child_meals.length === 0 ? (
+            <Box
+              sx={{
+                py: 6,
+                textAlign: 'center',
+                border: '2px dashed',
+                borderColor: 'divider',
+                borderRadius: 2,
+                bgcolor: (theme) => alpha(theme.palette.grey[100], 0.5),
+              }}
+            >
+              <Package
+                size={40}
+                strokeWidth={1.5}
+                style={{ opacity: 0.3, marginBottom: 12 }}
               />
-            ) : (
-              <MealChildrenTableMobile
-                selectedMeal={selectedMeal}
-                setSelectedMeal={setSelectedMeal}
-                data={selectedMeal?.child_meals}
-              />
-            )}
-          </div>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
+              <Typography variant="body1" color="text.secondary" sx={{ fontWeight: 500 }}>
+                No services added yet
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                Use the form above to add services to this meal
+              </Typography>
+            </Box>
+          ) : isMobile ? (
+            <MealChildrenTableMobile
+              selectedMeal={selectedMeal}
+              setSelectedMeal={setSelectedMeal}
+              data={selectedMeal.child_meals}
+            />
+          ) : (
+            <MealChildrenTable
+              selectedMeal={selectedMeal}
+              setSelectedMeal={setSelectedMeal}
+              data={selectedMeal.child_meals}
+            />
+          )}
+        </Box>
+
+        {/* Footer */}
+        <Box
+          sx={{
+            px: 3,
+            py: 2,
+            borderTop: '1px solid',
+            borderColor: 'divider',
+            bgcolor: (theme) => alpha(theme.palette.grey[100], 0.5),
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          <Button
+            onClick={handleClose}
+            variant="outlined"
+            sx={{
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 500,
+              px: 3,
+            }}
+          >
             Close
           </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+        </Box>
+      </DialogContent>
+    </Dialog>
   );
 };
 

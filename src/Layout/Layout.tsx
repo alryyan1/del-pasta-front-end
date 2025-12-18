@@ -1,23 +1,6 @@
 import * as React from "react";
-import Box from "@mui/material/Box";
 import {
-  Dashboard as DashboardIcon,
-  ShoppingCart,
-  List,
-  AttachMoney,
-  Apps,
-  Settings,
-  People,
-  PersonAdd,
-  Build,
-  Menu as MenuIcon,
-} from "@mui/icons-material";
-import { createTheme } from "@mui/material/styles";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
-import {
+  Box,
   CircularProgress,
   Avatar,
   Menu,
@@ -32,11 +15,35 @@ import {
   ListItemText,
   AppBar,
   Toolbar,
+  Divider,
+  alpha,
+  Chip,
+  Tooltip,
+  useMediaQuery,
 } from "@mui/material";
+import {
+  Dashboard as DashboardIcon,
+  ShoppingCart,
+  List,
+  AttachMoney,
+  Apps,
+  Settings,
+  People,
+  PersonAdd,
+  Build,
+  Menu as MenuIcon,
+  RestaurantMenu,
+  Logout,
+  Person,
+  ChevronLeft,
+} from "@mui/icons-material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { AuthProvider, useAuthContext } from "@/contexts/stateContext";
 import axiosClient from "@/helpers/axios-client";
 import { CacheProvider } from "@emotion/react";
 import { cacheLtr } from "@/helpers/constants";
- 
 import "./../i18n";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./../i18n";
@@ -46,48 +53,70 @@ import { Meal, Order } from "@/Types/types";
 import LoginDialog from "@/components/LoginDialog";
 import { useAuthStore } from "@/AuthStore";
 
-const demoTheme = createTheme({
+// Constants
+const DRAWER_WIDTH = 260;
+const APPBAR_HEIGHT = 64;
+
+// Theme configuration
+const theme = createTheme({
   direction: "ltr",
   palette: {
     primary: {
-      main: "#9c27b0",// purple
-      // main: "#1976d2",
+      main: "#7c3aed", // Modern purple
+      light: "#a78bfa",
+      dark: "#5b21b6",
+      contrastText: "#ffffff",
     },
-    mode: 'light',
+    secondary: {
+      main: "#10b981", // Emerald green
+      light: "#34d399",
+      dark: "#059669",
+    },
     background: {
-      default: '#f5f5f7',
-      paper: '#ffffff',
+      default: "#f8fafc",
+      paper: "#ffffff",
     },
     text: {
-      primary: '#111827',
-      secondary: '#374151',
+      primary: "#1e293b",
+      secondary: "#64748b",
     },
-  },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 900,
-      lg: 1900,
-      xl: 2000,
+    divider: "#e2e8f0",
+    success: {
+      main: "#10b981",
+    },
+    error: {
+      main: "#ef4444",
     },
   },
   typography: {
-    fontFamily: [
-      "Tajawal", // Add your default font here
-      "Arial",
-      "sans-serif",
-    ].join(","),
-    // You can customize other typography settings here
-    h1: {
-      fontFamily: "Tajawal", // Custom font for h1
-    },
-    h2: {
-      fontFamily: "Tajawal", // Custom font for h2
-    },
-    // Add other styles as needed
+    fontFamily: ["Inter", "Tajawal", "Arial", "sans-serif"].join(","),
+    h1: { fontWeight: 700 },
+    h2: { fontWeight: 700 },
+    h3: { fontWeight: 600 },
+    h4: { fontWeight: 600 },
+    h5: { fontWeight: 600 },
+    h6: { fontWeight: 600 },
+  },
+  shape: {
+    borderRadius: 12,
   },
   components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontWeight: 600,
+          borderRadius: 10,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none",
+        },
+      },
+    },
     MuiBreadcrumbs: {
       styleOverrides: {
         root: {
@@ -96,401 +125,475 @@ const demoTheme = createTheme({
       },
     },
   },
-
-  cssVariables: {
-    colorSchemeSelector: "data-toolpad-color-scheme",
-  },
-  colorSchemes: { light: true },
 });
 
+// Navigation items
+const mainNavItems = [
+  { path: "/dashboard", title: "Dashboard", icon: <DashboardIcon /> },
+  { path: "/makeOrder", title: "New Order", icon: <ShoppingCart /> },
+  { path: "/orders", title: "Orders", icon: <List /> },
+  { path: "/expenses", title: "Expenses", icon: <AttachMoney /> },
+  { path: "/stats", title: "Statistics", icon: <Apps /> },
+  { path: "/online-order", title: "Online Order", icon: <ShoppingCart /> },
+  { path: "/online-orders-list", title: "Online Orders", icon: <ShoppingCart /> },
+];
+
+const settingsNavItems = [
+  { path: "/config/meals", title: "Meals", icon: <RestaurantMenu /> },
+  { path: "/config/MealCategories", title: "Categories", icon: <Apps /> },
+  { path: "/config/customers", title: "Customers", icon: <People /> },
+  { path: "/config/users", title: "Users", icon: <PersonAdd /> },
+  { path: "/config/services", title: "Services", icon: <Build /> },
+  { path: "/config/settings", title: "Settings", icon: <Settings /> },
+];
+
 export default function DashboardLayoutBasic() {
-  const [isIpadPro, setIsIpadPro] = React.useState(false);
-  const [drawerOpen, setDrawerOpen] = React.useState(true);
-  const {openLoginDialog,setCloseLoginDialog} =  useAuthStore((state)=>state)
-  console.log(openLoginDialog,'openDialog')
-  const navigate =  useNavigate()
-  const location = useLocation()
-   const {setUser,setToken,} = useAuthContext()
-    const [meals,setMeals] = React.useState<Meal[]>([]);
-   React.useEffect(()=>{
-      axiosClient.get('meals').then(({data})=>{
-        setMeals(data)
-      })
-    },[])
-
-   
-  React.useEffect(() => {
-    axiosClient.get("/user").then(({ data }) => {
-      setUser(data);
-    }).catch(()=>{
-    console.log('error')
-    setUser(null);
-    setToken(null)
-    navigate('/login');
-  localStorage.removeItem('ACCESS_TOKEN')
-
-  });
-  }, [navigate, setToken, setUser])
-  React.useEffect(() => {
-    const mediaQuery = window.matchMedia(
-      '(min-width: 768px) and (max-width: 1366px)'
-    );
-
-    const handleResize = (e: MediaQueryList | MediaQueryListEvent) => {
-      const isMatch = 'matches' in e ? e.matches : (e as MediaQueryList).matches;
-      setIsIpadPro(isMatch);
-    };
-    if (mediaQuery.matches) {
-      console.log('The screen width is between 768px and 1366px');
-    } else {
-      console.log('The screen width is outside the range');
-    }
-    
-
-    handleResize(mediaQuery); // Initial check
-    mediaQuery.addEventListener('change', handleResize);
-
-    return () => mediaQuery.removeEventListener('change', handleResize);
-  }, []);
-  React.useEffect(() => {
-    //get lang from localstorage
-    const lang = localStorage.getItem("lang");
-    if (lang != null) {
-      i18n.changeLanguage(lang);
-    }
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  
+  const [drawerOpen, setDrawerOpen] = React.useState(!isMobile);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [meals, setMeals] = React.useState<Meal[]>([]);
   const [orders, setOrders] = React.useState<Order[]>([]);
-  const [open, setOpen] = React.useState(false);
-  const [selectedOrder, setSelectedOrder] = React.useState<Order>({} as unknown as Order);
+  const [arrivalDialogOpen, setArrivalDialogOpen] = React.useState(false);
+  const [selectedOrder, setSelectedOrder] = React.useState<Order>({} as Order);
+  const [isIpadPro, setIsIpadPro] = React.useState(false);
   const [audio] = React.useState(new Audio(alarm));
 
-  const pauseAlarm = () => {
-    audio.pause();
+  const { openLoginDialog, setCloseLoginDialog } = useAuthStore((state) => state);
+  const { user, setUser, setToken } = useAuthContext() as {
+    user: { name?: string; user_type?: string } | null;
+    setUser: (user: { name?: string; user_type?: string } | null) => void;
+    setToken: (token: string | null) => void;
   };
-  // React.useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     axiosClient.get("arrival").then(({ data }) => {
-  //       console.log(data);
-  //       setOrders(data);
-  //       if (data.length > 0) {
-  //         setOpen(true);
-  //         playAlarm();
-  //       }
-  //     });
-  //   }, 15000);
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, []);
-  const handleClose = () => {
-    setOpen(false);
-  };
-  const sidebarItems = [
-    { path: '/dashboard', title: 'Dashboard', icon: <DashboardIcon /> },
-    { path: '/makeOrder', title: 'New Order', icon: <ShoppingCart /> },
-    { path: '/orders', title: 'Orders', icon: <List /> },
-    { path: '/expenses', title: 'Expenses', icon: <AttachMoney /> },
-    { path: '/stats', title: 'Stats', icon: <Apps /> },
-    // { path: '/menu', title: 'Menu', icon: <Apps /> },
-    { path: '/online-order', title: 'Online Order', icon: <ShoppingCart /> },
-    { path: '/online-orders-list', title: 'MOC', icon: <ShoppingCart /> },
-  ];
 
-  const settingsItems = [
-    { path: '/config/meals', title: 'Services', icon: <Build /> },
-    { path: '/config/MealCategories', title: 'Categories', icon: <Apps /> },
-    { path: '/config/customers', title: 'Customers', icon: <People /> },
-    { path: '/config/users', title: 'Users', icon: <PersonAdd /> },
-    { path: '/config/services', title: 'Sub Services', icon: <Build /> },
-    { path: '/config/settings', title: 'Other', icon: <Settings /> },
-  ];
+  const userType = user?.user_type || localStorage.getItem("user_type");
+  const isStaff = userType === "staff";
 
-  const { user } = useAuthContext() as { user: { name?: string; user_type?: string } | null };
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  
-  // Get user type from user object or localStorage
-  const userType = user?.user_type || localStorage.getItem('user_type');
-  
-  // Filter navigation items based on user type
-  // All users (including staff) should see main items
-  const getFilteredSidebarItems = () => {
-    // Ensure all users can see main navigation items
-    return sidebarItems;
-  };
-  
-  const getFilteredSettingsItems = () => {
-    // Only admin users can see settings, staff users cannot
-    if (userType === 'staff') {
-      return [];
-    }
-    return settingsItems;
-  };
-  
+  // Fetch initial data
+  React.useEffect(() => {
+    axiosClient.get("meals").then(({ data }) => setMeals(data));
+  }, []);
+
+  // Auth check
+  React.useEffect(() => {
+    axiosClient
+      .get("/user")
+      .then(({ data }) => setUser(data))
+      .catch(() => {
+        setUser(null);
+        setToken(null);
+        localStorage.removeItem("ACCESS_TOKEN");
+        navigate("/login");
+      });
+  }, [navigate, setToken, setUser]);
+
+  // Language setup
+  React.useEffect(() => {
+    const lang = localStorage.getItem("lang");
+    if (lang) i18n.changeLanguage(lang);
+  }, []);
+
+  // iPad Pro detection
+  React.useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 768px) and (max-width: 1366px)");
+    const handleResize = (e: MediaQueryList | MediaQueryListEvent) => {
+      setIsIpadPro("matches" in e ? e.matches : (e as MediaQueryList).matches);
+    };
+    handleResize(mediaQuery);
+    mediaQuery.addEventListener("change", handleResize);
+    return () => mediaQuery.removeEventListener("change", handleResize);
+  }, []);
+
+  // Auto-close drawer on mobile
+  React.useEffect(() => {
+    setDrawerOpen(!isMobile);
+  }, [isMobile]);
+
   const handleLogout = () => {
-    // Call logout API endpoint
     axiosClient
       .post("logout")
       .then(() => {
-        // Clear local storage
-        localStorage.removeItem('ACCESS_TOKEN');
-        localStorage.removeItem('user_type');
-        // Clear auth state
+        localStorage.removeItem("ACCESS_TOKEN");
+        localStorage.removeItem("user_type");
         setUser(null);
         setToken(null);
-        // Close menu
         setAnchorEl(null);
-        // Navigate to login
-        navigate('/login');
+        navigate("/login");
       })
       .catch(() => {
-        // Even if API call fails, clear local data and logout
-        localStorage.removeItem('ACCESS_TOKEN');
-        localStorage.removeItem('user_type');
+        localStorage.removeItem("ACCESS_TOKEN");
+        localStorage.removeItem("user_type");
         setUser(null);
         setToken(null);
         setAnchorEl(null);
-        navigate('/login');
+        navigate("/login");
       });
   };
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  const pauseAlarm = () => audio.pause();
+  const handleArrivalClose = () => setArrivalDialogOpen(false);
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  const NavItem = ({ item, isActive }: { item: typeof mainNavItems[0]; isActive: boolean }) => (
+    <ListItem disablePadding sx={{ mb: 0.5 }}>
+      <ListItemButton
+        selected={isActive}
+        onClick={() => {
+          navigate(item.path);
+          if (isMobile) setDrawerOpen(false);
+        }}
+        sx={{
+          borderRadius: 2,
+          py: 1.25,
+          px: 2,
+          transition: "all 0.2s ease",
+          "&.Mui-selected": {
+            bgcolor: "primary.main",
+            color: "white",
+            boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette.primary.main, 0.4)}`,
+            "&:hover": {
+              bgcolor: "primary.dark",
+            },
+            "& .MuiListItemIcon-root": {
+              color: "white",
+            },
+          },
+          "&:hover:not(.Mui-selected)": {
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+          },
+        }}
+      >
+        <ListItemIcon
+          sx={{
+            minWidth: 40,
+            color: isActive ? "white" : "text.secondary",
+          }}
+        >
+          {item.icon}
+        </ListItemIcon>
+        <ListItemText
+          primary={item.title}
+          primaryTypographyProps={{
+            fontWeight: isActive ? 600 : 500,
+            fontSize: "0.875rem",
+          }}
+        />
+      </ListItemButton>
+    </ListItem>
+  );
+
+  const SidebarContent = () => (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        pt: 1,
+      }}
+    >
+      {/* Main Navigation */}
+      <Box sx={{ px: 2, mb: 1 }}>
+        <Typography
+          variant="overline"
+          sx={{
+            fontWeight: 700,
+            fontSize: "0.65rem",
+            color: "text.secondary",
+            letterSpacing: "0.08em",
+            pl: 1,
+          }}
+        >
+          Main Menu
+        </Typography>
+      </Box>
+      <MuiList sx={{ px: 1.5, flex: 1 }}>
+        {mainNavItems.map((item) => (
+          <NavItem key={item.path} item={item} isActive={location.pathname === item.path} />
+        ))}
+      </MuiList>
+
+      {/* Settings Navigation (Admin only) */}
+      {!isStaff && (
+        <>
+          <Divider sx={{ mx: 2, my: 2 }} />
+          <Box sx={{ px: 2, mb: 1 }}>
+            <Typography
+              variant="overline"
+              sx={{
+                fontWeight: 700,
+                fontSize: "0.65rem",
+                color: "text.secondary",
+                letterSpacing: "0.08em",
+                pl: 1,
+              }}
+            >
+              Settings
+            </Typography>
+          </Box>
+          <MuiList sx={{ px: 1.5, pb: 2 }}>
+            {settingsNavItems.map((item) => (
+              <NavItem key={item.path} item={item} isActive={location.pathname === item.path} />
+            ))}
+          </MuiList>
+        </>
+      )}
+
+      {/* User Info Card */}
+      <Box
+        sx={{
+          p: 2,
+          mx: 1.5,
+          mb: 2,
+          borderRadius: 3,
+          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.04),
+          border: "1px solid",
+          borderColor: "divider",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+          <Avatar
+            sx={{
+              width: 40,
+              height: 40,
+              bgcolor: "primary.main",
+              fontSize: "1rem",
+              fontWeight: 600,
+            }}
+          >
+            {user?.name?.[0]?.toUpperCase() || "U"}
+          </Avatar>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                fontWeight: 600,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {user?.name || "User"}
+            </Typography>
+            <Chip
+              label={isStaff ? "Staff" : "Admin"}
+              size="small"
+              sx={{
+                height: 20,
+                fontSize: "0.65rem",
+                fontWeight: 600,
+                bgcolor: isStaff
+                  ? (theme) => alpha(theme.palette.info.main, 0.1)
+                  : (theme) => alpha(theme.palette.success.main, 0.1),
+                color: isStaff ? "info.main" : "success.main",
+              }}
+            />
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+
   return (
-    <ThemeProvider theme={demoTheme}>
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <React.Suspense
         fallback={
           <Box
             sx={{
-              userSelect: 'none',
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               height: "100vh",
+              bgcolor: "background.default",
             }}
           >
-            <CircularProgress />
+            <CircularProgress size={48} />
           </Box>
         }
       >
         <I18nextProvider i18n={i18n}>
           <CacheProvider value={cacheLtr}>
             <AuthProvider>
-              <Box sx={{ display: 'flex', height: '100vh', direction: 'ltr' }}>
+              <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
                 {/* AppBar */}
-                <AppBar 
-                  position="fixed" 
-                  elevation={1}
-                  sx={{ 
+                <AppBar
+                  position="fixed"
+                  elevation={0}
+                  sx={{
                     zIndex: (theme) => theme.zIndex.drawer + 1,
-                    direction: 'ltr',
-                    left: 0,
-                    right: 'auto',
-                    bgcolor: 'background.paper',
-                    color: 'text.primary',
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
+                    bgcolor: "background.paper",
+                    color: "text.primary",
+                    borderBottom: "1px solid",
+                    borderColor: "divider",
+                    backdropFilter: "blur(8px)",
+                    backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.9),
                   }}
                 >
-                  <Toolbar sx={{ px: { xs: 2, sm: 3 } }}>
+                  <Toolbar sx={{ height: APPBAR_HEIGHT, px: { xs: 2, sm: 3 } }}>
+                    {/* Menu Toggle */}
                     <IconButton
-                      color="inherit"
-                      edge="start"
                       onClick={() => setDrawerOpen(!drawerOpen)}
-                      sx={{ mr: 2 }}
-                      aria-label="toggle drawer"
-                    >
-                      <MenuIcon />
-                    </IconButton>
-                    <Typography 
-                      variant="h6" 
-                      component="div" 
-                      sx={{ 
-                        flexGrow: 1,
-                        fontWeight: 600,
-                        fontSize: { xs: '1rem', sm: '1.25rem' },
+                      sx={{
+                        mr: 2,
+                        color: "text.secondary",
+                        "&:hover": {
+                          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                          color: "primary.main",
+                        },
                       }}
                     >
-                      Del-pasta
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Typography 
-                        variant="body2" 
-                        sx={{ 
-                          color: 'inherit',
-                          display: { xs: 'none', sm: 'block' },
+                      {drawerOpen ? <ChevronLeft /> : <MenuIcon />}
+                    </IconButton>
+
+                    {/* Logo */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                      <Box
+                        sx={{
+                          width: 36,
+                          height: 36,
+                          borderRadius: 2,
+                          bgcolor: "primary.main",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "white",
+                          fontWeight: 700,
+                          fontSize: "1rem",
                         }}
                       >
-                        {user?.name || 'User'}
-                      </Typography>
-                      <IconButton 
-                        onClick={handleMenuOpen} 
-                        size="small" 
-                        sx={{ color: 'inherit' }}
-                        aria-label="user menu"
+                        DP
+                      </Box>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: 700,
+                          display: { xs: "none", sm: "block" },
+                          background: (theme) =>
+                            `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                        }}
                       >
-                        <Avatar 
-                          sx={{ 
-                            bgcolor: 'primary.main', 
-                            width: 36, 
-                            height: 36,
-                            fontSize: '0.875rem',
+                        Del-Pasta
+                      </Typography>
+                    </Box>
+
+                    <Box sx={{ flexGrow: 1 }} />
+
+                    {/* User Menu */}
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 500,
+                          color: "text.secondary",
+                          display: { xs: "none", md: "block" },
+                        }}
+                      >
+                        Welcome, {user?.name || "User"}
+                      </Typography>
+                      <Tooltip title="Account">
+                        <IconButton
+                          onClick={(e) => setAnchorEl(e.currentTarget)}
+                          sx={{
+                            p: 0.5,
+                            border: "2px solid",
+                            borderColor: "divider",
+                            "&:hover": {
+                              borderColor: "primary.main",
+                            },
                           }}
                         >
-                          {user?.name?.[0]?.toUpperCase() || 'U'}
-                        </Avatar>
-                      </IconButton>
-                      <Menu
-                        anchorEl={anchorEl}
-                        open={Boolean(anchorEl)}
-                        onClose={handleMenuClose}
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'right',
-                        }}
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right',
+                          <Avatar
+                            sx={{
+                              width: 32,
+                              height: 32,
+                              bgcolor: "primary.main",
+                              fontSize: "0.875rem",
+                              fontWeight: 600,
+                            }}
+                          >
+                            {user?.name?.[0]?.toUpperCase() || "U"}
+                          </Avatar>
+                        </IconButton>
+                      </Tooltip>
+                    </Box>
+
+                    {/* User Dropdown Menu */}
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={() => setAnchorEl(null)}
+                      transformOrigin={{ horizontal: "right", vertical: "top" }}
+                      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                      PaperProps={{
+                        elevation: 0,
+                        sx: {
+                          mt: 1,
+                          minWidth: 200,
+                          borderRadius: 2,
+                          border: "1px solid",
+                          borderColor: "divider",
+                          boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
+                        },
+                      }}
+                    >
+                      <Box sx={{ px: 2, py: 1.5, borderBottom: "1px solid", borderColor: "divider" }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                          {user?.name || "User"}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {isStaff ? "Staff Account" : "Administrator"}
+                        </Typography>
+                      </Box>
+                      <MenuItem
+                        onClick={() => setAnchorEl(null)}
+                        sx={{ py: 1.5, gap: 1.5 }}
+                      >
+                        <Person fontSize="small" />
+                        Profile
+                      </MenuItem>
+                      <Divider />
+                      <MenuItem
+                        onClick={handleLogout}
+                        sx={{
+                          py: 1.5,
+                          gap: 1.5,
+                          color: "error.main",
+                          "&:hover": {
+                            bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
+                          },
                         }}
                       >
-                        <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                      </Menu>
-                    </Box>
+                        <Logout fontSize="small" />
+                        Logout
+                      </MenuItem>
+                    </Menu>
                   </Toolbar>
                 </AppBar>
 
-                {/* Drawer Sidebar - LEFT */}
+                {/* Sidebar Drawer */}
                 <Drawer
-                  variant="persistent"
+                  variant={isMobile ? "temporary" : "persistent"}
+                  anchor="right"
                   open={drawerOpen}
-                  anchor="left"
+                  onClose={() => setDrawerOpen(false)}
                   sx={{
-                    width: { xs: drawerOpen ? 240 : 0, sm: drawerOpen ? 240 : 0 },
+                    width: drawerOpen ? DRAWER_WIDTH : 0,
                     flexShrink: 0,
-                    display: { xs: drawerOpen ? 'block' : 'none', sm: 'block' },
-                    '& .MuiDrawer-paper': {
-                      width: 240,
-                      boxSizing: 'border-box',
-                      mt: 8,
-                      left: 0,
-                      right: 'auto',
-                      position: 'fixed',
-                      borderRight: '1px solid',
-                      borderColor: 'divider',
+                    "& .MuiDrawer-paper": {
+                      width: DRAWER_WIDTH,
+                      boxSizing: "border-box",
+                      mt: `${APPBAR_HEIGHT}px`,
+                      height: `calc(100% - ${APPBAR_HEIGHT}px)`,
+                      borderRight: "1px solid",
+                      borderColor: "divider",
+                      bgcolor: "background.paper",
                     },
                   }}
                 >
-                  <Toolbar />
-                  <Box sx={{ overflow: 'auto', pt: 2, pb: 2, direction: 'ltr', height: '100%' }}>
-                    {/* Main Items */}
-                    <Typography 
-                      variant="overline" 
-                      sx={{ 
-                        px: 2, 
-                        py: 1,
-                        fontWeight: 600, 
-                        textAlign: 'left',
-                        color: 'text.secondary',
-                        display: 'block',
-                      }}
-                    >
-                      Main Items
-                    </Typography>
-                    <MuiList sx={{ px: 1 }}>
-                      {getFilteredSidebarItems().map((item) => (
-                        <ListItem key={item.path} disablePadding>
-                          <ListItemButton
-                            selected={location.pathname === item.path}
-                            onClick={() => navigate(item.path)}
-                            sx={{ 
-                              direction: 'ltr',
-                              borderRadius: 1,
-                              mb: 0.5,
-                              '&.Mui-selected': {
-                                bgcolor: 'primary.main',
-                                color: 'primary.contrastText',
-                                '&:hover': {
-                                  bgcolor: 'primary.dark',
-                                },
-                                '& .MuiListItemIcon-root': {
-                                  color: 'primary.contrastText',
-                                },
-                              },
-                            }}
-                          >
-                            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>{item.icon}</ListItemIcon>
-                            <ListItemText 
-                              primary={item.title} 
-                              sx={{ textAlign: 'left' }}
-                              primaryTypographyProps={{
-                                fontWeight: location.pathname === item.path ? 600 : 400,
-                              }}
-                            />
-                          </ListItemButton>
-                        </ListItem>
-                      ))}
-                    </MuiList>
-
-                    {/* Settings Items (only for non-staff) */}
-                    {getFilteredSettingsItems().length > 0 && (
-                      <>
-                        <Typography 
-                          variant="overline" 
-                          sx={{ 
-                            px: 2, 
-                            py: 1,
-                            fontWeight: 600, 
-                            mt: 3,
-                            display: 'block', 
-                            textAlign: 'left',
-                            color: 'text.secondary',
-                          }}
-                        >
-                          Settings
-                        </Typography>
-                        <MuiList sx={{ px: 1 }}>
-                          {getFilteredSettingsItems().map((item) => (
-                            <ListItem key={item.path} disablePadding>
-                              <ListItemButton
-                                selected={location.pathname === item.path}
-                                onClick={() => navigate(item.path)}
-                                sx={{ 
-                                  direction: 'ltr',
-                                  borderRadius: 1,
-                                  mb: 0.5,
-                                  '&.Mui-selected': {
-                                    bgcolor: 'primary.main',
-                                    color: 'primary.contrastText',
-                                    '&:hover': {
-                                      bgcolor: 'primary.dark',
-                                    },
-                                    '& .MuiListItemIcon-root': {
-                                      color: 'primary.contrastText',
-                                    },
-                                  },
-                                }}
-                              >
-                                <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>{item.icon}</ListItemIcon>
-                                <ListItemText 
-                                  primary={item.title} 
-                                  sx={{ textAlign: 'left' }}
-                                  primaryTypographyProps={{
-                                    fontWeight: location.pathname === item.path ? 600 : 400,
-                                  }}
-                                />
-                              </ListItemButton>
-                            </ListItem>
-                          ))}
-                        </MuiList>
-                      </>
-                    )}
-                  </Box>
+                  <SidebarContent />
                 </Drawer>
 
                 {/* Main Content */}
@@ -498,14 +601,11 @@ export default function DashboardLayoutBasic() {
                   component="main"
                   sx={{
                     flexGrow: 1,
+                    minWidth: 0, // CRITICAL: allows flex child to shrink/stay within bounds
                     p: { xs: 2, sm: 3 },
-                    mt: 8,
-                    ml: { xs: 0, sm: drawerOpen ? '240px' : 0 },
-                    width: { xs: '100%', sm: drawerOpen ? 'calc(100% - 240px)' : '100%' },
-                    maxWidth: { xl: '1920px' },
-                    mx: { xl: 'auto' },
-                    transition: 'margin-left 0.3s, width 0.3s',
-                    minHeight: 'calc(100vh - 64px)',
+                    mt: `${APPBAR_HEIGHT}px`,
+                    transition: "width 0.3s ease",
+                    minHeight: `calc(100vh - ${APPBAR_HEIGHT}px)`,
                   }}
                 >
                   <Outlet
@@ -514,7 +614,7 @@ export default function DashboardLayoutBasic() {
                       setSelectedOrder,
                       isIpadPro,
                       setIsIpadPro,
-                      meals
+                      meals,
                     }}
                   />
                 </Box>
@@ -523,22 +623,19 @@ export default function DashboardLayoutBasic() {
           </CacheProvider>
         </I18nextProvider>
       </React.Suspense>
+
+      {/* Dialogs */}
       <ArriavalDialog
         pauseAlarm={pauseAlarm}
         setSelectedOrder={setSelectedOrder}
         selectedOrder={selectedOrder}
-        handleClose={handleClose}
-        open={open}
+        handleClose={handleArrivalClose}
+        open={arrivalDialogOpen}
         orders={orders}
         setOrders={setOrders}
       />
-      <React.Suspense>
-        <LoginDialog
-          open={openLoginDialog}
-          handleClose={() => {
-            setCloseLoginDialog()
-          }}
-        />
+      <React.Suspense fallback={null}>
+        <LoginDialog open={openLoginDialog} handleClose={setCloseLoginDialog} />
       </React.Suspense>
     </ThemeProvider>
   );

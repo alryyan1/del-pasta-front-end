@@ -8,27 +8,33 @@ import {
   InputLabel,
   FormControl,
   Typography,
-  Card,
   Stack,
+  Box,
+  FormHelperText,
 } from "@mui/material";
 import axiosClient from "@/helpers/axios-client";
 import { useMealsStore } from "@/stores/MealsStore";
 import { Category, Meal } from "@/Types/types";
-import { useTranslation } from "react-i18next";
+import { Save } from "lucide-react";
 
-interface ICategory {
-  id: number;
+interface IFormInput {
   name: string;
-  open:boolean;
-  handleClose:()=>void
+  category_id: number;
+  price?: number;
+  people_count?: string;
 }
 
-const ProductForm = ({handleClose,open}) => {
-  const { t } = useTranslation('services'); // i18n hook for translations
-  const [categories, setCategories] = React.useState<ICategory[]>([]);
+interface ProductFormProps {
+  handleClose: () => void;
+  open: boolean;
+}
+
+const ProductForm = ({ handleClose }: ProductFormProps) => {
+  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   useEffect(() => {
-    axiosClient.get<Category>(`categories`).then(({ data }) => {
+    axiosClient.get<Category[]>(`categories`).then(({ data }) => {
       setCategories(data);
     });
   }, []);
@@ -37,6 +43,7 @@ const ProductForm = ({handleClose,open}) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<IFormInput>({
     defaultValues: {
       people_count: "1",
@@ -45,66 +52,130 @@ const ProductForm = ({handleClose,open}) => {
 
   const addMeal = useMealsStore((state) => state.addMeal);
 
-  const submitForm: SubmitHandler<Meal> = (data) => {
-    addMeal(data);
-    handleClose()
+  const submitForm: SubmitHandler<IFormInput> = (data) => {
+    setIsSubmitting(true);
+    addMeal(data as unknown as Meal);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      reset();
+      handleClose();
+    }, 500);
   };
 
   return (
-    <Card sx={{ p: 1 }}>
-      <Typography variant="h4" align="center" gutterBottom>
-        {t("addService")}
-      </Typography>
-      <form style={{ direction: "rtl" }} onSubmit={handleSubmit(submitForm)}>
-        <Stack
-          direction={"column"}
-          justifyContent={"start"}
-          alignContent={"start"}
-          alignItems={"start"}
-          justifyItems={"start"}
-          gap={1}
-        >
+    <Box>
+      <form onSubmit={handleSubmit(submitForm)}>
+        <Stack spacing={3}>
           {/* Name Field */}
           <TextField
-            size="small"
-            label={t("name")}
+            label="Item Name"
+            placeholder="Enter item name..."
             fullWidth
-            variant="standard"
-            {...register("name", { required: t("nameRequired") })}
+            {...register("name", { required: "Name is required" })}
             error={!!errors.name}
             helperText={errors.name?.message}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+              },
+            }}
           />
 
           {/* Category Field */}
-          <FormControl fullWidth>
-            <InputLabel>{t("category")}</InputLabel>
+          <FormControl fullWidth error={!!errors.category_id}>
+            <InputLabel>Category</InputLabel>
             <Select
-              variant="standard"
-              label={t("category")}
+              label="Category"
               defaultValue=""
-              {...register("category_id")}
+              {...register("category_id", { required: "Category is required" })}
+              sx={{
+                borderRadius: 2,
+              }}
             >
               {categories.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
-                  {category.name}
+                  <Stack direction="row" alignItems="center" spacing={1.5}>
+                    <Box
+                      sx={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: '50%',
+                        bgcolor: 'primary.main',
+                      }}
+                    />
+                    <Typography>{category.name}</Typography>
+                  </Stack>
                 </MenuItem>
               ))}
             </Select>
+            {errors.category_id && (
+              <FormHelperText>{errors.category_id.message}</FormHelperText>
+            )}
           </FormControl>
-        </Stack>
 
-        {/* Submit Button */}
-        <Button
-          sx={{ mt: 1 }}
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-        >
-          {t("save")}
-        </Button>
+          {/* Price Field (Optional) */}
+          <TextField
+            label="Price (Optional)"
+            placeholder="0.00"
+            type="number"
+            fullWidth
+            {...register("price")}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+              },
+            }}
+            inputProps={{
+              step: "0.01",
+              min: "0",
+            }}
+          />
+
+          {/* Submit Button */}
+          <Box
+            sx={{
+              pt: 2,
+              borderTop: '1px solid',
+              borderColor: 'divider',
+              display: 'flex',
+              gap: 2,
+              justifyContent: 'flex-end',
+            }}
+          >
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 500,
+                px: 3,
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isSubmitting}
+              startIcon={<Save size={18} />}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                fontWeight: 600,
+                px: 3,
+                boxShadow: 'none',
+                '&:hover': {
+                  boxShadow: 'none',
+                },
+              }}
+            >
+              {isSubmitting ? 'Saving...' : "Save Item"}
+            </Button>
+          </Box>
+        </Stack>
       </form>
-    </Card>
+    </Box>
   );
 };
 

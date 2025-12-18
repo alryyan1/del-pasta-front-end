@@ -14,6 +14,7 @@ interface TdCellProps {
   sx?: any;
   isNum?: boolean;
   disabled?: boolean;
+  val?: any;
 }
 
 function TdCell({
@@ -28,10 +29,11 @@ function TdCell({
   sx = null,
   isNum = false,
   disabled = false,
+  val = null,
 }: TdCellProps) {
   const [edited, setEdited] = useState(show);
-  const [intial, setInitialVal] = useState(children);
-  const [iniVal, setInitVal] = useState(children);
+  const [intial, setInitialVal] = useState(val !== null ? val : children);
+  const [iniVal, setInitVal] = useState(val !== null ? val : children);
   const clickHandler = () => {
     if (!show) {
       setEdited(true);

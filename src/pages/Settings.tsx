@@ -1,314 +1,432 @@
 import React, { useEffect, useState } from "react";
-import axiosClient from "@/helpers/axios-client";
-import { useTranslation } from "react-i18next";
 import {
   Box,
+  Paper,
+  Typography,
+  Stack,
+  TextField,
   Button,
   Checkbox,
-  Divider,
   FormControlLabel,
   FormGroup,
-  Grid,
-  Paper,
-  TextField,
-  Typography,
+  Divider,
+  alpha,
+  Fade,
+  IconButton,
 } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Settings as SettingsIcon, Upload, Save, Image, X } from "lucide-react";
+import axiosClient from "@/helpers/axios-client";
+import PageHeader from "@/components/PageHeader";
 
-function encodeImageFileAsURL(file, colName) {
-  var reader = new FileReader();
+interface SettingsData {
+  id?: number;
+  header_base64?: string;
+  footer_base64?: string;
+  is_header?: number;
+  is_footer?: number;
+  is_logo?: number;
+  kitchen_name?: string;
+  currency?: string;
+  inventory_notification_number?: string;
+  vatin?: string;
+  cr?: string;
+  email?: string;
+  address?: string;
+  header_content?: string;
+  footer_content?: string;
+}
+
+function encodeImageFileAsURL(
+  file: File,
+  colName: string,
+  callback: () => void
+) {
+  const reader = new FileReader();
   reader.onloadend = function () {
-    saveToDb(colName, reader.result);
+    saveToDb(colName, reader.result as string);
+    callback();
   };
   reader.readAsDataURL(file);
 }
 
-const saveToDb = (colName, data) => {
-  axiosClient.post("settings", { colName, data }).then(({ data }) => {
-    // console.log(data);
-  });
+const saveToDb = (colName: string, data: string | boolean) => {
+  axiosClient.post("settings", { colName, data });
 };
 
 function Settings() {
-  const { t } = useTranslation('settings');
-  const [file, setFile] = useState(null);
-  const [src, setSrc] = useState(null);
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState<SettingsData | null>(null);
   const [welcomeMsg, setWelcomeMsg] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axiosClient.get("settings").then(({ data }) => {
-      setSettings(data);
-    });
+    setLoading(true);
+    axiosClient
+      .get("settings")
+      .then(({ data }) => {
+        setSettings(data);
+        setWelcomeMsg(data?.header_content || "");
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const handleFileChange = (e, colName) => {
-    encodeImageFileAsURL(e.target.files[0], colName);
-    const url = URL.createObjectURL(e.target.files[0]);
-    setSrc(url);
-    if (e.target.files) {
-      setFile(e.target.files[0]);
+  const handleImageUpload = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    colName: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      encodeImageFileAsURL(file, colName, () => {
+        // Refresh settings after upload
+        axiosClient.get("settings").then(({ data }) => setSettings(data));
+      });
     }
   };
 
-  const image1 = new Image(100, 100);
-  image1.src = settings?.header_base64;
-
-  const image2 = new Image(100, 100);
-  image2.src = settings?.footer_base64;
-
   return (
-    <Grid gap={4} container>
-      {/* Welcome Text */}
-    
-
-      <Grid item xs={12} lg={4}>
-        <Typography textAlign={'center'} variant="h3">
-          {t('header')}
-        </Typography>
-        <input
-          onChange={(e) => handleFileChange(e, 'header_base64')}
-          type="file"
+    <Fade in timeout={300}>
+      <Box sx={{ maxWidth: 1200, mx: "auto" }}>
+        <PageHeader
+          title="Settings"
+          subtitle="Configure your application settings"
+          icon={<SettingsIcon size={24} />}
         />
-        {file && (
-          <section>
-            <ul>
-              <li>{t('fileDetailsName')}: {file.name}</li>
-            </ul>
-          </section>
-        )}
-        <img width={100} src={image1.src} alt="" />
 
-     
-        <Typography textAlign={'center'} variant="h3">
-          {t('footer')}
-        </Typography>
-
-        <input
-          onChange={(e) => handleFileChange(e, 'footer_base64')}
-          type="file"
-        />
-        {file && (
-          <section>
-            <ul>
-              <li>{t('fileDetailsName')}: {file.name}</li>
-            </ul>
-          </section>
-        )}
-        <img width={100} src={image2.src} alt="" />
-      </Grid>
-
-      <Grid item xs={12} lg={3}>
-        <Stack direction={'column'} gap={1} key={settings?.id} sx={{ p: 1 }}>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked={settings?.is_header === 1}
-                  onChange={(e) => {
-                    axiosClient.post("settings", {
-                      colName: "is_header",
-                      data: e.target.checked,
-                    });
-                  }}
-                />
-              }
-              label={t('headerLabel')}
-            />
-          </FormGroup>
-
-       
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked={settings?.is_footer === 1}
-                  onChange={(e) => {
-                    axiosClient.post("settings", {
-                      colName: "is_footer",
-                      data: e.target.checked,
-                    });
-                  }}
-                />
-              }
-              label={t('footerLabel')}
-            />
-          </FormGroup>
-       
-
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked={settings?.is_logo === 1}
-                  onChange={(e) => {
-                    axiosClient.post("settings", {
-                      colName: "is_logo",
-                      data: e.target.checked,
-                    });
-                  }}
-                />
-              }
-              label={t('logoLabel')}
-            />
-          </FormGroup>
-       
-
-          <TextField
-            defaultValue={settings?.kitchen_name}
-            sx={{ mb: 1 }}
-            label={t('institutionName')}
-            fullWidth
-            variant='standard'
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "kitchen_name",
-                data: e.target.value,
-              });
-            }}
-          />
-       
-
-          <TextField
-            defaultValue={settings?.currency}
-            sx={{ mb: 1 }}
-            label={t('currencyLabel')}
-            fullWidth
-            variant='standard'
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "currency",
-                data: e.target.value,
-              });
-            }}
-          />
-       
-
-          <TextField
-            defaultValue={settings?.inventory_notification_number}
-            sx={{ mb: 1 }}
-            label={t('employeePhone')}
-            fullWidth
-            variant='standard'
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "inventory_notification_number",
-                data: e.target.value,
-              });
-            }}
-          />
-       
-
-          <TextField
-            defaultValue={settings?.vatin}
-            label={t('vatin')}
-            fullWidth
-            variant='standard'
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "vatin",
-                data: e.target.value,
-              });
-            }}
-          />
-       
-
-          <TextField
-            defaultValue={settings?.cr}
-            label={t('cr')}
-            fullWidth
-            variant='standard'
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "cr",
-                data: e.target.value,
-              });
-            }}
-          />
-       
-
-          <TextField
-            defaultValue={settings?.email}
-            label={t('emailLabel')}
-            fullWidth
-            variant='standard'
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "email",
-                data: e.target.value,
-              });
-            }}
-          />
-       
-
-          <TextField
-            defaultValue={settings?.address}
-            label={t('addressLabel')}
-            fullWidth
-            variant='standard'
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "address",
-                data: e.target.value,
-              });
-            }}
-          />
-        </Stack>
-      </Grid>
-
-      <Grid item xs={12} lg={3}>
-        <Box sx={{ p: 1 }}>
-          <Divider>{t('welcomeMessage')}</Divider>
-          <TextField
-            defaultValue={settings?.header_content}
-            sx={{ mb: 1 }}
-            rows={10}
-            multiline
-            fullWidth
-            onChange={(e) => {
-              setWelcomeMsg(e.target.value);
-            }}
-          />
-          <Button
-            fullWidth
-            variant='standard'
-            variant="contained"
-            sx={{ mb: 1 }}
-            onClick={() => {
-              axiosClient.post("settings", {
-                colName: "header_content",
-                data: welcomeMsg,
-              });
-              axiosClient.post("settings", {
-                colName: "is_footer",
-                data: false,
-              });
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr 1fr" },
+            gap: 3,
+          }}
+        >
+          {/* Images Section */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
             }}
           >
-            {t('save')}
-          </Button>
+            <Stack direction="row" alignItems="center" gap={1.5} sx={{ mb: 3 }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                  color: "primary.main",
+                }}
+              >
+                <Image size={18} />
+              </Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                Receipt Images
+              </Typography>
+            </Stack>
 
-       
-          <div style={{direction:'ltr'}}>
-              <TextField
-            defaultValue={settings?.footer_content}
-            rows={3}
-            label={t('footerContent')}
-            multiline
-            fullWidth
-            onChange={(e) => {
-              axiosClient.post("settings", {
-                colName: "footer_content",
-                data: e.target.value,
-              });
+            <Stack spacing={3}>
+              {/* Header Image */}
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+                  Header Image
+                </Typography>
+                <Box
+                  component="label"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 120,
+                    border: "2px dashed",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+                    },
+                  }}
+                >
+                  {settings?.header_base64 ? (
+                    <Box
+                      component="img"
+                      src={settings.header_base64}
+                      alt="Header"
+                      sx={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    />
+                  ) : (
+                    <>
+                      <Upload size={24} style={{ opacity: 0.5, marginBottom: 8 }} />
+                      <Typography variant="caption" color="text.secondary">
+                        Click to upload
+                      </Typography>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, "header_base64")}
+                    style={{ display: "none" }}
+                  />
+                </Box>
+              </Box>
+
+              {/* Footer Image */}
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+                  Footer Image
+                </Typography>
+                <Box
+                  component="label"
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 120,
+                    border: "2px dashed",
+                    borderColor: "divider",
+                    borderRadius: 2,
+                    cursor: "pointer",
+                    overflow: "hidden",
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      borderColor: "primary.main",
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+                    },
+                  }}
+                >
+                  {settings?.footer_base64 ? (
+                    <Box
+                      component="img"
+                      src={settings.footer_base64}
+                      alt="Footer"
+                      sx={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    />
+                  ) : (
+                    <>
+                      <Upload size={24} style={{ opacity: 0.5, marginBottom: 8 }} />
+                      <Typography variant="caption" color="text.secondary">
+                        Click to upload
+                      </Typography>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, "footer_base64")}
+                    style={{ display: "none" }}
+                  />
+                </Box>
+              </Box>
+            </Stack>
+          </Paper>
+
+          {/* General Settings */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
             }}
-          />
-          </div>
-        
-       
+          >
+            <Stack direction="row" alignItems="center" gap={1.5} sx={{ mb: 3 }}>
+              <Box
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  bgcolor: (theme) => alpha(theme.palette.info.main, 0.1),
+                  color: "info.main",
+                }}
+              >
+                <SettingsIcon size={18} />
+              </Box>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                General Settings
+              </Typography>
+            </Stack>
+
+            <Stack spacing={2}>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={settings?.is_header === 1}
+                      onChange={(e) =>
+                        saveToDb("is_header", e.target.checked)
+                      }
+                      size="small"
+                    />
+                  }
+                  label="Show Header"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={settings?.is_footer === 1}
+                      onChange={(e) =>
+                        saveToDb("is_footer", e.target.checked)
+                      }
+                      size="small"
+                    />
+                  }
+                  label="Show Footer"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={settings?.is_logo === 1}
+                      onChange={(e) =>
+                        saveToDb("is_logo", e.target.checked)
+                      }
+                      size="small"
+                    />
+                  }
+                  label="Show Logo"
+                />
+              </FormGroup>
+
+              <Divider />
+
+              <TextField
+                label="Business Name"
+                size="small"
+                defaultValue={settings?.kitchen_name}
+                onChange={(e) => saveToDb("kitchen_name", e.target.value)}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+              <TextField
+                label="Currency"
+                size="small"
+                defaultValue={settings?.currency}
+                onChange={(e) => saveToDb("currency", e.target.value)}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+              <TextField
+                label="Notification Phone"
+                size="small"
+                defaultValue={settings?.inventory_notification_number}
+                onChange={(e) =>
+                  saveToDb("inventory_notification_number", e.target.value)
+                }
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+              <TextField
+                label="VAT Number"
+                size="small"
+                defaultValue={settings?.vatin}
+                onChange={(e) => saveToDb("vatin", e.target.value)}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+              <TextField
+                label="CR Number"
+                size="small"
+                defaultValue={settings?.cr}
+                onChange={(e) => saveToDb("cr", e.target.value)}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+              <TextField
+                label="Email"
+                size="small"
+                defaultValue={settings?.email}
+                onChange={(e) => saveToDb("email", e.target.value)}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+              <TextField
+                label="Address"
+                size="small"
+                defaultValue={settings?.address}
+                onChange={(e) => saveToDb("address", e.target.value)}
+                sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+              />
+            </Stack>
+          </Paper>
+
+          {/* Content Section */}
+          <Paper
+            elevation={0}
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
+            }}
+          >
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 3 }}>
+              Receipt Content
+            </Typography>
+
+            <Stack spacing={3}>
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+                  Welcome Message
+                </Typography>
+                <TextField
+                  multiline
+                  rows={5}
+                  fullWidth
+                  value={welcomeMsg}
+                  onChange={(e) => setWelcomeMsg(e.target.value)}
+                  placeholder="Enter welcome message for receipts..."
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                />
+                <Button
+                  fullWidth
+                  variant="contained"
+                  startIcon={<Save size={18} />}
+                  onClick={() => {
+                    saveToDb("header_content", welcomeMsg);
+                  }}
+                  sx={{
+                    mt: 1.5,
+                    borderRadius: 2,
+                    textTransform: "none",
+                    fontWeight: 600,
+                    boxShadow: "none",
+                    "&:hover": { boxShadow: "none" },
+                  }}
+                >
+                  Save Message
+                </Button>
+              </Box>
+
+              <Divider />
+
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: 600, mb: 1.5 }}>
+                  Footer Content
+                </Typography>
+                <TextField
+                  multiline
+                  rows={3}
+                  fullWidth
+                  defaultValue={settings?.footer_content}
+                  onChange={(e) => saveToDb("footer_content", e.target.value)}
+                  placeholder="Enter footer content..."
+                  sx={{ "& .MuiOutlinedInput-root": { borderRadius: 2 } }}
+                />
+              </Box>
+            </Stack>
+          </Paper>
         </Box>
-      </Grid>
-    </Grid>
+      </Box>
+    </Fade>
   );
 }
 

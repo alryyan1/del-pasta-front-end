@@ -107,7 +107,7 @@ function OrderHeader({
 
   return (
     <Stack
-      justifyContent={"space-around"}
+      justifyContent={"space-between"}
       gap={2}
       direction={"row"}
       alignItems={"center"}

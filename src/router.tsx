@@ -2,6 +2,7 @@ import { createHashRouter, RouteObject } from "react-router-dom";
 import Error from "./Error";
 import GuestLayout from "./components/GuestLayout";
 import NewOrder from "./pages/NewOrder";
+import NewOrderV2 from "./pages/NewOrderV2";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Meals from "./pages/Meals";
@@ -42,6 +43,10 @@ const settings: RouteObject = {
 };
 const makeOrder: RouteObject = {
   path: "makeOrder",
+  element: <NewOrderV2 />,
+};
+const makeOrderOld: RouteObject = {
+  path: "makeOrderOld",
   element: <NewOrder />,
 };
 const landingPage: RouteObject = {
@@ -121,6 +126,7 @@ const authoroized: RouteObject = {
   children: [
     landingPage,
     makeOrder,
+    makeOrderOld,
     config,
     orders,
     onlineOrdersAdmin,

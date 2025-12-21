@@ -1,49 +1,68 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { Meal, Mealorder, Order, Requestedchildmeal } from "@/Types/types";
 import axiosClient from "@/helpers/axios-client";
 import { LoadingButton } from "@mui/lab";
-import { Box, Stack } from "@mui/system";
 import CartItem from "./CartItem";
-import { Plus, ShoppingCart } from "lucide-react";
-import { Autocomplete, Button, Divider, TextField, Typography } from "@mui/material";
-import { Notes } from "@mui/icons-material";
+import { Plus, ShoppingCart, Receipt, MapPin, FileText } from "lucide-react";
+import {
+  Autocomplete,
+  Button,
+  TextField,
+  Typography,
+  useTheme,
+  IconButton,
+  Tooltip,
+  Box,
+  Stack,
+  alpha,
+  Paper,
+  Divider,
+  Chip,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 
 interface CartProps {
   selectedOrder: Order;
-  setSelectedOrder: (order) => void;
+  setSelectedOrder: (order: Order) => void;
   printHandler: () => void;
 }
 
 function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
-  const { t } = useTranslation("cart"); // Using the i18n translation hook
+  const theme = useTheme();
+  const { t } = useTranslation("cart");
   const [colName, setColName] = useState("");
-  const [selectedMeal,setSelectedMeal]= useState<Meal|null>(null)
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [val, setVal] = useState("");
-  const updateQuantity = (increment: boolean, item: Requestedchildmeal) => {
-    axiosClient
-      .patch(`RequestedChild/${item.id}`, {
-        count: increment ? item.count + 1 : Math.max(0, item.count - 1),
-      })
-      .then(({ data }) => {
-        setSelectedOrder(data.order);
-      });
-  };
+  const { meals } = useOutletContext();
 
-  const updateMealOrderQuantity = (increment: boolean, item: Mealorder) => {
-    axiosClient
-      .patch(`orderMeals/${item.id}`, {
-        quantity: increment
-          ? item.quantity + 1
-          : Math.max(0, item.quantity - 1),
-      })
-      .then(({ data }) => {
-        setSelectedOrder(data.order);
-      });
-  };
+  const updateQuantity = useCallback(
+    (increment: boolean, item: Requestedchildmeal) => {
+      axiosClient
+        .patch(`RequestedChild/${item.id}`, {
+          count: increment ? item.count + 1 : Math.max(0, item.count - 1),
+        })
+        .then(({ data }) => {
+          setSelectedOrder(data.order);
+        });
+    },
+    [setSelectedOrder]
+  );
 
-  const orderUpdateHandler = () => {
+  const updateMealOrderQuantity = useCallback(
+    (increment: boolean, item: Mealorder) => {
+      axiosClient
+        .patch(`orderMeals/${item.id}`, {
+          quantity: increment ? item.quantity + 1 : Math.max(0, item.quantity - 1),
+        })
+        .then(({ data }) => {
+          setSelectedOrder(data.order);
+        });
+    },
+    [setSelectedOrder]
+  );
+
+  const orderUpdateHandler = useCallback(() => {
     axiosClient
       .patch(`orders/${selectedOrder.id}`, {
         order_confirmed: 1,
@@ -54,169 +73,380 @@ function Cart({ selectedOrder, setSelectedOrder, printHandler }: CartProps) {
           printHandler();
         }
         setSelectedOrder(data.order);
-        // setTimeout(() => {
-        //   setSelectedOrder(null);
-        // }, 300);
       });
-  };
+  }, [selectedOrder.id, setSelectedOrder, printHandler]);
 
-  const orderItemUpdateHandler = (val, orderMeal, colName = "delivery_fee") => {
+  const orderItemUpdateHandler = useCallback(
+    (val: string | number, orderMeal: Order, colName = "delivery_fee") => {
+      axiosClient
+        .patch(`orders/${orderMeal.id}`, {
+          [colName]: val,
+        })
+        .then(({ data }) => {
+          setSelectedOrder(data.order);
+        });
+    },
+    [setSelectedOrder]
+  );
+
+  useEffect(() => {
+    if (colName !== "") {
+      const timer = setTimeout(() => {
+        orderItemUpdateHandler(val, selectedOrder, colName);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [val, colName, selectedOrder, orderItemUpdateHandler]);
+
+  const mealOrderHandler = useCallback(() => {
+    if (!selectedMeal || !selectedOrder) return;
     axiosClient
-      .patch(`orders/${orderMeal.id}`, {
-        [colName]: val,
+      .post("orderMeals", {
+        order_id: selectedOrder.id,
+        meal_id: selectedMeal.id,
+        quantity: 1,
+        price: selectedMeal.price,
       })
       .then(({ data }) => {
         setSelectedOrder(data.order);
+        setSelectedMeal(null);
       });
-  };
- 
-  useEffect(() => {
-    if (colName !='') {
-          const timer = setTimeout(() => {
-      orderItemUpdateHandler(val, selectedOrder, colName);
-    }, 400);
-    return () => clearTimeout(timer);
-    }
+  }, [selectedMeal, selectedOrder, setSelectedOrder]);
 
-  }, [val]);
-  const mealOrderHandler = ()=>{
-      axiosClient.post('orderMeals',{
-        order_id:selectedOrder?.id,
-        meal_id:selectedMeal?.id,
-        quantity:1,
-        price:selectedMeal?.price
-      }).then(({data})=>{
-        setSelectedOrder(data.order)
-        // setMealOrder(data.mealOrder)
-          // console.log(data)
-      })
-   }
-   const {meals} = useOutletContext()
+  // Memoized calculations
+  const totalAmount = useMemo(
+    () => selectedOrder.totalPrice.toFixed(3),
+    [selectedOrder.totalPrice]
+  );
+  const paidAmount = useMemo(
+    () => selectedOrder.amount_paid.toFixed(3),
+    [selectedOrder.amount_paid]
+  );
+  const remainingAmount = useMemo(
+    () => (selectedOrder.totalPrice - selectedOrder.amount_paid).toFixed(3),
+    [selectedOrder.totalPrice, selectedOrder.amount_paid]
+  );
+
+  const isOrderConfirmed = selectedOrder.order_confirmed;
+  const hasItems = selectedOrder.meal_orders.length > 0;
+
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Stack
-        direction={"column"}
+    <Box
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+      }}
+    >
+      {/* Header */}
+      <Box
         sx={{
-          p: 2,
-          boxShadow: 3,
-          overflow: 'auto',
-          height: 'calc(100vh - 200px)',
+          p: 2.5,
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          bgcolor: "background.paper",
         }}
-        gap={1}
       >
-        <Stack direction={'row'} gap={1}>
-          <Autocomplete onChange={(e,val)=>{
-            setSelectedMeal(val)
-          }} fullWidth getOptionLabel={(op)=>op.name} renderInput={(params)=>{
-          return <TextField label='الوجبات' {...params}/>
-        }}  options={meals}/>
-        <Button disabled={selectedOrder?.order_confirmed} onClick={()=>{
-          mealOrderHandler()
-        }} variant="contained"><Plus/></Button>
+        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: 2,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                color: "primary.main",
+              }}
+            >
+              <ShoppingCart size={20} />
+            </Box>
+            <Box>
+              <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>
+                {t("cart") || "السلة"}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {selectedOrder.meal_orders.length} {t("items") || "عنصر"}
+              </Typography>
+            </Box>
+          </Stack>
+          {isOrderConfirmed && (
+            <Chip
+              label={t("confirmed") || "مؤكد"}
+              size="small"
+              sx={{
+                bgcolor: (theme) => alpha(theme.palette.success.main, 0.1),
+                color: "success.main",
+                fontWeight: 600,
+              }}
+            />
+          )}
         </Stack>
-        
-        <Typography variant="h4" textAlign={'center'}>الطلبات</Typography>
-        <Box sx={{ display: 'grid', gap: 2, mb: 1.5 }}>
-          {selectedOrder.meal_orders.map((item) => {
-            const isMultible = item.quantity > 1 ? "" : "";
-            return (
+      </Box>
+
+      {/* Add Meal Section */}
+      {!isOrderConfirmed && (
+        <Box sx={{ p: 2, borderBottom: "1px solid", borderColor: "divider" }}>
+          <Stack direction="row" spacing={1}>
+            <Autocomplete
+              fullWidth
+              size="small"
+              options={meals || []}
+              getOptionLabel={(option) => option.name}
+              value={selectedMeal}
+              onChange={(e, val) => setSelectedMeal(val)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={t("meals") || "الوجبات"}
+                  placeholder={t("search_meals") || "ابحث عن وجبة..."}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                    },
+                  }}
+                />
+              )}
+            />
+            <Tooltip title={t("add_meal") || "إضافة وجبة"}>
+              <IconButton
+                onClick={mealOrderHandler}
+                disabled={!selectedMeal}
+                sx={{
+                  bgcolor: selectedMeal ? "primary.main" : "action.disabledBackground",
+                  color: selectedMeal ? "white" : "action.disabled",
+                  "&:hover": {
+                    bgcolor: selectedMeal ? "primary.dark" : "action.disabledBackground",
+                  },
+                  borderRadius: 2,
+                }}
+              >
+                <Plus size={20} />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        </Box>
+      )}
+
+      {/* Cart Items */}
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: "auto",
+          p: 2,
+          "&::-webkit-scrollbar": {
+            width: 8,
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: (theme) => alpha(theme.palette.grey[500], 0.05),
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: (theme) => alpha(theme.palette.grey[500], 0.2),
+            borderRadius: 4,
+            "&:hover": {
+              backgroundColor: (theme) => alpha(theme.palette.grey[500], 0.3),
+            },
+          },
+        }}
+      >
+        {hasItems ? (
+          <Stack spacing={1.5}>
+            {selectedOrder.meal_orders.map((item) => (
               <CartItem
-               selectedOrder={selectedOrder}
+                key={item.id}
+                selectedOrder={selectedOrder}
                 updateRequestedQuantity={updateQuantity}
                 setSelectedOrder={setSelectedOrder}
                 updateQuantity={updateMealOrderQuantity}
-                isMultible={isMultible}
+                isMultible=""
                 item={item}
               />
-            );
-          })}
-        </Box>
+            ))}
+          </Stack>
+        ) : (
+          <Box
+            sx={{
+              py: 8,
+              textAlign: "center",
+              color: "text.secondary",
+            }}
+          >
+            <ShoppingCart size={48} style={{ opacity: 0.3, marginBottom: 16 }} />
+            <Typography variant="body1" sx={{ fontWeight: 500 }}>
+              {t("empty_cart") || "السلة فارغة"}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 0.5 }}>
+              {t("add_items_message") || "أضف عناصر من القائمة"}
+            </Typography>
+          </Box>
+        )}
+      </Box>
 
-       {selectedOrder.meal_orders.length > 0 && (
-        <Box>
-          <Box>
+      {/* Order Details & Summary */}
+      {hasItems && (
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2.5,
+            borderTop: "1px solid",
+            borderColor: "divider",
+            bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+          }}
+        >
+          {/* Notes & Address */}
+          <Stack spacing={2} sx={{ mb: 2.5 }}>
             <TextField
               autoComplete="off"
-              variant="standard"
+              size="small"
               fullWidth
-              label={t("notes")}
+              label={t("notes") || "ملاحظات"}
+              multiline
+              rows={2}
               key={selectedOrder.id}
               onChange={(e) => {
                 setColName("notes");
                 setVal(e.target.value);
               }}
               defaultValue={selectedOrder.notes}
-            ></TextField>
-          </Box>
-          <Box>
+              InputProps={{
+                startAdornment: (
+                  <Box sx={{ mr: 1, display: "flex", alignItems: "center" }}>
+                    <FileText size={16} style={{ opacity: 0.5 }} />
+                  </Box>
+                ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
+            />
             <TextField
               autoComplete="off"
-              variant="standard"
+              size="small"
               fullWidth
-              label={t("delivery_address")}
+              label={t("delivery_address") || "عنوان التوصيل"}
               key={selectedOrder.id}
               onChange={(e) => {
                 setColName("delivery_address");
-
-
                 setVal(e.target.value);
               }}
               defaultValue={selectedOrder.delivery_address}
-            ></TextField>
-          </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, mb: 1.5, mt: 2 }}>
-            <Stack direction={"row"} gap={2} justifyContent={'space-around'}>
-              <Stack direction={"column"} gap={1}>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t("total_amount")}</Typography>
-                <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                  {selectedOrder.totalPrice.toFixed(3)}
+              InputProps={{
+                startAdornment: (
+                  <Box sx={{ mr: 1, display: "flex", alignItems: "center" }}>
+                    <MapPin size={16} style={{ opacity: 0.5 }} />
+                  </Box>
+                ),
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
+            />
+          </Stack>
+
+          {/* Summary */}
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: 2,
+              bgcolor: "background.paper",
+              border: "1px solid",
+              borderColor: "divider",
+              mb: 2,
+            }}
+          >
+            <Stack spacing={1.5}>
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="body2" color="text.secondary">
+                  {t("total_amount") || "المبلغ الإجمالي"}
+                </Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: "text.primary" }}>
+                  {totalAmount} {t("currency_OMR") || "د.ك"}
                 </Typography>
               </Stack>
 
-
-
-              <Stack direction={'column'}>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t("paid")}</Typography>
-                <Typography variant="body1" sx={{ color: 'text.primary' }}>
-                  {selectedOrder.amount_paid.toFixed(3)}
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="body2" color="text.secondary">
+                  {t("paid") || "المدفوع"}
                 </Typography>
-              </Stack >
-              <Stack direction={'column'}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>{t("delivery_fee")}</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <TextField
-                 onFocus={(event) => {
-                  event.target.select();
-                }}
-                  type="number"
-                  key={selectedOrder.id}
-                  variant="standard"
-                  sx={{ width: "50px", direction: "ltr" }}
-                  onChange={(e) => {
-                    orderItemUpdateHandler(e.target.value, selectedOrder);
-                  }}
-                  defaultValue={selectedOrder.delivery_fee}
-                ></TextField>
-                <Typography variant="body2">{t("currency_OMR")}</Typography>
-              </Box>
-              </Stack >
-            </Stack>
+                <Typography variant="body1" sx={{ fontWeight: 600, color: "success.main" }}>
+                  {paidAmount} {t("currency_OMR") || "د.ك"}
+                </Typography>
+              </Stack>
 
-          
+              <Divider />
+
+              <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography variant="body2" color="text.secondary">
+                  {t("remaining") || "المتبقي"}
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 600, color: "warning.main" }}>
+                  {remainingAmount} {t("currency_OMR") || "د.ك"}
+                </Typography>
+              </Stack>
+
+              <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mt: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {t("delivery_fee") || "رسوم التوصيل"}
+                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+                  <TextField
+                    onFocus={(event) => {
+                      event.target.select();
+                    }}
+                    type="number"
+                    key={selectedOrder.id}
+                    size="small"
+                    sx={{
+                      width: "70px",
+                      direction: "ltr",
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 1.5,
+                      },
+                    }}
+                    onChange={(e) => {
+                      orderItemUpdateHandler(e.target.value, selectedOrder);
+                    }}
+                    defaultValue={selectedOrder.delivery_fee}
+                  />
+                  <Typography variant="caption" color="text.secondary">
+                    {t("currency_OMR") || "د.ك"}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Stack>
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+
+          {/* Confirm Button */}
+          {!isOrderConfirmed && (
             <LoadingButton
-              disabled={selectedOrder.order_confirmed}
+              fullWidth
               onClick={orderUpdateHandler}
               variant="contained"
-              sx={{}}
+              size="large"
+              sx={{
+                borderRadius: 2,
+                textTransform: "none",
+                fontWeight: 600,
+                py: 1.5,
+                boxShadow: (theme) => `0 4px 12px ${alpha(theme.palette.primary.main, 0.3)}`,
+                "&:hover": {
+                  boxShadow: (theme) => `0 6px 16px ${alpha(theme.palette.primary.main, 0.4)}`,
+                },
+              }}
+              startIcon={<Receipt size={20} />}
             >
-              {t("confirm_order")}
+              {t("confirm_order") || "تأكيد الطلب"}
             </LoadingButton>
-          </Box>
-        </Box>
+          )}
+        </Paper>
       )}
-      </Stack>
     </Box>
   );
 }

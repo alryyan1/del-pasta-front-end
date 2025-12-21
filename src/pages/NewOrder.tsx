@@ -1,15 +1,29 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import axiosClient from "@/helpers/axios-client";
 import { useAuthContext } from "@/contexts/stateContext";
 import { Customer, Order } from "@/Types/types";
-import { Badge, Box, IconButton, Paper, Slide, Tooltip, Typography } from "@mui/material";
+import {
+  Badge,
+  Box,
+  IconButton,
+  Paper,
+  Slide,
+  Tooltip,
+  Typography,
+  Fade,
+  alpha,
+  Stack,
+  Chip,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Cart from "@/components/Cart";
 import MealCategoryPanel from "@/components/MealCategoryPanel";
 import OrderList from "@/components/OrderList";
 import OrderHeader from "./OrderrHeader";
-import { Settings, ShoppingBag, ShoppingCart } from "lucide-react";
+import { Settings, ShoppingBag, ShoppingCart, Plus } from "lucide-react";
 import { CustomerForm } from "./Customer/CutomerForm";
 import { useCustomerStore } from "./Customer/useCustomer";
 import OrderHeaderMobile from "@/components/OrderHeaderMobile";
@@ -19,82 +33,82 @@ import NoteDialog from "@/components/NoteDialog";
 import printJS from "print-js";
 
 const NewOrder = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [width, setWidth] = useState(window.innerWidth);
   const [showOrderSettings, setOrderSettings] = useState(false);
-  const [showCart, setShowCart] = useState(window.innerWidth > 700);
-  const [showCategories, setShowCategories] = useState(window.innerWidth > 700);
+  const [showCart, setShowCart] = useState(!isMobile);
+  const [showCategories, setShowCategories] = useState(!isMobile);
   const { customers, fetchData } = useCustomerStore();
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchData]);
 
-  const [selectedCustomer, setSelectedCustomer] = useState<
-    Customer | undefined
-  >();
-  const { t } = useTranslation('newOrder'); // Using i18next hook for translations
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>();
+  const { t } = useTranslation("newOrder");
+
   useEffect(() => {
     document.title = "طلب جديد";
   }, []);
 
+  // Responsive handlers
   useEffect(() => {
-    const handleResize = () => {
-      setWidth(window.innerWidth);
+    if (isMobile) {
+      setShowCart(false);
+      setShowCategories(true);
+    } else {
+      setShowCart(true);
+      setShowCategories(true);
+      setOrderSettings(false);
+    }
+  }, [isMobile]);
 
-      if (window.innerWidth < 700) {
-        setShowCart(false);
-      } else {
-        setShowCart(true);
-        setOrderSettings(false);
-        setShowCategories(true);
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-  const [open,setOpen] = useState(false);
-  const handleNoteClose = ()=>{
+  const [open, setOpen] = useState(false);
+  const handleNoteClose = () => {
     setOpen(false);
-  }
+  };
+
   const outletContext = useOutletContext() as {
     selectedOrder: Order | null;
     setSelectedOrder: (order: Order | null) => void;
   };
   const { selectedOrder, setSelectedOrder: setSelectedOrderFromContext } = outletContext;
   const { add } = useAuthContext();
-  
-  // Wrapper function to match NoteDialog's expected type
-  const setSelectedOrder = useCallback((order: Order | ((prev: Order) => Order)) => {
-    if (typeof order === 'function') {
-      // Handle function case
-      const currentOrder = selectedOrder;
-      if (currentOrder) {
-        setSelectedOrderFromContext(order(currentOrder));
-      }
-    } else {
-      setSelectedOrderFromContext(order);
-    }
-  }, [selectedOrder, setSelectedOrderFromContext]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const printHandler = () => {
-    axiosClient
-      .get(`printSale?order_id=${selectedOrder?.id}&base64=1`)
-      .then(({ data }) => {
-        printJS({
-          printable: data.slice(data.indexOf("JVB")),
-          base64: true,
-          type: "pdf",
-        });
-      });
-  };
 
-  const handleClose = () => {
+  // Optimized setSelectedOrder wrapper
+  const setSelectedOrder = useCallback(
+    (order: Order | ((prev: Order) => Order)) => {
+      if (typeof order === "function") {
+        const currentOrder = selectedOrder;
+        if (currentOrder) {
+          setSelectedOrderFromContext(order(currentOrder));
+        }
+      } else {
+        setSelectedOrderFromContext(order);
+      }
+    },
+    [selectedOrder, setSelectedOrderFromContext]
+  );
+
+  const [orders, setOrders] = useState<Order[]>([]);
+
+  const printHandler = useCallback(() => {
+    if (!selectedOrder?.id) return;
+    axiosClient.get(`printSale?order_id=${selectedOrder.id}&base64=1`).then(({ data }) => {
+      printJS({
+        printable: data.slice(data.indexOf("JVB")),
+        base64: true,
+        type: "pdf",
+      });
+    });
+  }, [selectedOrder?.id]);
+
+  const handleClose = useCallback(() => {
     setIsFormOpen(false);
     setSelectedCustomer(undefined);
-  };
+  }, []);
 
   useEffect(() => {
     setOrders((prev) => {
@@ -107,13 +121,12 @@ const NewOrder = () => {
     });
   }, [selectedOrder]);
 
-
-  const newOrderHandler = () => {
+  const newOrderHandler = useCallback(() => {
     axiosClient.post("orders").then(({ data }) => {
       setSelectedOrder(data.data);
       add(data.data, setOrders);
     });
-  };
+  }, [setSelectedOrder, add]);
 
   useEffect(() => {
     axiosClient.get<Order[]>("orders?today=1").then(({ data }) => {
@@ -121,177 +134,387 @@ const NewOrder = () => {
     });
   }, []);
 
- 
+  // Memoized values for performance
+  const cartItemCount = useMemo(
+    () => selectedOrder?.meal_orders?.length ?? 0,
+    [selectedOrder?.meal_orders?.length]
+  );
+
+  const hasOrderSelected = useMemo(() => !!selectedOrder, [selectedOrder]);
 
   return (
-    <>
-      {width < 830 && (
-        <Box
-          sx={{
-            mb: 2,
-            bgcolor: 'rgba(233, 30, 99, 0.07)',
-            p: 1.5,
-            borderRadius: 2,
-            border: '1px dashed',
-            borderColor: 'divider',
-          }}
-        >
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <IconButton
-              onClick={() => {
-                setOrderSettings(!showOrderSettings);
-              }}
-            >
-              <Tooltip title={t("order_settings")}>
-                <Settings />
-              </Tooltip>
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                setShowCart(showCategories);
-                setShowCategories(!showCategories);
-              }}
-            >
-              {showCategories ? (
-              <Badge badgeContent={selectedOrder?.meal_orders?.length ?? 0} color="primary">
-                  <ShoppingCart />
-                </Badge>
-              ) : (
-                <ShoppingBag />
-              )}
-            </IconButton>
-          </Box>
-        </Box>
-      )}
+    <Fade in timeout={300}>
+      <Box
+        sx={{
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          bgcolor: "background.default",
+        }}
+      >
+        {/* Mobile Header Controls */}
+        {isMobile && (
+          <Paper
+            elevation={0}
+            sx={{
+              mb: 2,
+              p: 1.5,
+              borderRadius: 3,
+              border: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.paper",
+              boxShadow: (theme) =>
+                `0 2px 8px ${alpha(theme.palette.primary.main, 0.08)}`,
+            }}
+          >
+            <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
+              <Stack direction="row" spacing={1}>
+                <Tooltip title={t("order_settings") || "إعدادات الطلب"}>
+                  <IconButton
+                    onClick={() => setOrderSettings(!showOrderSettings)}
+                    sx={{
+                      bgcolor: showOrderSettings
+                        ? (theme) => alpha(theme.palette.primary.main, 0.1)
+                        : "transparent",
+                      color: showOrderSettings ? "primary.main" : "text.secondary",
+                      "&:hover": {
+                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.15),
+                      },
+                    }}
+                  >
+                    <Settings size={20} />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title={showCategories ? "السلة" : "الفئات"}>
+                  <IconButton
+                    onClick={() => {
+                      setShowCart(showCategories);
+                      setShowCategories(!showCategories);
+                    }}
+                    sx={{
+                      bgcolor: showCategories
+                        ? (theme) => alpha(theme.palette.success.main, 0.1)
+                        : "transparent",
+                      color: showCategories ? "success.main" : "text.secondary",
+                      "&:hover": {
+                        bgcolor: (theme) => alpha(theme.palette.success.main, 0.15),
+                      },
+                    }}
+                  >
+                    <Badge badgeContent={cartItemCount} color="primary" max={99}>
+                      {showCategories ? <ShoppingCart size={20} /> : <ShoppingBag size={20} />}
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+              </Stack>
 
-      {showOrderSettings && (
-        <Slide direction="up" in={true} mountOnEnter unmountOnExit>
-          <Box>
-            <OrderHeaderMobile
-              showOrderSettings={showOrderSettings}
-              showNewOrderBtn={true}
+              {hasOrderSelected && (
+                <Chip
+                  label={`#${selectedOrder?.order_number || ""}`}
+                  size="small"
+                  sx={{
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                    color: "primary.main",
+                    fontWeight: 600,
+                    fontSize: "0.75rem",
+                  }}
+                />
+              )}
+            </Stack>
+          </Paper>
+        )}
+
+        {/* Order Settings Slide (Mobile) */}
+        {showOrderSettings && isMobile && (
+          <Slide direction="up" in={showOrderSettings} mountOnEnter unmountOnExit>
+            <Box sx={{ mb: 2 }}>
+              <OrderHeaderMobile
+                showOrderSettings={showOrderSettings}
+                showNewOrderBtn={true}
+                setIsFormOpen={setIsFormOpen}
+                key={selectedOrder?.id}
+                selectedOrder={selectedOrder}
+                setSelectedOrder={setSelectedOrder}
+                setOrders={setOrders}
+                newOrderHandler={newOrderHandler}
+              />
+            </Box>
+          </Slide>
+        )}
+
+        {/* Desktop Order Header */}
+        {!isMobile && (
+          <Box sx={{ mb: 2 }}>
+            <OrderHeader
+              customers={customers}
+              setOpen={setOpen}
+              handleClose={handleNoteClose}
               setIsFormOpen={setIsFormOpen}
               key={selectedOrder?.id}
               selectedOrder={selectedOrder}
               setSelectedOrder={setSelectedOrder}
-              setOrders={setOrders}
               newOrderHandler={newOrderHandler}
             />
           </Box>
-        </Slide>
-      )}
-
-      {width > 830 && (
-        <OrderHeader
-          customers={customers}
-          setOpen={setOpen}
-          handleClose={handleNoteClose}
-          setIsFormOpen={setIsFormOpen}
-          key={selectedOrder?.id}
-          selectedOrder={selectedOrder}
-          setSelectedOrder={setSelectedOrder}
-          newOrderHandler={newOrderHandler}
-        />
-      )}
-
-      <Box
-        sx={{
-          display: { xs: 'block', md: 'grid' },
-          gridTemplateColumns: { md: '1fr 1fr' },
-          mt: { xs: 2, md: 3 },
-          gap: { xs: 2, md: 3 },
-          maxWidth: '100%',
-        }}
-      >
-        {showCategories && (
-          <Box sx={{ minHeight: { md: 'calc(100vh - 200px)' } }}>
-            {selectedOrder ? (
-              <MealCategoryPanel
-                selectedOrder={selectedOrder}
-                setSelectedOrder={(order: Order) => setSelectedOrderFromContext(order)}
-              />
-            ) : (
-              <Paper 
-                elevation={1}
-                sx={{ 
-                  p: 3, 
-                  textAlign: 'center',
-                  color: 'text.secondary',
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Typography variant="body1">Select an order to view categories</Typography>
-              </Paper>
-            )}
-          </Box>
         )}
 
-        <Box sx={{ direction: 'ltr' }}>
+        {/* Main Content Area */}
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            gap: { xs: 2, md: 3 },
+            overflow: "hidden",
+            minHeight: 0,
+          }}
+        >
+          {/* Categories & Meals Panel */}
+          {showCategories && (
+            <Box
+              sx={{
+                flex: { xs: "0 0 auto", md: "1 1 50%" },
+                minWidth: 0,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+              }}
+            >
+              {hasOrderSelected ? (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    borderRadius: 3,
+                    border: "1px solid",
+                    borderColor: (theme) => alpha(theme.palette.grey[300], 0.5),
+                    bgcolor: "background.paper",
+                    overflow: "hidden",
+                    boxShadow: (theme) => `0 2px 8px ${alpha(theme.palette.common.black, 0.08)}`,
+                  }}
+                >
+                  {selectedOrder && (
+                    <MealCategoryPanel
+                      selectedOrder={selectedOrder}
+                      setSelectedOrder={(order: Order) => setSelectedOrderFromContext(order)}
+                    />
+                  )}
+                </Paper>
+              ) : (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    p: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    borderRadius: 3,
+                    border: "2px dashed",
+                    borderColor: "divider",
+                    bgcolor: (theme) => alpha(theme.palette.primary.main, 0.02),
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: (theme) => alpha(theme.palette.primary.main, 0.1),
+                      mb: 2,
+                    }}
+                  >
+                    <Plus size={40} style={{ color: theme.palette.primary.main }} />
+                  </Box>
+                  <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, color: "text.primary" }}>
+                    {t("create_new_order") || "إنشاء طلب جديد"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t("select_order_message") || "اختر أو أنشئ طلباً جديداً للبدء"}
+                  </Typography>
+                </Paper>
+              )}
+            </Box>
+          )}
+
+          {/* Cart & Orders List Panel */}
           <Box
             sx={{
-              display: { xs: 'block', md: 'grid' },
+              flex: { xs: "0 0 auto", md: "1 1 50%" },
+              minWidth: 0,
+              display: "flex",
+              flexDirection: { xs: "column", md: "row" },
               gap: { xs: 2, md: 2 },
-              gridTemplateColumns: { md: 'minmax(285px, 1fr) 80px' },
-              minHeight: { md: 'calc(100vh - 200px)' },
+              overflow: "hidden",
             }}
           >
+            {/* Cart Section */}
             {showCart && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                {(selectedOrder?.meal_orders?.length ?? 0) > 0 && selectedOrder && (
-                  <Cart
-                    printHandler={printHandler}
-                    setSelectedOrder={(order: Order) => setSelectedOrderFromContext(order)}
-                    selectedOrder={selectedOrder}
-                  />
-                )}
-
-                {((selectedOrder?.meal_orders?.length ?? 0) === 0) && showCart && (
+              <Box
+                sx={{
+                  flex: { xs: "0 0 auto", md: "1 1 auto" },
+                  minWidth: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  overflow: "hidden",
+                }}
+              >
+                {cartItemCount > 0 && hasOrderSelected ? (
                   <Paper
-                    elevation={3}
+                    elevation={0}
                     sx={{
-                      p: 3,
-                      borderRadius: 2,
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      borderRadius: 3,
+                      border: "1px solid",
+                      borderColor: (theme) => alpha(theme.palette.grey[300], 0.5),
+                      bgcolor: "background.paper",
+                      overflow: "hidden",
+                      boxShadow: (theme) => `0 2px 8px ${alpha(theme.palette.common.black, 0.08)}`,
+                    }}
+                  >
+                    {selectedOrder && (
+                      <Cart
+                        printHandler={printHandler}
+                        setSelectedOrder={(order: Order) => setSelectedOrderFromContext(order)}
+                        selectedOrder={selectedOrder}
+                      />
+                    )}
+                  </Paper>
+                ) : (
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      height: { xs: "auto", md: "100%" },
+                      minHeight: { xs: 300, md: "auto" },
+                      p: 4,
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: 3,
+                      border: "2px dashed",
+                      borderColor: "divider",
+                      bgcolor: (theme) => alpha(theme.palette.grey[500], 0.02),
                     }}
                   >
                     <Box
                       sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'text.secondary',
+                        width: 64,
+                        height: 64,
+                        borderRadius: "50%",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        bgcolor: (theme) => alpha(theme.palette.grey[500], 0.1),
+                        mb: 2,
                       }}
                     >
-                      <ShoppingCart size={48} style={{ marginBottom: 16 }} />
-                      <Typography>{t("empty_cart")}</Typography>
+                      <ShoppingCart size={32} style={{ opacity: 0.5 }} />
                     </Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5, color: "text.primary" }}>
+                      {t("empty_cart") || "السلة فارغة"}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" textAlign="center">
+                      {t("add_items_message") || "أضف عناصر من القائمة إلى السلة"}
+                    </Typography>
                   </Paper>
                 )}
               </Box>
             )}
-            <OrderList
-              orders={orders}
-              selectedOrder={selectedOrder}
-              setSelectedOrder={setSelectedOrderFromContext}
-            />
+
+            {/* Orders List Sidebar */}
+            <Box
+              sx={{
+                flex: { xs: "0 0 auto", md: "0 0 100px" },
+                minWidth: { xs: "100%", md: 100 },
+                maxWidth: { xs: "100%", md: 100 },
+              }}
+            >
+              <Paper
+                elevation={0}
+                sx={{
+                  height: { xs: "auto", md: "100%" },
+                  p: 1.5,
+                  borderRadius: 3,
+                  border: "1px solid",
+                  borderColor: (theme) => alpha(theme.palette.grey[300], 0.5),
+                  bgcolor: "background.paper",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                  boxShadow: (theme) => `0 2px 8px ${alpha(theme.palette.common.black, 0.08)}`,
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                    color: "text.secondary",
+                    textAlign: "center",
+                    mb: 0.5,
+                  }}
+                >
+                  {t("orders") || "الطلبات"}
+                </Typography>
+                <Box
+                  sx={{
+                    flex: 1,
+                    overflowY: "auto",
+                    "&::-webkit-scrollbar": {
+                      width: 6,
+                    },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: (theme) => alpha(theme.palette.grey[500], 0.05),
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: (theme) => alpha(theme.palette.grey[500], 0.2),
+                      borderRadius: 3,
+                      "&:hover": {
+                        backgroundColor: (theme) => alpha(theme.palette.grey[500], 0.3),
+                      },
+                    },
+                  }}
+                >
+                  <OrderList
+                    orders={orders}
+                    selectedOrder={selectedOrder}
+                    setSelectedOrder={setSelectedOrderFromContext}
+                  />
+                </Box>
+              </Paper>
+            </Box>
           </Box>
         </Box>
+
+        {/* Dialogs */}
         <CustomerForm
           key={selectedCustomer?.id}
           open={isFormOpen}
           onClose={handleClose}
           selectedCustomer={selectedCustomer || ({} as Customer)}
-          onSubmit={() => {
-            // Handle customer submission if needed
-            handleClose();
-          }}
+          onSubmit={handleClose}
         />
-       {selectedOrder &&  <NoteDialog handleClose={handleNoteClose} open={open} selectedOrder={selectedOrder} setSelectedOrder={setSelectedOrder as React.Dispatch<React.SetStateAction<Order>>}/>}
+        {hasOrderSelected && selectedOrder && (
+          <NoteDialog
+            handleClose={handleNoteClose}
+            open={open}
+            selectedOrder={selectedOrder}
+            setSelectedOrder={setSelectedOrder as React.Dispatch<React.SetStateAction<Order>>}
+          />
+        )}
       </Box>
-    </>
+    </Fade>
   );
 };
 
